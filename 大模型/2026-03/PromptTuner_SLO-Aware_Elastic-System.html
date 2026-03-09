@@ -4,126 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PromptTuner: SLO-Aware Elastic System for LLM Prompt Tuning</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.2/github-markdown.min.css">
     <style>
-        /* 基础样式 */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #1e1e1e;
-            color: #dcddde;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        /* Back link */
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #7b6cd9;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        /* Override GitHub Markdown CSS for dark theme */
-        .markdown-body {
-            color: #dcddde;
-            background: #1e1e1e;
-        }
-        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-            color: #dcddde;
-            border-color: #333;
-        }
-        .markdown-body a {
-            color: #7b6cd9;
-        }
-        .markdown-body code {
-            background: #2a2a2a;
-            color: #e6edf3;
-        }
-        .markdown-body pre {
-            background: #2a2a2a;
-            border-color: #333;
-        }
-        /* Callout styles */
-        .callout {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 16px 0;
-            border-left: 4px solid;
-        }
-        .callout-tip {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-success {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-warning {
-            border-color: #d29922;
-            background: rgba(210, 153, 34, 0.1);
-        }
-        .callout-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #dcddde;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+        background: #f9f8ff;
+        color: #1a1a2e;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+    a { color: #6c5ce7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .tag-link {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #ede9fe;
+        color: #6c5ce7;
+        font-size: 0.78em;
+        font-weight: 600;
+        transition: background 0.15s;
+    }
+    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
+    .score-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #fef3c7;
+        color: #d97706;
+        font-size: 0.78em;
+        font-weight: 700;
+    }
+    .authors { color: #6b7280; font-size: 0.88em; }
+</style>
+    <style>
+        .detail-section { margin-bottom: 40px; }
+        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
+        .section-body { color: #374151; line-height: 1.8; }
+        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
+        .abstract-en { margin-top: 8px; }
+        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
+        .back-nav { margin-bottom: 32px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
+        .back-link:hover { color: #5a4bd1; }
+        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
+        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
+        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
+        .section-body ul, .section-body ol { padding-left: 1.5em; }
+        .section-body li { margin-bottom: 4px; }
+        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
+        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
+        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
+        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
+        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
+        .callout-success { border-color: #10b981; background: #ecfdf5; }
+        .callout-title { font-weight: 700; margin-bottom: 6px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← 返回首页</a>
-        <div class="markdown-body">
-            <hr />
-<p>date: "2026-03-09"
-paper_id: "arXiv:2603.05087"
-title: "PromptTuner: SLO-Aware Elastic System for LLM Prompt Tuning"
-authors: "Wei Gao, Peng Sun, Dmitrii Ustiugov, Tianwei Zhang, Yonggang Wen"
-domain: "大模型"
-tags:
-  - 论文笔记
-  - SLO
-  - Elastic-System
-  - Prompt-Tuning
-  - Resource-Management
-  - LLM-Serving
-quality_score: "8.2/10"
-created: "2026-03-09"
-updated: "2026-03-09"
-status: analyzed</p>
-<hr />
-<h1 id="prompttuner-slo-aware-elastic-system-for-llm-prompt-tuning">PromptTuner: SLO-Aware Elastic System for LLM Prompt Tuning</h1>
-<h2 id="_1">核心信息</h2>
-<ul>
-<li><strong>论文ID</strong>：arXiv:2603.05087</li>
-<li><strong>作者</strong>：Wei Gao, Peng Sun, Dmitrii Ustiugov, Tianwei Zhang, Yonggang Wen</li>
-<li><strong>发布时间</strong>：2026-03-05</li>
-<li><strong>会议/期刊</strong>：cs.DC (Distributed Computing)</li>
-<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.05087">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05087">PDF</a></li>
-<li><strong>分类</strong>：Distributed Systems</li>
-</ul>
-<h2 id="_2">摘要翻译</h2>
-<h3 id="_3">英文摘要</h3>
-<p>Prompt tuning has become a prominent strategy for enhancing the performance of Large Language Models (LLMs) on downstream tasks. Many IT enterprises now offer Prompt-Tuning-as-a-Service to fulfill the growing demand for prompt tuning LLMs on downstream tasks. Their primary objective is to satisfy users' Service Level Objectives (SLOs) while reducing resource provisioning costs. Nevertheless, our characterization analysis for existing deep learning resource management systems reveals that they are insufficient to optimize these objectives for LLM prompt tuning workloads.</p>
-<p>In this paper, we introduce PromptTuner, an SLO-aware elastic system to optimize LLM prompt tuning. It contains two innovations. (1) We design a Prompt Bank to identify efficient initial prompts to expedite the convergence of prompt tuning. (2) We develop a Workload Scheduler to enable fast resource allocation to reduce the SLO violation and resource costs. In our evaluation, PromptTuner reduces SLO violations by 4.0x and 7.9x, and lowers costs by 1.6x and 4.5x, compared to INFless and ElasticFlow respectively.</p>
-<h3 id="_4">中文翻译</h3>
-<p>Prompt tuning 已成为增强大语言模型（LLM）在下游任务上性能的主要策略。许多 IT 企业现在提供 Prompt-Tuning-as-a-Service 来满足对 LLM 进行 prompt tuning 的下游任务需求。他们的主要目标是在满足用户服务级别目标（SLO）的同时降低资源配置成本。然而，我们对现有深度学习资源管理系统的表征分析表明，它们不足以优化 LLM prompt tuning 工作负载的这些目标。</p>
-<p>在本文中，我们介绍了 PromptTuner，一个 SLO 感知的弹性系统来优化 LLM prompt tuning。它包含两个创新：（1）我们设计了一个 Prompt Bank 来识别高效的初始 prompt，以加速 prompt tuning 的收敛。（2）我们开发了一个 Workload Scheduler 来实现快速的资源分配，以减少 SLO 违规和资源成本。在我们的评估中，与 INFless 和 ElasticFlow 相比，PromptTuner 分别将 SLO 违规减少了 4.0 倍和 7.9 倍，成本降低了 1.6 倍和 4.5 倍。</p>
-<h3 id="_5">核心要点提炼</h3>
-<ul>
+    <div class="container" style="max-width: 800px;">
+        <nav class="back-nav">
+            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
+        </nav>
+        <div class="paper-header-detail">
+            <h1 class="paper-title-detail">PromptTuner: SLO-Aware Elastic System for LLM Prompt Tuning</h1>
+            <div class="paper-meta-detail">
+                <span class="authors">Wei Gao, Peng Sun, Dmitrii Ustiugov, Tianwei Zhang, Yonggang Wen</span>
+                <span class="score-badge large">8.2/10</span>
+                
+        <a href="https://arxiv.org/abs/2603.05087" target="_blank" class="tag-link">arXiv</a>
+        <a href="https://arxiv.org/pdf/2603.05087" target="_blank" class="tag-link">PDF</a>
+            </div>
+        </div>
+        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>Prompt tuning 已成为增强大语言模型（LLM）在下游任务上性能的主要策略。许多 IT 企业现在提供 Prompt-Tuning-as-a-Service 来满足对 LLM 进行 prompt tuning 的下游任务需求。他们的主要目标是在满足用户服务级别目标（SLO）的同时降低资源配置成本。然而，我们对现有深度学习资源管理系统的表征分析表明，它们不足以优化 LLM prompt tuning 工作负载的这些目标。</p>
+<p>在本文中，我们介绍了 PromptTuner，一个 SLO 感知的弹性系统来优化 LLM prompt tuning。它包含两个创新：（1）我们设计了一个 Prompt Bank 来识别高效的初始 prompt，以加速 prompt tuning 的收敛。（2）我们开发了一个 Workload Scheduler 来实现快速的资源分配，以减少 SLO 违规和资源成本。在我们的评估中，与 INFless 和 ElasticFlow 相比，PromptTuner 分别将 SLO 违规减少了 4.0 倍和 7.9 倍，成本降低了 1.6 倍和 4.5 倍。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">Prompt tuning has become a prominent strategy for enhancing the performance of Large Language Models (LLMs) on downstream tasks. Many IT enterprises now offer Prompt-Tuning-as-a-Service to fulfill the growing demand for prompt tuning LLMs on downstream tasks. Their primary objective is to satisfy users' Service Level Objectives (SLOs) while reducing resource provisioning costs. Nevertheless, our characterization analysis for existing deep learning resource management systems reveals that they are insufficient to optimize these objectives for LLM prompt tuning workloads.
+
+In this paper, we introduce PromptTuner, an SLO-aware elastic system to optimize LLM prompt tuning. It contains two innovations. (1) We design a Prompt Bank to identify efficient initial prompts to expedite the convergence of prompt tuning. (2) We develop a Workload Scheduler to enable fast resource allocation to reduce the SLO violation and resource costs. In our evaluation, PromptTuner reduces SLO violations by 4.0x and 7.9x, and lowers costs by 1.6x and 4.5x, compared to INFless and ElasticFlow respectively.</p></div></section>
+        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
 <li><strong>研究背景</strong>：Prompt-Tuning-as-a-Service 成为企业服务，需要满足 SLO 并降低成本</li>
 <li><strong>研究动机</strong>：现有深度学习资源管理系统不适用于 LLM prompt tuning 工作负载</li>
 <li><strong>核心方法</strong>：Prompt Bank（高效初始 prompt）+ Workload Scheduler（快速资源分配）</li>
 <li><strong>主要结果</strong>：SLO 违规减少 4-8 倍，成本降低 1.6-4.5 倍</li>
 <li><strong>研究意义</strong>：首个针对 LLM prompt tuning 的 SLO 感知资源管理系统</li>
-</ul>
-<h2 id="_6">研究背景与动机</h2>
-<h3 id="_7">领域现状</h3>
+</ul></div></section>
+        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
 <p><strong>Prompt Tuning 作为服务</strong>：
 - IT 企业提供 Prompt-Tuning-as-a-Service
 - 用户需求：满足 SLO（Service Level Objectives）
@@ -134,24 +106,17 @@ status: analyzed</p>
   - 收敛速度高度依赖初始 prompt 质量
   - 资源需求随训练进程动态变化
   - 不同任务的 SLO 要求不同</p>
-<h3 id="_8">研究动机</h3>
-<p><strong>核心问题</strong>：如何在满足 SLO 的前提下，优化 LLM prompt tuning 的资源分配？</p>
-<h2 id="_9">研究问题</h2>
-<h3 id="_10">核心研究问题</h3>
-<p>设计一个 SLO 感知的弹性系统，用于优化 LLM prompt tuning：
-1. 如何识别高效的初始 prompt 以加速收敛？
-2. 如何快速分配资源以减少 SLO 违规和资源成本？</p>
-<h2 id="_11">方法概述</h2>
-<h3 id="_12">核心思想</h3>
+<h3 id="_2">研究动机</h3>
+<p><strong>核心问题</strong>：如何在满足 SLO 的前提下，优化 LLM prompt tuning 的资源分配？</p></div></section>
+        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><h3 id="_1">核心思想</h3>
 <p>PromptTuner 是一个针对 LLM prompt tuning 的 SLO 感知弹性系统，包含两个核心创新：
 1. <strong>Prompt Bank</strong>：识别高效初始 prompt
 2. <strong>Workload Scheduler</strong>：快速资源分配</p>
-<h3 id="_13">方法框架</h3>
-<p><img alt="PromptTuner 系统架构" src="images/PromptTuner_SLO-Aware/system_architecture-prompt-tuner_new.pdf" /></p>
+<h3 id="_2">方法框架</h3>
 <blockquote>
 <p>图1：PromptTuner 系统架构，展示 Prompt Bank 和 Workload Scheduler 两个核心组件</p>
 </blockquote>
-<h4 id="_14">各模块详细说明</h4>
+<h4 id="_3">各模块详细说明</h4>
 <p><strong>模块1：Prompt Bank</strong>
 - <strong>功能</strong>：识别和存储高效的初始 prompt
 - <strong>输入</strong>：历史 prompt tuning 任务
@@ -175,27 +140,8 @@ status: analyzed</p>
 - <strong>关键技术</strong>：
   - 弹性资源分配算法
   - SLO 感知的任务调度
-  - 资源预留和释放策略</p>
-<h2 id="_15">实验结果</h2>
-<h3 id="_16">实验目标</h3>
-<p>验证 PromptTuner 在减少 SLO 违规和降低成本方面的有效性。</p>
-<h3 id="_17">数据集</h3>
-<p>真实的 LLM prompt tuning 工作负载</p>
-<h3 id="_18">实验设置</h3>
-<h4 id="_19">基线方法</h4>
-<ul>
-<li><strong>INFless</strong>：深度学习推理服务调度系统</li>
-<li><strong>ElasticFlow</strong>：弹性深度学习训练框架</li>
-</ul>
-<h4 id="_20">评估指标</h4>
-<ul>
-<li><strong>SLO 违规率</strong>：未满足 SLO 的任务比例</li>
-<li><strong>资源成本</strong>：计算资源消耗</li>
-<li><strong>收敛速度</strong>：prompt tuning 完成时间</li>
-</ul>
-<h3 id="_21">主要结果</h3>
-<p><img alt="SLO 违规率对比" src="images/PromptTuner_SLO-Aware/compared_to_automatic_cdf_page1.png" /></p>
-<blockquote>
+  - 资源预留和释放策略</p></div></section>
+        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><blockquote>
 <p>图2：PromptTuner 与基线方法的 SLO 违规率对比</p>
 </blockquote>
 <table>
@@ -222,23 +168,23 @@ status: analyzed</p>
 <p><strong>结果分析</strong>：
 - PromptTuner 在 SLO 满足率上显著优于基线
 - 资源成本大幅降低
-- 弹性资源分配有效应对动态工作负载</p>
-<h2 id="_22">深度分析</h2>
-<h3 id="_23">研究价值评估</h3>
-<h4 id="_24">理论贡献</h4>
+- 弹性资源分配有效应对动态工作负载</p></div></section>
+        
+        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
+<h4 id="_2">理论贡献</h4>
 <ul>
 <li><strong>贡献1</strong>：首次针对 LLM prompt tuning 的 SLO 感知资源管理</li>
 <li>创新点：识别 prompt tuning 工作负载的独特特性</li>
 <li>学术价值：为 LLM 服务优化提供新思路</li>
 </ul>
-<h4 id="_25">实际应用价值</h4>
+<h4 id="_3">实际应用价值</h4>
 <ul>
 <li><strong>应用场景</strong>：Prompt-Tuning-as-a-Service</li>
 <li>适用性：直接应用于企业级 prompt tuning 服务</li>
 <li>优势：显著降低 SLO 违规和资源成本</li>
 <li>潜在影响：可能成为 Prompt-Tuning-as-a-Service 的标准配置</li>
 </ul>
-<h3 id="_26">方法优势详解</h3>
+<h3 id="_4">方法优势详解</h3>
 <h4 id="1">优势1：双阶段优化</h4>
 <ul>
 <li><strong>描述</strong>：Prompt Bank + Workload Solver 协同优化</li>
@@ -251,7 +197,7 @@ status: analyzed</p>
 <li><strong>技术基础</strong>：SLO 建模和预测</li>
 <li><strong>实验验证</strong>：SLO 违规率显著降低</li>
 </ul>
-<h3 id="_27">局限性分析</h3>
+<h3 id="_5">局限性分析</h3>
 <h4 id="1_1">局限1：特定工作负载</h4>
 <ul>
 <li><strong>描述</strong>：专门针对 LLM prompt tuning</li>
@@ -259,70 +205,7 @@ status: analyzed</p>
 <li><strong>原因</strong>：方法设计依赖于 prompt tuning 的特性</li>
 <li><strong>影响</strong>：应用范围受限</li>
 <li><strong>可能的解决方案</strong>：扩展到其他 LLM 服务场景</li>
-</ul>
-<h2 id="_28">与相关论文对比</h2>
-<h3 id="_29">对比论文</h3>
-<p>与 INFless、ElasticFlow 等通用深度学习资源管理系统相比：
-- 专注 LLM prompt tuning 场景
-- 针对 prompt tuning 特性优化
-- 在 SLO 满足和成本方面表现更优</p>
-<h2 id="_30">我的综合评价</h2>
-<h3 id="_31">价值评分</h3>
-<h4 id="_32">总体评分</h4>
-<p><strong>8.2/10</strong> - 首个针对 LLM prompt tuning 的 SLO 感知资源管理系统，实用价值高</p>
-<h4 id="_33">分项评分</h4>
-<table>
-<thead>
-<tr>
-<th>评分维度</th>
-<th>分数</th>
-<th>评分理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>创新性</td>
-<td>8/10</td>
-<td>首次针对 prompt tuning 场景，有创新性</td>
-</tr>
-<tr>
-<td>技术质量</td>
-<td>8/10</td>
-<td>系统设计合理，实验充分</td>
-</tr>
-<tr>
-<td>实验充分性</td>
-<td>8/10</td>
-<td>与两个基线对比，结果显著</td>
-</tr>
-<tr>
-<td>写作质量</td>
-<td>8/10</td>
-<td>结构清晰</td>
-</tr>
-<tr>
-<td>实用性</td>
-<td>9/10</td>
-<td>直接适用于企业服务场景</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_34">相关论文</h2>
-<h3 id="_35">直接相关</h3>
-<ul>
-<li>SLO-Aware Resource Allocation for Prefill-Decode Disaggregated LLM Inference</li>
-</ul>
-<h3 id="_36">背景相关</h3>
-<ul>
-<li>INFless, ElasticFlow 等资源管理系统</li>
-</ul>
-<div class="callout callout-tip">
-PromptTuner 展示了针对特定 LLM 应用场景（prompt tuning）进行系统优化的重要性，而非使用通用的资源管理系统。
-</div>
-<div class="callout callout-success">
-⭐⭐⭐⭐ 推荐！对于从事 LLM 服务和资源管理研究的人员很有参考价值。
-</div>
-        </div>
+</ul></div></section>
     </div>
 </body>
 </html>

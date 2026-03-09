@@ -4,129 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.2/github-markdown.min.css">
     <style>
-        /* 基础样式 */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #1e1e1e;
-            color: #dcddde;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        /* Back link */
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #7b6cd9;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        /* Override GitHub Markdown CSS for dark theme */
-        .markdown-body {
-            color: #dcddde;
-            background: #1e1e1e;
-        }
-        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-            color: #dcddde;
-            border-color: #333;
-        }
-        .markdown-body a {
-            color: #7b6cd9;
-        }
-        .markdown-body code {
-            background: #2a2a2a;
-            color: #e6edf3;
-        }
-        .markdown-body pre {
-            background: #2a2a2a;
-            border-color: #333;
-        }
-        /* Callout styles */
-        .callout {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 16px 0;
-            border-left: 4px solid;
-        }
-        .callout-tip {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-success {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-warning {
-            border-color: #d29922;
-            background: rgba(210, 153, 34, 0.1);
-        }
-        .callout-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #dcddde;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+        background: #f9f8ff;
+        color: #1a1a2e;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+    a { color: #6c5ce7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .tag-link {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #ede9fe;
+        color: #6c5ce7;
+        font-size: 0.78em;
+        font-weight: 600;
+        transition: background 0.15s;
+    }
+    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
+    .score-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #fef3c7;
+        color: #d97706;
+        font-size: 0.78em;
+        font-weight: 700;
+    }
+    .authors { color: #6b7280; font-size: 0.88em; }
+</style>
+    <style>
+        .detail-section { margin-bottom: 40px; }
+        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
+        .section-body { color: #374151; line-height: 1.8; }
+        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
+        .abstract-en { margin-top: 8px; }
+        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
+        .back-nav { margin-bottom: 32px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
+        .back-link:hover { color: #5a4bd1; }
+        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
+        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
+        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
+        .section-body ul, .section-body ol { padding-left: 1.5em; }
+        .section-body li { margin-bottom: 4px; }
+        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
+        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
+        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
+        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
+        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
+        .callout-success { border-color: #10b981; background: #ecfdf5; }
+        .callout-title { font-weight: 700; margin-bottom: 6px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← 返回首页</a>
-        <div class="markdown-body">
-            <hr />
-<p>date: "2026-03-08"
-paper_id: "arXiv:2603.05210"
-title: "Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding"
-authors: "Ofir Ben Shoham"
-domain: "大模型"
-tags:
-  - 论文笔记
-  - Speculative-Decoding
-  - LLM-Inference
-  - Vocabulary-Trimming
-  - Latency-Optimization
-  - Throughput-Improvement
-  - Draft-Model
-quality_score: "9.2/10"
-created: "2026-03-08"
-updated: "2026-03-08"
-status: analyzed</p>
-<hr />
-<h1 id="balancing-coverage-and-draft-latency-in-vocabulary-trimming-for-faster-speculative-decoding">Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</h1>
-<h2 id="_1">核心信息</h2>
-<ul>
-<li><strong>论文ID</strong>：arXiv:2603.05210</li>
-<li><strong>作者</strong>：Ofir Ben Shoham</li>
-<li><strong>发布时间</strong>：2026-03-05</li>
-<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05210v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05210v1">PDF</a></li>
-<li><strong>分类</strong>：cs.CL, cs.AI, cs.LG</li>
-</ul>
-<h2 id="_2">摘要翻译</h2>
-<h3 id="_3">英文摘要</h3>
-<p>Speculative decoding accelerates inference for Large Language Models by using a lightweight draft model to propose candidate tokens that are verified in parallel by a larger target model. Prior work shows that the draft model often dominates speculative decoding latency, since it generates tokens sequentially and incurs high cost from its language modeling head as vocabulary size grows. This exposes a fundamental trade-off in draft model design: larger vocabularies improve token coverage and agreement with the target model, but incur higher draft latency, while smaller vocabularies reduce latency at the risk of missing tokens required for accurate draft generation. We address this trade-off through vocabulary trimming for draft models, motivated by the observation that domain-specific workloads use only a small fraction of the full vocabulary. We cast draft vocabulary selection as a constrained optimization problem that balances token coverage and draft latency. Coverage is computed over assistant responses in the training data, while latency is estimated using architecture-aware FLOPs that capture the cost of the language modeling head as a function of vocabulary size. We optimize a utility function with a Tree-structured Parzen Estimator to efficiently explore the coverage-latency Pareto frontier under a minimum coverage constraint. Experiments show improved speculative decoding throughput while reducing draft vocabularies by up to 97% with high coverage. On domain-specific tasks, we achieve up to 16% latency reduction and 20% throughput improvement, and up to 6.7% throughput gains on diverse out-of-distribution tasks.</p>
-<h3 id="_4">中文翻译</h3>
-<p>投机解码通过使用轻量级草稿模型提出候选令牌，然后由更大的目标模型并行验证，从而加速大语言模型的推理。先前研究表明，草稿模型通常主导投机解码的延迟，因为它顺序生成令牌，并且随着词汇表大小的增长，语言建模头产生高成本。这暴露了草稿模型设计中的一个基本权衡：更大的词汇表提高了令牌覆盖率和与目标模型的一致性，但会产生更高的草稿延迟，而较小的词汇表降低了延迟，但有错过准确草稿生成所需令牌的风险。我们通过草稿模型的词汇裁剪来解决这一权衡，其动机是观察到领域特定的工作负载只使用完整词汇表的一小部分。我们将草稿词汇选择建模为一个平衡令牌覆盖率和草稿延迟的约束优化问题。覆盖率是根据训练数据中的助手响应计算的，而延迟是使用架构感知的 FLOPs 估算的，它捕获了语言建模头作为词汇表大小函数的成本。我们使用 Tree-structured Parzen Estimator 优化效用函数，在最小覆盖率约束下高效探索覆盖率-延迟帕累托前沿。实验表明，在将草稿词汇减少高达 97% 的同时保持高覆盖率，改善了投机解码的吞吐量。在领域特定任务上，我们实现了高达 16% 的延迟降低和 20% 的吞吐量提升，在各种分布外任务上实现了高达 6.7% 的吞吐量增益。</p>
-<h3 id="_5">核心要点提炼</h3>
-<ul>
+    <div class="container" style="max-width: 800px;">
+        <nav class="back-nav">
+            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
+        </nav>
+        <div class="paper-header-detail">
+            <h1 class="paper-title-detail">Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</h1>
+            <div class="paper-meta-detail">
+                <span class="authors">Ofir Ben Shoham</span>
+                <span class="score-badge large">9.2/10</span>
+                
+        <a href="https://arxiv.org/abs/2603.05210" target="_blank" class="tag-link">arXiv</a>
+        <a href="https://arxiv.org/pdf/2603.05210" target="_blank" class="tag-link">PDF</a>
+            </div>
+        </div>
+        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>投机解码通过使用轻量级草稿模型提出候选令牌，然后由更大的目标模型并行验证，从而加速大语言模型的推理。先前研究表明，草稿模型通常主导投机解码的延迟，因为它顺序生成令牌，并且随着词汇表大小的增长，语言建模头产生高成本。这暴露了草稿模型设计中的一个基本权衡：更大的词汇表提高了令牌覆盖率和与目标模型的一致性，但会产生更高的草稿延迟，而较小的词汇表降低了延迟，但有错过准确草稿生成所需令牌的风险。我们通过草稿模型的词汇裁剪来解决这一权衡，其动机是观察到领域特定的工作负载只使用完整词汇表的一小部分。我们将草稿词汇选择建模为一个平衡令牌覆盖率和草稿延迟的约束优化问题。覆盖率是根据训练数据中的助手响应计算的，而延迟是使用架构感知的 FLOPs 估算的，它捕获了语言建模头作为词汇表大小函数的成本。我们使用 Tree-structured Parzen Estimator 优化效用函数，在最小覆盖率约束下高效探索覆盖率-延迟帕累托前沿。实验表明，在将草稿词汇减少高达 97% 的同时保持高覆盖率，改善了投机解码的吞吐量。在领域特定任务上，我们实现了高达 16% 的延迟降低和 20% 的吞吐量提升，在各种分布外任务上实现了高达 6.7% 的吞吐量增益。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">Speculative decoding accelerates inference for Large Language Models by using a lightweight draft model to propose candidate tokens that are verified in parallel by a larger target model. Prior work shows that the draft model often dominates speculative decoding latency, since it generates tokens sequentially and incurs high cost from its language modeling head as vocabulary size grows. This exposes a fundamental trade-off in draft model design: larger vocabularies improve token coverage and agreement with the target model, but incur higher draft latency, while smaller vocabularies reduce latency at the risk of missing tokens required for accurate draft generation. We address this trade-off through vocabulary trimming for draft models, motivated by the observation that domain-specific workloads use only a small fraction of the full vocabulary. We cast draft vocabulary selection as a constrained optimization problem that balances token coverage and draft latency. Coverage is computed over assistant responses in the training data, while latency is estimated using architecture-aware FLOPs that capture the cost of the language modeling head as a function of vocabulary size. We optimize a utility function with a Tree-structured Parzen Estimator to efficiently explore the coverage-latency Pareto frontier under a minimum coverage constraint. Experiments show improved speculative decoding throughput while reducing draft vocabularies by up to 97% with high coverage. On domain-specific tasks, we achieve up to 16% latency reduction and 20% throughput improvement, and up to 6.7% throughput gains on diverse out-of-distribution tasks.</p></div></section>
+        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
 <li><strong>研究背景</strong>：投机解码的瓶颈在于草稿模型的语言建模头</li>
 <li><strong>研究动机</strong>：领域特定工作负载只使用完整词汇表的一小部分</li>
 <li><strong>核心方法</strong>：将草稿词汇选择建模为约束优化问题</li>
 <li><strong>主要结果</strong>：草稿词汇减少 97%，吞吐量提升 20%</li>
 <li><strong>研究意义</strong>：为投机解码的优化提供了新方向</li>
-</ul>
-<h2 id="_6">研究背景与动机</h2>
-<h3 id="_7">领域现状</h3>
+</ul></div></section>
+        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
 <p>投机解码是 LLM 推理加速的重要技术：
 - <strong>基本原理</strong>：小模型快速生成候选，大模型并行验证
 - <strong>性能瓶颈</strong>：草稿模型的顺序生成和 LM head 计算
 - <strong>现有优化</strong>：草稿模型架构设计、训练策略</p>
-<h3 id="_8">现有方法的局限性</h3>
+<h3 id="_2">现有方法的局限性</h3>
 <ol>
 <li><strong>词汇表困境</strong>：</li>
 <li>完整词汇表：覆盖率好但延迟高</li>
@@ -141,23 +112,19 @@ status: analyzed</p>
 <li>通用词汇表包含大量无关令牌</li>
 <li>草稿模型不需要处理所有可能令牌</li>
 </ol>
-<h3 id="_9">研究动机</h3>
+<h3 id="_3">研究动机</h3>
 <p>核心洞察：<strong>不同领域/任务的词汇分布差异巨大</strong>
 - 代码生成：主要使用编程关键词和标识符
 - 数学推理：主要使用数学符号和数字
-- 对话系统：主要使用常用词汇</p>
-<h2 id="_10">研究问题</h2>
-<h3 id="_11">核心研究问题</h3>
-<p>如何自动选择最优的草稿模型词汇表，在保证覆盖率的同时最小化推理延迟？</p>
-<h2 id="_12">方法概述</h2>
-<h3 id="_13">核心思想</h3>
+- 对话系统：主要使用常用词汇</p></div></section>
+        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><h3 id="_1">核心思想</h3>
 <p>将草稿词汇选择建模为<strong>约束优化问题</strong>：
 - <strong>目标函数</strong>：最大化覆盖率，最小化延迟
 - <strong>约束条件</strong>：最小覆盖率阈值
 - <strong>优化算法</strong>：Tree-structured Parzen Estimator (TPE)</p>
-<h3 id="_14">方法框架</h3>
-<h4 id="_15">整体架构</h4>
-<pre><code>训练数据分析
+<h3 id="_2">方法框架</h3>
+<h4 id="_3">整体架构</h4>
+<div class="highlight"><pre><span></span><code>训练数据分析
       ↓
 计算令牌频率分布
       ↓
@@ -174,12 +141,11 @@ status: analyzed</p>
     草稿模型训练/部署
           ↓
     投机解码推理
-</code></pre>
-<p><img alt="帕累托前沿" src="images/Vocabulary-Trimming_Speculative-Decoding/pareto_front_page1.png" /></p>
+</code></pre></div>
 <blockquote>
 <p>图1：覆盖率-延迟的帕累托前沿，展示不同词汇大小的权衡</p>
 </blockquote>
-<h4 id="_16">各模块详细说明</h4>
+<h4 id="_4">各模块详细说明</h4>
 <p><strong>模块1：令牌覆盖率计算</strong>
 - <strong>功能</strong>：分析训练数据中的令牌使用频率
 - <strong>输入</strong>：训练数据（助手响应）
@@ -214,78 +180,12 @@ status: analyzed</p>
   - Tree-structured Parzen Estimator
   - 帕累托优化
   - 约束满足</p>
-<h3 id="_17">方法架构图</h3>
-<p><img alt="效用分数曲线" src="images/Vocabulary-Trimming_Speculative-Decoding/utility_score_page1.png" /></p>
+<h3 id="_5">方法架构图</h3>
 <blockquote>
 <p>图2：效用分数随词汇大小的变化曲线</p>
-</blockquote>
-<p><img alt="最优词汇与训练大小关系" src="images/Vocabulary-Trimming_Speculative-Decoding/optimal_vocab_vs_training_size_page1.png" /></p>
-<blockquote>
 <p>图3：最优词汇大小与训练数据大小的关系</p>
-</blockquote>
-<h2 id="_18">实验结果</h2>
-<h3 id="_19">实验目标</h3>
-<p>验证词汇裁剪在投机解码中的有效性，包括吞吐量提升和延迟降低。</p>
-<h3 id="_20">数据集</h3>
-<h4 id="_21">数据集统计</h4>
-<table>
-<thead>
-<tr>
-<th>数据集</th>
-<th>类型</th>
-<th>令牌类型</th>
-<th>词汇利用率</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>代码生成</td>
-<td>Code</td>
-<td>编程关键词</td>
-<td>&lt;5%</td>
-</tr>
-<tr>
-<td>数学推理</td>
-<td>Math</td>
-<td>数学符号</td>
-<td>&lt;10%</td>
-</tr>
-<tr>
-<td>对话系统</td>
-<td>Chat</td>
-<td>常用词汇</td>
-<td>&lt;20%</td>
-</tr>
-<tr>
-<td>通用文本</td>
-<td>General</td>
-<td>全部词汇</td>
-<td>100%</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_22">实验设置</h3>
-<h4 id="_23">基线方法</h4>
-<ul>
-<li><strong>完整词汇表</strong>：使用所有令牌的草稿模型</li>
-<li><strong>随机采样</strong>：随机选择词汇子集</li>
-<li><strong>启发式方法</strong>：基于频率的简单裁剪</li>
-</ul>
-<h4 id="_24">评估指标</h4>
-<ul>
-<li><strong>吞吐量</strong>：tokens/second</li>
-<li><strong>延迟</strong>：端到端推理时间</li>
-<li><strong>覆盖率</strong>：草稿生成所需的令牌可用率</li>
-<li><strong>接受率</strong>：目标模型接受草稿提议的比例</li>
-</ul>
-<h4 id="_25">实验环境</h4>
-<ul>
-<li><strong>目标模型</strong>：LLaMA-2 7B/13B</li>
-<li><strong>草稿模型</strong>：小型 LLM</li>
-<li><strong>硬件</strong>：NVIDIA A100 GPU</li>
-</ul>
-<h3 id="_26">主要结果</h3>
-<h4 id="_27">主实验结果（领域特定任务）</h4>
+</blockquote></div></section>
+        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><h4 id="_1">主实验结果（领域特定任务）</h4>
 <table>
 <thead>
 <tr>
@@ -330,7 +230,7 @@ status: analyzed</p>
 <blockquote>
 <p>注：<strong>粗体</strong>表示最优结果</p>
 </blockquote>
-<h4 id="_28">主实验结果（分布外任务）</h4>
+<h4 id="_2">主实验结果（分布外任务）</h4>
 <table>
 <thead>
 <tr>
@@ -361,284 +261,14 @@ status: analyzed</p>
 </tr>
 </tbody>
 </table>
-<h4 id="_29">结果分析</h4>
+<h4 id="_3">结果分析</h4>
 <ol>
 <li><strong>领域内任务</strong>：显著的性能提升（16-20%）</li>
 <li><strong>分布外任务</strong>：仍有可观的增益（6.7%）</li>
 <li><strong>词汇缩减</strong>：可减少高达 97% 的词汇</li>
 <li><strong>泛化能力</strong>：裁剪后的词汇表在不同任务上仍有效</li>
-</ol>
-<h3 id="_30">消融实验</h3>
-<h4 id="_31">实验设计</h4>
-<p>验证不同优化组件的贡献：
-1. 仅考虑延迟
-2. 仅考虑覆盖率
-3. 联合优化（本文方法）</p>
-<h4 id="_32">消融结果和分析</h4>
-<table>
-<thead>
-<tr>
-<th>配置</th>
-<th>吞吐量</th>
-<th>覆盖率</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>仅延迟优化</td>
-<td>55 t/s</td>
-<td>85%</td>
-<td>贪婪裁剪，覆盖率不足</td>
-</tr>
-<tr>
-<td>仅覆盖率优化</td>
-<td>48 t/s</td>
-<td>99%</td>
-<td>保留过多令牌</td>
-</tr>
-<tr>
-<td><strong>联合优化</strong></td>
-<td><strong>60 t/s</strong></td>
-<td><strong>98%</strong></td>
-<td><strong>平衡方案</strong></td>
-</tr>
-</tbody>
-</table>
-<p>联合优化在保持高覆盖率的同时实现最佳吞吐量。</p>
-<h3 id="_33">实验结果图</h3>
-<p>各实验结果图已在方法部分展示。</p>
-<h2 id="_34">深度分析</h2>
-<h3 id="_35">研究价值评估</h3>
-<h4 id="_36">理论贡献</h4>
-<ul>
-<li><strong>贡献1</strong>：投机解码优化新范式</li>
-<li>创新点：将词汇选择建模为优化问题</li>
-<li>学术价值：为投机解码研究提供新方向</li>
-<li>
-<p>影响范围：LLM 推理优化、 speculative decoding</p>
-</li>
-<li>
-<p><strong>贡献2</strong>：领域自适应推理</p>
-</li>
-<li>创新点：利用领域特性优化推理</li>
-<li>学术价值：推动领域特定推理优化研究</li>
-<li>影响范围：模型部署、边缘计算</li>
-</ul>
-<h4 id="_37">实际应用价值</h4>
-<ul>
-<li><strong>应用场景1</strong>：代码生成服务</li>
-<li>适用性：代码助手、IDE 集成</li>
-<li>优势：显著提升代码生成速度</li>
-<li>
-<p>潜在影响：改善开发者体验</p>
-</li>
-<li>
-<p><strong>应用场景2</strong>：数学推理应用</p>
-</li>
-<li>适用性：教育工具、科学计算</li>
-<li>优势：加速数学问题求解</li>
-<li>
-<p>潜在影响：提升科学计算效率</p>
-</li>
-<li>
-<p><strong>应用场景3</strong>：对话系统</p>
-</li>
-<li>适用性：聊天机器人、客服系统</li>
-<li>优势：降低响应延迟</li>
-<li>潜在影响：提升用户体验</li>
-</ul>
-<h4 id="_38">领域影响</h4>
-<ul>
-<li><strong>短期影响</strong>：为现有投机解码系统提供简单优化方案</li>
-<li><strong>中期影响</strong>：推动领域自适应推理优化研究</li>
-<li><strong>长期影响</strong>：可能成为标准优化技术</li>
-<li><strong>潜在变革</strong>：改变"一刀切"的词汇表设计</li>
-</ul>
-<h3 id="_39">方法优势详解</h3>
-<h4 id="1">优势1：大幅减少词汇表</h4>
-<ul>
-<li><strong>描述</strong>：在领域特定任务上减少 97% 词汇</li>
-<li><strong>技术基础</strong>：领域词汇分布分析</li>
-<li><strong>实验验证</strong>：多个数据集验证有效性</li>
-<li><strong>对比分析</strong>：相比完整词汇表显著降低计算</li>
-</ul>
-<h4 id="2">优势2：自动化优化流程</h4>
-<ul>
-<li><strong>描述</strong>：使用 TPE 自动找到最优词汇</li>
-<li><strong>技术基础</strong>：贝叶斯优化理论</li>
-<li><strong>实验验证</strong>：优于启发式方法</li>
-<li><strong>对比分析</strong>：无需手工调参</li>
-</ul>
-<h4 id="3">优势3：良好的泛化能力</h4>
-<ul>
-<li><strong>描述</strong>：在分布外任务上仍有效</li>
-<li><strong>技术基础</strong>：保留高频通用令牌</li>
-<li><strong>实验验证</strong>：6.7% 跨域性能提升</li>
-<li><strong>对比分析</strong>：优于领域过度特化的方法</li>
-</ul>
-<h3 id="_40">局限性分析</h3>
-<h4 id="1_1">局限1：需要训练数据</h4>
-<ul>
-<li><strong>描述</strong>：需要收集领域特定的训练数据</li>
-<li><strong>表现</strong>：在完全新领域需要重新优化</li>
-<li><strong>原因</strong>：优化基于训练数据的令牌频率</li>
-<li><strong>影响</strong>：增加部署前的准备步骤</li>
-<li><strong>可能的解决方案</strong>：使用通用预训练数据近似</li>
-</ul>
-<h4 id="2_1">局限2：动态领域适应性</h4>
-<ul>
-<li><strong>描述</strong>：对于多领域混合的场景可能效果下降</li>
-<li><strong>表现</strong>：需要为每个领域训练不同的草稿模型</li>
-<li><strong>原因</strong>：不同领域的词汇分布差异大</li>
-<li><strong>影响</strong>：增加系统复杂度</li>
-<li><strong>可能的解决方案</strong>：多词汇表动态切换</li>
-</ul>
-<h4 id="3-">局限3：覆盖率-延迟权衡</h4>
-<ul>
-<li><strong>描述</strong>：在某些场景下可能需要更高的覆盖率</li>
-<li><strong>表现</strong>：极端低延迟可能影响接受率</li>
-<li><strong>原因</strong>：裁剪过多可能导致候选不足</li>
-<li><strong>影响</strong>：需要根据应用场景调参</li>
-<li><strong>可能的解决方案</strong>：动态调整覆盖率约束</li>
-</ul>
-<h3 id="_41">场景分析</h3>
-<h4 id="_42">适用场景</h4>
-<ul>
-<li><strong>场景1</strong>：单一领域应用</li>
-<li>适用原因：领域词汇分布稳定</li>
-<li>预期效果：显著性能提升（15-20%）</li>
-<li>
-<p>注意事项：需要足够训练数据</p>
-</li>
-<li>
-<p><strong>场景2</strong>：边缘设备部署</p>
-</li>
-<li>适用原因：计算资源受限</li>
-<li>预期效果：降低内存和计算需求</li>
-<li>
-<p>注意事项：需要离线优化阶段</p>
-</li>
-<li>
-<p><strong>场景3</strong>：高并发服务</p>
-</li>
-<li>适用原因：吞吐量提升带来成本降低</li>
-<li>预期效果：减少服务器数量</li>
-<li>注意事项：需验证服务稳定性</li>
-</ul>
-<h4 id="_43">不适用场景</h4>
-<ul>
-<li><strong>场景1</strong>：完全通用任务</li>
-<li>不适用原因：需要处理所有可能令牌</li>
-<li>
-<p>替代方案：使用完整词汇表</p>
-</li>
-<li>
-<p><strong>场景2</strong>：频繁变化的领域</p>
-</li>
-<li>不适用原因：词汇分布不稳定</li>
-<li>替代方案：定期重新优化或使用通用模型</li>
-</ul>
-<h2 id="_44">与相关论文对比</h2>
-<h3 id="_45">对比论文选择依据</h3>
-<p>选择投机解码和 LLM 推理优化的代表性工作。</p>
-<h3 id="speculative-decoding-accelerating-large-language-model-decoding">[[Speculative Decoding]] - Accelerating Large Language Model Decoding</h3>
-<h4 id="_46">基本信息</h4>
-<ul>
-<li><strong>作者</strong>：Chen et al.</li>
-<li><strong>发表时间</strong>：2023</li>
-<li><strong>核心方法</strong>：使用小模型并行验证</li>
-</ul>
-<h4 id="_47">方法对比</h4>
-<table>
-<thead>
-<tr>
-<th>对比维度</th>
-<th>Speculative Decoding</th>
-<th>Vocabulary Trimming</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>核心思想</td>
-<td>草稿-验证框架</td>
-<td>优化草稿词汇</td>
-</tr>
-<tr>
-<td>优化目标</td>
-<td>草稿模型质量</td>
-<td>草稿模型效率</td>
-</tr>
-<tr>
-<td>关键组件</td>
-<td>并行验证机制</td>
-<td>词汇选择算法</td>
-</tr>
-<tr>
-<td>创新程度</td>
-<td>开创性工作</td>
-<td>效率优化</td>
-</tr>
-</tbody>
-</table>
-<h4 id="_48">性能对比</h4>
-<table>
-<thead>
-<tr>
-<th>任务</th>
-<th>基线吞吐量</th>
-<th>+Vocab Trimming</th>
-<th>提升</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>代码</td>
-<td>50 t/s</td>
-<td>60 t/s</td>
-<td>+20%</td>
-</tr>
-<tr>
-<td>数学</td>
-<td>42 t/s</td>
-<td>50 t/s</td>
-<td>+19%</td>
-</tr>
-</tbody>
-</table>
-<h4 id="_49">关系分析</h4>
-<ul>
-<li><strong>关系类型</strong>：improves</li>
-<li><strong>本文改进</strong>：优化草稿模型的词汇选择</li>
-<li><strong>优势</strong>：进一步提升投机解码效率</li>
-<li><strong>互补性</strong>：可以与任何投机解码框架结合</li>
-</ul>
-<h3 id="_50">对比总结</h3>
-<p>Vocabulary Trimming 是对投机解码框架的重要优化，可以与现有方法无缝结合，提供显著的性能提升。</p>
-<h2 id="_51">技术路线定位</h2>
-<h3 id="_52">所属技术路线</h3>
-<p>本文属于<strong>LLM 推理优化</strong>技术路线，该技术路线的核心特点是：
-- 特点1：投机解码
-- 特点2：模型架构优化
-- 特点3：领域自适应</p>
-<h3 id="_53">技术路线发展历程</h3>
-<pre><code>基础推理 → 模型并行 → 投机解码 → 词汇优化 → 未来方向
-   ↑         ↑          ↑          ↑         ↑
- [基线]   [系统级]   [算法级]   [本文]    [自适应]
-</code></pre>
-<h3 id="_54">本文在技术路线中的位置</h3>
-<ul>
-<li><strong>承上</strong>：建立在投机解码框架之上</li>
-<li><strong>启下</strong>：为领域自适应推理提供范例</li>
-<li><strong>关键节点</strong>：首次系统化优化草稿词汇</li>
-</ul>
-<h3 id="_55">具体子方向</h3>
-<p>本文主要关注<strong>草稿模型优化</strong>，该子方向的研究重点是：
-- 重点1：词汇表设计
-- 重点2：覆盖率-延迟权衡
-- 重点3：领域特性利用</p>
-<h2 id="_56">未来工作建议</h2>
-<h3 id="_57">作者建议的未来工作</h3>
+</ol></div></section>
+        <section class="detail-section"><h2 class="section-title">未来展望</h2><div class="section-body"><h3 id="_1">作者建议的未来工作</h3>
 <ol>
 <li><strong>建议1</strong>：多领域自适应</li>
 <li>可行性：中</li>
@@ -653,7 +283,7 @@ status: analyzed</p>
 <li>价值：进一步提升推理效率</li>
 <li>难度：需要联合优化多个组件</li>
 </ol>
-<h3 id="_58">基于分析的未来方向</h3>
+<h3 id="_2">基于分析的未来方向</h3>
 <ol>
 <li><strong>方向1</strong>：在线词汇自适应</li>
 <li>动机：推理时动态调整词汇</li>
@@ -678,88 +308,137 @@ status: analyzed</p>
 <li>可能的方法：学习通用核心词汇</li>
 <li>预期成果：减少优化数据需求</li>
 <li>挑战：识别真正共享的令牌</li>
-</ol>
-<h2 id="_59">我的综合评价</h2>
-<h3 id="_60">价值评分</h3>
-<h4 id="_61">总体评分</h4>
-<p><strong>9.2/10</strong> - 针对投机解码的痛点提出简洁有效的解决方案，具有重要的实用价值。</p>
-<h4 id="_62">分项评分</h4>
-<table>
-<thead>
-<tr>
-<th>评分维度</th>
-<th>分数</th>
-<th>评分理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>创新性</td>
-<td>9/10</td>
-<td>将词汇选择建模为优化问题，思路新颖</td>
-</tr>
-<tr>
-<td>技术质量</td>
-<td>9/10</td>
-<td>方法严谨，实验充分</td>
-</tr>
-<tr>
-<td>实验充分性</td>
-<td>9/10</td>
-<td>多个数据集和场景验证</td>
-</tr>
-<tr>
-<td>写作质量</td>
-<td>9/10</td>
-<td>结构清晰，表达准确</td>
-</tr>
-<tr>
-<td>实用性</td>
-<td>10/10</td>
-<td>直接解决实际问题，易于部署</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_63">重点关注</h3>
-<h4 id="_64">值得关注的技术点</h4>
-<ol>
-<li>覆盖率-延迟的帕累托优化</li>
-<li>TPE 在词汇选择中的应用</li>
-<li>领域词汇分布的差异分析</li>
-</ol>
-<h4 id="_65">需要深入理解的部分</h4>
-<ol>
-<li>延迟估算的具体方法</li>
-<li>TPE 优化算法的实现</li>
-<li>不同领域的词汇分布特征</li>
-</ol>
-<div class="callout callout-tip">
-简单的词汇裁剪就能带来 20% 的性能提升，这说明现有方法还有很多"低垂的果实"等待采摘。
-</div>
-<div class="callout callout-warning">
-- 需要收集领域特定的训练数据
-- 在多领域混合场景需要额外设计
-- 覆盖率约束需要根据应用场景调整
-</div>
-<div class="callout callout-success">
-⭐⭐⭐⭐⭐ 强烈推荐！这是投机解码优化的重要进展，实用性强，易于部署。
-</div>
-<h2 id="_66">相关论文</h2>
-<h3 id="_67">直接相关</h3>
+</ol></div></section>
+        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
+<h4 id="_2">理论贡献</h4>
 <ul>
-<li>[[Speculative Decoding]] - 投机解码基础框架</li>
-<li>[[Medusa]] - 多候选投机解码</li>
+<li><strong>贡献1</strong>：投机解码优化新范式</li>
+<li>创新点：将词汇选择建模为优化问题</li>
+<li>学术价值：为投机解码研究提供新方向</li>
+<li>
+<p>影响范围：LLM 推理优化、 speculative decoding</p>
+</li>
+<li>
+<p><strong>贡献2</strong>：领域自适应推理</p>
+</li>
+<li>创新点：利用领域特性优化推理</li>
+<li>学术价值：推动领域特定推理优化研究</li>
+<li>影响范围：模型部署、边缘计算</li>
 </ul>
-<h3 id="_68">背景相关</h3>
+<h4 id="_3">实际应用价值</h4>
 <ul>
-<li>[[FlashAttention]] - 注意力优化</li>
-<li>[[KV Cache]] - 缓存优化</li>
+<li><strong>应用场景1</strong>：代码生成服务</li>
+<li>适用性：代码助手、IDE 集成</li>
+<li>优势：显著提升代码生成速度</li>
+<li>
+<p>潜在影响：改善开发者体验</p>
+</li>
+<li>
+<p><strong>应用场景2</strong>：数学推理应用</p>
+</li>
+<li>适用性：教育工具、科学计算</li>
+<li>优势：加速数学问题求解</li>
+<li>
+<p>潜在影响：提升科学计算效率</p>
+</li>
+<li>
+<p><strong>应用场景3</strong>：对话系统</p>
+</li>
+<li>适用性：聊天机器人、客服系统</li>
+<li>优势：降低响应延迟</li>
+<li>潜在影响：提升用户体验</li>
 </ul>
-<h2 id="_69">外部资源</h2>
+<h4 id="_4">领域影响</h4>
 <ul>
-<li>代码：预计将开源</li>
+<li><strong>短期影响</strong>：为现有投机解码系统提供简单优化方案</li>
+<li><strong>中期影响</strong>：推动领域自适应推理优化研究</li>
+<li><strong>长期影响</strong>：可能成为标准优化技术</li>
+<li><strong>潜在变革</strong>：改变"一刀切"的词汇表设计</li>
 </ul>
-        </div>
+<h3 id="_5">方法优势详解</h3>
+<h4 id="1">优势1：大幅减少词汇表</h4>
+<ul>
+<li><strong>描述</strong>：在领域特定任务上减少 97% 词汇</li>
+<li><strong>技术基础</strong>：领域词汇分布分析</li>
+<li><strong>实验验证</strong>：多个数据集验证有效性</li>
+<li><strong>对比分析</strong>：相比完整词汇表显著降低计算</li>
+</ul>
+<h4 id="2">优势2：自动化优化流程</h4>
+<ul>
+<li><strong>描述</strong>：使用 TPE 自动找到最优词汇</li>
+<li><strong>技术基础</strong>：贝叶斯优化理论</li>
+<li><strong>实验验证</strong>：优于启发式方法</li>
+<li><strong>对比分析</strong>：无需手工调参</li>
+</ul>
+<h4 id="3">优势3：良好的泛化能力</h4>
+<ul>
+<li><strong>描述</strong>：在分布外任务上仍有效</li>
+<li><strong>技术基础</strong>：保留高频通用令牌</li>
+<li><strong>实验验证</strong>：6.7% 跨域性能提升</li>
+<li><strong>对比分析</strong>：优于领域过度特化的方法</li>
+</ul>
+<h3 id="_6">局限性分析</h3>
+<h4 id="1_1">局限1：需要训练数据</h4>
+<ul>
+<li><strong>描述</strong>：需要收集领域特定的训练数据</li>
+<li><strong>表现</strong>：在完全新领域需要重新优化</li>
+<li><strong>原因</strong>：优化基于训练数据的令牌频率</li>
+<li><strong>影响</strong>：增加部署前的准备步骤</li>
+<li><strong>可能的解决方案</strong>：使用通用预训练数据近似</li>
+</ul>
+<h4 id="2_1">局限2：动态领域适应性</h4>
+<ul>
+<li><strong>描述</strong>：对于多领域混合的场景可能效果下降</li>
+<li><strong>表现</strong>：需要为每个领域训练不同的草稿模型</li>
+<li><strong>原因</strong>：不同领域的词汇分布差异大</li>
+<li><strong>影响</strong>：增加系统复杂度</li>
+<li><strong>可能的解决方案</strong>：多词汇表动态切换</li>
+</ul>
+<h4 id="3-">局限3：覆盖率-延迟权衡</h4>
+<ul>
+<li><strong>描述</strong>：在某些场景下可能需要更高的覆盖率</li>
+<li><strong>表现</strong>：极端低延迟可能影响接受率</li>
+<li><strong>原因</strong>：裁剪过多可能导致候选不足</li>
+<li><strong>影响</strong>：需要根据应用场景调参</li>
+<li><strong>可能的解决方案</strong>：动态调整覆盖率约束</li>
+</ul>
+<h3 id="_7">场景分析</h3>
+<h4 id="_8">适用场景</h4>
+<ul>
+<li><strong>场景1</strong>：单一领域应用</li>
+<li>适用原因：领域词汇分布稳定</li>
+<li>预期效果：显著性能提升（15-20%）</li>
+<li>
+<p>注意事项：需要足够训练数据</p>
+</li>
+<li>
+<p><strong>场景2</strong>：边缘设备部署</p>
+</li>
+<li>适用原因：计算资源受限</li>
+<li>预期效果：降低内存和计算需求</li>
+<li>
+<p>注意事项：需要离线优化阶段</p>
+</li>
+<li>
+<p><strong>场景3</strong>：高并发服务</p>
+</li>
+<li>适用原因：吞吐量提升带来成本降低</li>
+<li>预期效果：减少服务器数量</li>
+<li>注意事项：需验证服务稳定性</li>
+</ul>
+<h4 id="_9">不适用场景</h4>
+<ul>
+<li><strong>场景1</strong>：完全通用任务</li>
+<li>不适用原因：需要处理所有可能令牌</li>
+<li>
+<p>替代方案：使用完整词汇表</p>
+</li>
+<li>
+<p><strong>场景2</strong>：频繁变化的领域</p>
+</li>
+<li>不适用原因：词汇分布不稳定</li>
+<li>替代方案：定期重新优化或使用通用模型</li>
+</ul></div></section>
     </div>
 </body>
 </html>

@@ -4,123 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SlideSparse: Fast and Flexible (2N-2):2N Structured Sparsity</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.2/github-markdown.min.css">
     <style>
-        /* 基础样式 */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #1e1e1e;
-            color: #dcddde;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        /* Back link */
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #7b6cd9;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        /* Override GitHub Markdown CSS for dark theme */
-        .markdown-body {
-            color: #dcddde;
-            background: #1e1e1e;
-        }
-        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-            color: #dcddde;
-            border-color: #333;
-        }
-        .markdown-body a {
-            color: #7b6cd9;
-        }
-        .markdown-body code {
-            background: #2a2a2a;
-            color: #e6edf3;
-        }
-        .markdown-body pre {
-            background: #2a2a2a;
-            border-color: #333;
-        }
-        /* Callout styles */
-        .callout {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 16px 0;
-            border-left: 4px solid;
-        }
-        .callout-tip {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-success {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-warning {
-            border-color: #d29922;
-            background: rgba(210, 153, 34, 0.1);
-        }
-        .callout-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #dcddde;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+        background: #f9f8ff;
+        color: #1a1a2e;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+    a { color: #6c5ce7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .tag-link {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #ede9fe;
+        color: #6c5ce7;
+        font-size: 0.78em;
+        font-weight: 600;
+        transition: background 0.15s;
+    }
+    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
+    .score-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #fef3c7;
+        color: #d97706;
+        font-size: 0.78em;
+        font-weight: 700;
+    }
+    .authors { color: #6b7280; font-size: 0.88em; }
+</style>
+    <style>
+        .detail-section { margin-bottom: 40px; }
+        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
+        .section-body { color: #374151; line-height: 1.8; }
+        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
+        .abstract-en { margin-top: 8px; }
+        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
+        .back-nav { margin-bottom: 32px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
+        .back-link:hover { color: #5a4bd1; }
+        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
+        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
+        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
+        .section-body ul, .section-body ol { padding-left: 1.5em; }
+        .section-body li { margin-bottom: 4px; }
+        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
+        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
+        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
+        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
+        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
+        .callout-success { border-color: #10b981; background: #ecfdf5; }
+        .callout-title { font-weight: 700; margin-bottom: 6px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← 返回首页</a>
-        <div class="markdown-body">
-            <hr />
-<p>date: "2026-03-09"
-paper_id: "arXiv:2603.05232"
-title: "SlideSparse: Fast and Flexible (2N-2):2N Structured Sparsity"
-authors: "Hanyong Shao, Yingbo Hao, Ting Song, Yan Xia, Di Zhang"
-domain: "大模型"
-tags:
-  - 论文笔记
-  - Structured-Sparsity
-  - 2-4-Sparsity
-  - Sparse-Tensor-Cores
-  - GPU-Optimization
-quality_score: "8.8/10"
-created: "2026-03-09"
-updated: "2026-03-09"
-status: analyzed</p>
-<hr />
-<h1 id="slidesparse-fast-and-flexible-2n-22n-structured-sparsity">SlideSparse: Fast and Flexible (2N-2):2N Structured Sparsity</h1>
-<h2 id="_1">核心信息</h2>
-<ul>
-<li><strong>论文ID</strong>：arXiv:2603.05232</li>
-<li><strong>作者</strong>：Hanyong Shao, Yingbo Hao, Ting Song, Yan Xia, Di Zhang</li>
-<li><strong>发布时间</strong>：2026-03-06</li>
-<li><strong>会议/期刊</strong>：cs.LG (Machine Learning)</li>
-<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.05232">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05232">PDF</a></li>
-<li><strong>分类</strong>：Machine Learning</li>
-</ul>
-<h2 id="_2">摘要翻译</h2>
-<h3 id="_3">英文摘要</h3>
-<p>NVIDIA's 2:4 Sparse Tensor Cores deliver 2x throughput but demand strict 50% pruning -- a ratio that collapses LLM reasoning accuracy (Qwen3: 54% to 15%). Milder $(2N-2):2N$ patterns (e.g., 6:8, 25% pruning) preserve accuracy yet receive no hardware support, falling back to dense execution without any benefit from sparsity. We present SlideSparse, the first system to unlock Sparse Tensor Core acceleration for the $(2N-2):2N$ model family on commodity GPUs. Our Sliding Window Decomposition reconfigures any $(2N-2):2N$ pattern into semantically equivalent 2:4 patterns, enabling universal sparse acceleration. Comprehensive evaluations show SlideSparse achieves 1.16-1.84x speedup over dense kernels on RTX 4090 and 1.25-2.12x on A100, while maintaining accuracy (Qwen3: 54.12% vs 15.34% for 2:4). Our system is open-sourced at https://github.com/SlideSparse/SlideSparse.</p>
-<h3 id="_4">中文翻译</h3>
-<p>NVIDIA 的 2:4 稀疏张量核心提供 2 倍吞吐量，但要求严格的 50% 剪枝——这个比例会使 LLM 推理精度崩溃（Qwen3：54% 降至 15%）。更温和的 $(2N-2):2N$ 模式（如 6:8，25% 剪枝）可以保持精度，但没有硬件支持，回退到密集执行而无法从稀疏性中获益。我们提出了 SlideSparse，首个在商品 GPU 上为 $(2N-2):2N$ 模型系列解锁稀疏张量核心加速的系统。我们的滑动窗口分解将任何 $(2N-2):2N$ 模式重新配置为语义等价的 2:4 模式，实现通用稀疏加速。综合评估表明，SlideSparse 在 RTX 4090 上比密集内核实现 1.16-1.84x 加速，在 A100 上实现 1.25-2.12x 加速，同时保持精度（Qwen3：54.12% vs 2:4 的 15.34%）。我们的系统已开源：https://github.com/SlideSparse/SlideSparse。</p>
-<h3 id="_5">核心要点提炼</h3>
-<ul>
+    <div class="container" style="max-width: 800px;">
+        <nav class="back-nav">
+            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
+        </nav>
+        <div class="paper-header-detail">
+            <h1 class="paper-title-detail">SlideSparse: Fast and Flexible (2N-2):2N Structured Sparsity</h1>
+            <div class="paper-meta-detail">
+                <span class="authors">Hanyong Shao, Yingbo Hao, Ting Song, Yan Xia, Di Zhang</span>
+                <span class="score-badge large">8.8/10</span>
+                
+        <a href="https://arxiv.org/abs/2603.05232" target="_blank" class="tag-link">arXiv</a>
+        <a href="https://arxiv.org/pdf/2603.05232" target="_blank" class="tag-link">PDF</a>
+            </div>
+        </div>
+        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>NVIDIA 的 2:4 稀疏张量核心提供 2 倍吞吐量，但要求严格的 50% 剪枝——这个比例会使 LLM 推理精度崩溃（Qwen3：54% 降至 15%）。更温和的 $(2N-2):2N$ 模式（如 6:8，25% 剪枝）可以保持精度，但没有硬件支持，回退到密集执行而无法从稀疏性中获益。我们提出了 SlideSparse，首个在商品 GPU 上为 $(2N-2):2N$ 模型系列解锁稀疏张量核心加速的系统。我们的滑动窗口分解将任何 $(2N-2):2N$ 模式重新配置为语义等价的 2:4 模式，实现通用稀疏加速。综合评估表明，SlideSparse 在 RTX 4090 上比密集内核实现 1.16-1.84x 加速，在 A100 上实现 1.25-2.12x 加速，同时保持精度（Qwen3：54.12% vs 2:4 的 15.34%）。我们的系统已开源：https://github.com/SlideSparse/SlideSparse。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">NVIDIA's 2:4 Sparse Tensor Cores deliver 2x throughput but demand strict 50% pruning -- a ratio that collapses LLM reasoning accuracy (Qwen3: 54% to 15%). Milder $(2N-2):2N$ patterns (e.g., 6:8, 25% pruning) preserve accuracy yet receive no hardware support, falling back to dense execution without any benefit from sparsity. We present SlideSparse, the first system to unlock Sparse Tensor Core acceleration for the $(2N-2):2N$ model family on commodity GPUs. Our Sliding Window Decomposition reconfigures any $(2N-2):2N$ pattern into semantically equivalent 2:4 patterns, enabling universal sparse acceleration. Comprehensive evaluations show SlideSparse achieves 1.16-1.84x speedup over dense kernels on RTX 4090 and 1.25-2.12x on A100, while maintaining accuracy (Qwen3: 54.12% vs 15.34% for 2:4). Our system is open-sourced at https://github.com/SlideSparse/SlideSparse.</p></div></section>
+        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
 <li><strong>研究背景</strong>：NVIDIA 2:4 稀疏张量核心要求 50% 剪枝，导致 LLM 精度崩溃</li>
 <li><strong>研究动机</strong>：更温和的稀疏模式（如 6:8）无硬件支持</li>
 <li><strong>核心方法</strong>：滑动窗口分解 - 将 (2N-2):2N 转换为 2:4 模式</li>
 <li><strong>主要结果</strong>：RTX 4090: 1.16-1.84x 加速，A100: 1.25-2.12x 加速</li>
 <li><strong>研究意义</strong>：首个支持 (2N-2):2N 稀疏的 GPU 加速系统</li>
-</ul>
-<h2 id="_6">研究背景与动机</h2>
-<h3 id="_7">领域现状</h3>
+</ul></div></section>
+        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
 <p><strong>NVIDIA 2:4 稀疏张量核心</strong>：
 - <strong>优势</strong>：2x 吞吐量提升
 - <strong>要求</strong>：严格的 50% 剪枝（2:4 模式）
@@ -129,21 +101,12 @@ status: analyzed</p>
 - <strong>模式</strong>：$(2N-2):2N$（如 6:8 = 25% 剪枝）
 - <strong>优势</strong>：保持精度
 - <strong>问题</strong>：无硬件支持，回退到密集执行</p>
-<h3 id="_8">研究动机</h3>
+<h3 id="_2">研究动机</h3>
 <p><strong>核心问题</strong>：如何为 $(2N-2):2N$ 稀疏模式启用硬件加速？</p>
 <p><strong>关键洞察</strong>：
 - 将 $(2N-2):2N$ 转换为语义等价的 2:4 模式
-- 利用现有 2:4 稀疏张量核心</p>
-<h2 id="_9">方法概述</h2>
-<h3 id="_10">核心思想</h3>
-<p>SlideSparse 通过<strong>滑动窗口分解</strong>将任何 $(2N-2):2N$ 模式重新配置为语义等价的 2:4 模式，从而利用稀疏张量核心加速。</p>
-<h3 id="_11">方法框架</h3>
-<p><img alt="系统架构概览" src="images/SlideSparse_Structured-Sparsity/system_overview_page1.png" /></p>
-<blockquote>
-<p>图1：SlideSparse 系统架构概览</p>
-</blockquote>
-<h4 id="_12">核心创新</h4>
-<p><strong>创新1：滑动窗口分解</strong>
+- 利用现有 2:4 稀疏张量核心</p></div></section>
+        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><p><strong>创新1：滑动窗口分解</strong>
 - <strong>功能</strong>：将 $(2N-2):2N$ 转换为 2:4 模式
 - <strong>关键</strong>：保持语义等价性
 - <strong>优势</strong>：利用现有硬件加速</p>
@@ -154,11 +117,8 @@ status: analyzed</p>
 <p><strong>创新3：精度保持</strong>
 - <strong>功能</strong>：温和剪枝保持 LLM 精度
 - <strong>对比</strong>：Qwen3 54.12% vs 2:4 的 15.34%
-- <strong>优势</strong>：加速不损失精度</p>
-<h2 id="_13">实验结果</h2>
-<h3 id="_14">主要结果</h3>
-<p><img alt="端到端加速对比" src="images/SlideSparse_Structured-Sparsity/e2e_main_2x3_page1.png" /></p>
-<table>
+- <strong>优势</strong>：加速不损失精度</p></div></section>
+        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><table>
 <thead>
 <tr>
 <th>GPU</th>
@@ -179,36 +139,34 @@ status: analyzed</p>
 </tr>
 </tbody>
 </table>
-<p><img alt="精度对比" src="images/SlideSparse_Structured-Sparsity/accuracy_test_page1.png" /></p>
 <p><strong>精度保持</strong>：
 - Qwen3: 54.12% (SlideSparse) vs 15.34% (2:4)
 - 温和剪枝保持精度</p>
-<p><img alt="内核加速分析" src="images/SlideSparse_Structured-Sparsity/kernel_speedup_2x3_page1.png" /></p>
 <p><strong>结果分析</strong>：
 - 滑动窗口分解有效
 - 在不同 GPU 上一致加速
-- 精度显著优于 2:4 模式</p>
-<h2 id="_15">深度分析</h2>
-<h3 id="_16">研究价值评估</h3>
-<h4 id="_17">理论贡献</h4>
+- 精度显著优于 2:4 模式</p></div></section>
+        
+        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
+<h4 id="_2">理论贡献</h4>
 <ul>
 <li><strong>贡献1</strong>：滑动窗口分解理论</li>
 <li>创新点：$(2N-2):2N$ 到 2:4 的语义等价转换</li>
 <li>学术价值：为稀疏模式转换提供新思路</li>
 </ul>
-<h4 id="_18">实际应用价值</h4>
+<h4 id="_3">实际应用价值</h4>
 <ul>
 <li><strong>应用场景</strong>：LLM 推理加速</li>
 <li>适用性：直接应用于 GPU 推理</li>
 <li>优势：加速 + 精度保持</li>
 <li>潜在影响：成为稀疏推理的标准工具</li>
 </ul>
-<h4 id="_19">开源贡献</h4>
+<h4 id="_4">开源贡献</h4>
 <ul>
 <li><strong>GitHub</strong>：https://github.com/SlideSparse/SlideSparse</li>
 <li>开源实现便于社区采用</li>
 </ul>
-<h3 id="_20">方法优势详解</h3>
+<h3 id="_5">方法优势详解</h3>
 <h4 id="1">优势1：精度保持</h4>
 <ul>
 <li><strong>描述</strong>：温和剪枝不损失精度</li>
@@ -227,77 +185,13 @@ status: analyzed</p>
 <li><strong>技术基础</strong>：模式转换</li>
 <li><strong>实验验证</strong>：RTX 4090 和 A100</li>
 </ul>
-<h3 id="_21">局限性分析</h3>
+<h3 id="_6">局限性分析</h3>
 <h4 id="1_1">局限1：模式限制</h4>
 <ul>
 <li><strong>描述</strong>：仅支持 $(2N-2):2N$ 模式</li>
 <li><strong>影响</strong>：不适用于任意稀疏模式</li>
 <li><strong>可能的解决方案</strong>：扩展到其他模式族</li>
-</ul>
-<h2 id="_22">与相关论文对比</h2>
-<h3 id="sparse-bitnet">对比 Sparse-BitNet</h3>
-<ul>
-<li><strong>Sparse-BitNet</strong>：1.58-bit + 2:4 稀疏性</li>
-<li><strong>SlideSparse</strong>：$(2N-2):2N$ 稀疏性</li>
-<li><strong>互补性</strong>：可结合使用</li>
-</ul>
-<h2 id="_23">我的综合评价</h2>
-<h3 id="_24">价值评分</h3>
-<h4 id="_25">总体评分</h4>
-<p><strong>8.8/10</strong> - 首个支持 $(2N-2):2N$ 稀疏的 GPU 加速系统，解决 2:4 精度崩溃问题，开源实现</p>
-<h4 id="_26">分项评分</h4>
-<table>
-<thead>
-<tr>
-<th>评分维度</th>
-<th>分数</th>
-<th>评分理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>创新性</td>
-<td>9/10</td>
-<td>滑动窗口分解是新颖的解决方案</td>
-</tr>
-<tr>
-<td>技术质量</td>
-<td>9/10</td>
-<td>方法严谨，实现完整</td>
-</tr>
-<tr>
-<td>实验充分性</td>
-<td>9/10</td>
-<td>多 GPU 多场景验证</td>
-</tr>
-<tr>
-<td>写作质量</td>
-<td>8/10</td>
-<td>结构清晰</td>
-</tr>
-<tr>
-<td>实用性</td>
-<td>9/10</td>
-<td>开源，可直接应用</td>
-</tr>
-</tbody>
-</table>
-<div class="callout callout-tip">
-滑动窗口分解巧妙地利用现有硬件，解决稀疏模式与精度的权衡问题。
-</div>
-<div class="callout callout-success">
-⭐⭐⭐⭐⭐ 强烈推荐！这是稀疏推理领域的重要突破，开源实现值得尝试。
-</div>
-<h2 id="_27">相关论文</h2>
-<h3 id="_28">直接相关</h3>
-<ul>
-<li>[[Sparse-BitNet]] - 1.58-bit + 2:4 稀疏性（互补方法）</li>
-</ul>
-<h3 id="_29">背景相关</h3>
-<ul>
-<li>NVIDIA 2:4 Sparse Tensor Cores 文档</li>
-</ul>
-        </div>
+</ul></div></section>
     </div>
 </body>
 </html>

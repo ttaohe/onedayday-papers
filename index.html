@@ -4,139 +4,213 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日论文推荐</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.2/github-markdown.min.css">
     <style>
-        /* 基础样式 */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #1e1e1e;
-            color: #dcddde;
-            line-height:1.6;
-            padding: 20px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+        background: #f9f8ff;
+        color: #1a1a2e;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+    a { color: #6c5ce7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .tag-link {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #ede9fe;
+        color: #6c5ce7;
+        font-size: 0.78em;
+        font-weight: 600;
+        transition: background 0.15s;
+    }
+    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
+    .score-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #fef3c7;
+        color: #d97706;
+        font-size: 0.78em;
+        font-weight: 700;
+    }
+    .authors { color: #6b7280; font-size: 0.88em; }
+</style>
+    <style>
+        /* ---- 顶栏 ---- */
+        .site-header {
+            background: #fff;
+            border-bottom: 1px solid #e8e4f3;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 8px rgba(108,92,231,0.06);
         }
-        .container {
-            max-width: 1200px;
+        .header-inner {
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            height: 56px;
         }
-
-        /* Header */
-        header {
-            text-align: center;
-            padding: 40px 0;
-            border-bottom: 1px solid #333;
-            margin-bottom: 40px;
+        .site-title { font-size: 1.15em; font-weight: 800; color: #1a1a2e; white-space: nowrap; }
+        .site-subtitle { color: #9ca3af; font-size: 0.82em; white-space: nowrap; }
+        /* ---- 日期筛选 ---- */
+        .date-filter {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex: 1;
         }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            color: #dcddde;
+        .date-filter::-webkit-scrollbar { display: none; }
+        .date-tab {
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 1.5px solid #e0d9f9;
+            background: transparent;
+            color: #6c5ce7;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
         }
-        .subtitle {
-            color: #999;
-            font-size: 1.1em;
-        }
-
-        /* Date sections */
-        .date-section {
-            margin-bottom: 60px;
+        .date-tab:hover { background: #ede9fe; }
+        .date-tab.active { background: #6c5ce7; color: #fff; border-color: #6c5ce7; }
+        /* ---- 主内容 ---- */
+        .main-content { padding-top: 32px; }
+        /* ---- 日期区块 ---- */
+        .date-section { margin-bottom: 56px; }
+        .date-section.hidden { display: none; }
+        .date-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 16px;
         }
         .date-title {
-            color: #7b6cd9;
-            font-size: 2em;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #1a1a2e;
         }
-
-        /* Note cards */
-        .note-card {
-            background: #252525;
-            border: 1px solid #333;
+        .paper-count {
+            font-size: 0.82em;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+        /* ---- 今日概览 ---- */
+        .overview-box {
+            background: #fff;
+            border: 1px solid #e8e4f3;
+            border-left: 4px solid #6c5ce7;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin-bottom: 24px;
+            color: #374151;
+            font-size: 0.92em;
+            line-height: 1.8;
+        }
+        .overview-box h2, .overview-box h3 { display: none; }
+        .overview-box ul { padding-left: 1.2em; }
+        .overview-box li { margin-bottom: 4px; }
+        /* ---- 论文卡片 ---- */
+        .papers-grid {
+            display: grid;
+            gap: 16px;
+        }
+        .paper-card {
+            background: #fff;
+            border: 1px solid #e8e4f3;
             border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 20px;
+            padding: 22px 24px;
+            transition: box-shadow 0.15s, transform 0.15s;
         }
-
-        /* Override GitHub Markdown CSS for dark theme */
-        .markdown-body {
-            color: #dcddde;
-            background: #252525;
+        .paper-card:hover {
+            box-shadow: 0 4px 20px rgba(108,92,231,0.1);
+            transform: translateY(-2px);
         }
-        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-            color: #dcddde;
-            border-color: #333;
-        }
-        .markdown-body a {
-            color: #7b6cd9;
-        }
-        .markdown-body code {
-            background: #2a2a2a;
-            color: #e6edf3;
-        }
-        .markdown-body pre {
-            background: #2a2a2a;
-            border-color: #333;
-        }
-
-        /* Callout styles */
-        .callout {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 16px 0;
-            border-left: 4px solid;
-        }
-        .callout-tip {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-success {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-title {
-            font-weight: 600;
+        .paper-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
             margin-bottom: 8px;
-            color: #dcddde;
         }
-
-        /* Tables */
-        table {
-            border-color: #333;
+        .paper-title {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #1a1a2e;
+            line-height: 1.4;
+            margin: 0;
         }
-        th {
-            background: #2a2a2a;
-            color: #dcddde;
+        .paper-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
         }
-
-        /* Images */
-        img {
-            max-width: 100%;
+        .paper-links { display: flex; gap: 6px; flex-shrink: 0; }
+        .paper-summary {
+            color: #374151;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            line-height: 1.7;
+            padding: 10px 14px;
+            background: #f9f8ff;
             border-radius: 8px;
         }
+        .paper-section { margin-top: 12px; }
+        .section-label {
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        .paper-section ul { padding-left: 1.2em; color: #374151; font-size: 0.9em; line-height: 1.7; }
+        .paper-section li { margin-bottom: 3px; }
+        .paper-section p { color: #374151; font-size: 0.9em; line-height: 1.7; }
+        /* callouts */
+        .callout { padding: 12px 16px; border-radius: 8px; margin: 10px 0; border-left: 4px solid; }
+        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
+        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
+        .callout-success { border-color: #10b981; background: #ecfdf5; }
+        .callout-title { font-weight: 700; margin-bottom: 6px; font-size: 0.9em; }
     </style>
 </head>
 <body>
+    <header class="site-header">
+        <div class="header-inner">
+            <div>
+                <div class="site-title">📚 每日论文推荐</div>
+                <div class="site-subtitle">LLM Inference &amp; AI Infrastructure</div>
+            </div>
+            <div class="date-filter" id="dateFilter">
+                <button class="date-tab active" data-date="all" onclick="filterDate('all')">全部</button>
+                <button class="date-tab" data-date="2026-03-09" onclick="filterDate('2026-03-09')">2026-03-09</button><button class="date-tab" data-date="2026-03-08" onclick="filterDate('2026-03-08')">2026-03-08</button>
+            </div>
+        </div>
+    </header>
     <div class="container">
-        <header>
-            <h1>📚 每日论文推荐</h1>
-            <p class="subtitle">LLM Inference & AI Infrastructure</p>
-        </header>
-
-        <div class="markdown-body">
+        <main class="main-content" id="mainContent">
             
-            <div class="date-section">
+        <section class="date-section" data-date="2026-03-09">
+            <div class="date-header">
                 <h2 class="date-title">2026-03-09</h2>
-                <div class="notes-list">
-            
-                <div class="note-card">
-                    <div class="note-content">
-                        <hr />
-<p>keywords: [MoE serving, serverless computing, quantization-aware training, expert specialization, sparse crosscoders, long-context prefill, flash attention, prompt learning, zero-shot anomaly detection]
-tags: ["llm-generated", "daily-paper-recommend"]</p>
-<hr />
-<h2 id="_1">今日概览</h2>
-<p>今日推荐的 <strong>6 篇论文</strong>主要聚焦于 <strong>MoE 模型服务优化</strong>、<strong>长上下文预填充加速</strong>、<strong>量化感知训练</strong>和<strong>专家内部机制分析</strong>等前沿方向。</p>
+                <span class="paper-count">6 篇论文</span>
+            </div>
+            <div class="overview-box"><p>今日推荐的 <strong>6 篇论文</strong>主要聚焦于 <strong>MoE 模型服务优化</strong>、<strong>长上下文预填充加速</strong>、<strong>量化感知训练</strong>和<strong>专家内部机制分析</strong>等前沿方向。</p>
 <ul>
 <li>
 <p><strong>最新论文说明</strong>：今天是 2026-03-09（周日），arXiv 无新论文发布。以下是 2026-03-06（周四）的最新论文推荐。</p>
@@ -165,15 +239,14 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 <li>最后关注 <strong>CR-QAT</strong> 和 <strong>WMoE-CLIP</strong> 的量化应用</li>
 </ul>
 <hr />
-<h3 id="moeless-efficient-moe-llm-serving-via-serverless-computing">[[MoEless: Efficient MoE LLM Serving via Serverless Computing]]</h3>
+<h3 id="moeless-efficient-moe-llm-serving-via-serverless-computing">MoEless: Efficient MoE LLM Serving via Serverless Computing</h3>
 <ul>
 <li><strong>作者</strong>：Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06350">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06350">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/MoEless_Serverless-MoE-Serving]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/MoEless_Serverless-MoE-Serving</li>
 <li><strong>评分</strong>：8.5/10 | 置信度 0.90</li>
 </ul>
-<p><img alt="系统架构" src="20_Research/Papers/大模型/images/MoEless_Serverless-MoE-Serving/overview-arch.pdf" /></p>
 <p><strong>一句话总结</strong>：MoEless 是首个使用无服务器计算优化 MoE LLM 服务的框架，推理延迟降低 54.9%，成本降低 36.4%。</p>
 <p><strong>核心贡献/观点</strong>：
 - MoE LLM 使用专家并行分布式部署存在专家负载不平衡
@@ -181,7 +254,7 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 - 优化的专家放置 + 动态专家扩展缓解负载不平衡
 - 推理延迟降低 54.9%，成本降低 36.4%</p>
 <hr />
-<h3 id="flashprefill-instantaneous-pattern-discovery-and-thresholding-for-ultra-fast-long-context-prefilling">[[FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling]]</h3>
+<h3 id="flashprefill-instantaneous-pattern-discovery-and-thresholding-for-ultra-fast-long-context-prefilling">FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling</h3>
 <ul>
 <li><strong>作者</strong>：Qihang Fan, Huaibo Huang, Zhiying Wu</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06199">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06199">PDF</a></li>
@@ -197,37 +270,35 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 - 保持模型质量的同时大幅加速</p>
 <p><strong>关键结果</strong>：在长上下文预填充上实现显著加速，同时保持模型性能。</p>
 <hr />
-<h3 id="cr-qat-curriculum-relational-quantization-aware-training-for-open-vocabulary-object-detection">[[CR-QAT: Curriculum Relational Quantization-Aware Training for Open-Vocabulary Object Detection]]</h3>
+<h3 id="cr-qat-curriculum-relational-quantization-aware-training-for-open-vocabulary-object-detection">CR-QAT: Curriculum Relational Quantization-Aware Training for Open-Vocabulary Object Detection</h3>
 <ul>
 <li><strong>作者</strong>：Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo Baek, Jibum Kim</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05964">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05964">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/CR-QAT_Quantization-Aware-Training]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/CR-QAT_Quantization-Aware-Training</li>
 <li><strong>评分</strong>：7.8/10 | 置信度 0.50</li>
 </ul>
-<p><img alt="方法概览" src="20_Research/Papers/大模型/images/CR-QAT_Quantization-Training/fig2_overview_page1.png" /></p>
 <p><strong>一句话总结</strong>：CR-QAT 首次研究极端量化对视觉-语言对齐的影响，通过课程关系保护保持 4-bit 量化性能。</p>
 <p><strong>核心贡献/观点</strong>：
 - 极端低比特（4-bit）量化破坏细粒度视觉-语言对齐和区域关系
 - 关系保护正则化 + 课程学习策略
 - 在 4-bit 量化下保持 OVOD 性能</p>
 <hr />
-<h3 id="moe-lens-an-expert-is-all-you-need">[[MoE Lens -- An Expert Is All You Need]]</h3>
+<h3 id="moe-lens-an-expert-is-all-you-need">MoE Lens -- An Expert Is All You Need</h3>
 <ul>
 <li><strong>作者</strong>：Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05806">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05806">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/MoE-Lens_Expert-Specialization]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/MoE-Lens_Expert-Specialization</li>
 <li><strong>评分</strong>：8.0/10 | 置信度 0.50</li>
 </ul>
-<p><img alt="MoE Lens 分析框架" src="20_Research/Papers/大模型/images/MoE-Lens_Expert-Specialization/full-lens.png" /></p>
 <p><strong>一句话总结</strong>：MoE Lens 系统性分析专家特化行为，发现显著冗余，专家剪枝 50% 保持性能。</p>
 <p><strong>核心贡献/观点</strong>：
 - 领域特定路由模式 + 早期解码框架
 - DeepSeekMoE 存在显著专家特化冗余
 - 专家剪枝策略减少 50% 活动专家</p>
 <hr />
-<h3 id="sparse-crosscoders-for-diffing-moes-and-dense-models">[[Sparse Crosscoders for diffing MoEs and Dense models]]</h3>
+<h3 id="sparse-crosscoders-for-diffing-moes-and-dense-models">Sparse Crosscoders for diffing MoEs and Dense models</h3>
 <ul>
 <li><strong>作者</strong>：Marmik Chaudhari, Nishkal Hundia, Idhant Gulati</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05805">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05805">PDF</a></li>
@@ -243,7 +314,7 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 - 揭示 MoE 和密集模型的内部差异</p>
 <p><strong>关键结果</strong>：提供 MoE 和密集模型的系统性比较，揭示内部表示差异。</p>
 <hr />
-<h3 id="wmoe-clip-wavelet-enhanced-mixture-of-experts-prompt-learning-for-zero-shot-anomaly-detection">[[WMoE-CLIP: Wavelet-Enhanced Mixture-of-Experts Prompt Learning for Zero-Shot Anomaly Detection]]</h3>
+<h3 id="wmoe-clip-wavelet-enhanced-mixture-of-experts-prompt-learning-for-zero-shot-anomaly-detection">WMoE-CLIP: Wavelet-Enhanced Mixture-of-Experts Prompt Learning for Zero-Shot Anomaly Detection</h3>
 <ul>
 <li><strong>作者</strong>：Peng Chen, Chao Huang</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06313">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06313">PDF</a></li>
@@ -260,31 +331,126 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
   - MoE 提示学习动态适应不同语义
 - 提升对复杂和细微异常的检测能力</p>
 <p><strong>关键结果</strong>：在零样本异常检测任务上优于现有方法。</p>
-<hr />
-<h2 id="_2">搜索说明</h2>
-<p>本次搜索使用 AI 语义分析方法，从 arXiv 获取 <strong>2026-03-06</strong> 的所有计算机相关论文（334 篇），通过分析每篇论文的标题和摘要筛选出相关论文。</p>
-<p><strong>筛选标准</strong>：
-- <strong>LLM Inference / AI Infrastructure</strong>：MoE serving, serverless, long-context, attention optimization
-- <strong>量化</strong>：quantization-aware training, low-bit quantization
-- <strong>MoE 架构</strong>：expert specialization, routing patterns
-- <strong>排除</strong>：图像生成、chatbot、医疗应用、联邦学习等</p>
-<p><strong>结果</strong>：334 篇论文中筛选出 16 篇相关论文（4.8%），推荐评分最高的 6 篇。</p>
-<p><strong>注意</strong>：今天是 2026-03-09（周日），arXiv 无新论文。以上推荐来自 2026-03-06（周四）的最新论文。</p>
-                    </div>
-                </div>
-                </div></div>
-            <div class="date-section">
+<hr /></div>
+            <div class="papers-grid">
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">MoEless: Efficient MoE LLM Serving via Serverless Computing</h3>
+            <span class="score-badge">8.5/10 | 置信度 0.90</span>
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.06350" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.06350" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">MoEless 是首个使用无服务器计算优化 MoE LLM 服务的框架，推理延迟降低 54.9%，成本降低 36.4%。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>MoE LLM 使用专家并行分布式部署存在专家负载不平衡</li>
+<li>无服务器计算按需付费、弹性扩展，适合 MoE 的稀疏激活特性</li>
+<li>优化的专家放置 + 动态专家扩展缓解负载不平衡</li>
+<li>推理延迟降低 54.9%，成本降低 36.4%</li>
+</ul></div>
+        
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling</h3>
+            <span class="score-badge">置信度 0.40</span>
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Qihang Fan, Huaibo Huang, Zhiying Wu</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.06199" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.06199" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">FlashPrefill 实现超快速长上下文预填充，通过瞬时模式发现和阈值化减少注意力计算。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>长上下文预填充是 LLM 推理的计算瓶颈</li>
+<li>现有稀疏注意力方法搜索延迟高或稀疏度不足</li>
+<li>FlashPrefill 实现瞬时模式发现</li>
+<li>自适应阈值化减少计算量</li>
+<li>保持模型质量的同时大幅加速</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>在长上下文预填充上实现显著加速，同时保持模型性能。</p></div>
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">CR-QAT: Curriculum Relational Quantization-Aware Training for Open-Vocabulary Object Detection</h3>
+            <span class="score-badge">7.8/10 | 置信度 0.50</span>
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo Baek, Jibum Kim</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.05964" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.05964" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">CR-QAT 首次研究极端量化对视觉-语言对齐的影响，通过课程关系保护保持 4-bit 量化性能。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>极端低比特（4-bit）量化破坏细粒度视觉-语言对齐和区域关系</li>
+<li>关系保护正则化 + 课程学习策略</li>
+<li>在 4-bit 量化下保持 OVOD 性能</li>
+</ul></div>
+        
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">MoE Lens -- An Expert Is All You Need</h3>
+            <span class="score-badge">8.0/10 | 置信度 0.50</span>
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.05806" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.05806" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">MoE Lens 系统性分析专家特化行为，发现显著冗余，专家剪枝 50% 保持性能。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>领域特定路由模式 + 早期解码框架</li>
+<li>DeepSeekMoE 存在显著专家特化冗余</li>
+<li>专家剪枝策略减少 50% 活动专家</li>
+</ul></div>
+        
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">Sparse Crosscoders for diffing MoEs and Dense models</h3>
+            <span class="score-badge">置信度 0.50</span>
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Marmik Chaudhari, Nishkal Hundia, Idhant Gulati</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.05805" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.05805" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">使用稀疏交叉编码器系统比较 MoE 和密集模型的内部表示。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>MoE 通过稀疏专家路由实现参数高效扩展</li>
+<li>MoE 内部表示相比密集模型理解不足</li>
+<li>使用交叉编码器（稀疏自编码器变体）联合建模多个激活空间</li>
+<li>训练 5 层密集和 MoE 模型（相同活动参数）进行比较</li>
+<li>揭示 MoE 和密集模型的内部差异</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>提供 MoE 和密集模型的系统性比较，揭示内部表示差异。</p></div>
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">WMoE-CLIP: Wavelet-Enhanced Mixture-of-Experts Prompt Learning for Zero-Shot Anomaly Detection</h3>
+            <span class="score-badge">置信度 0.40</span>
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Peng Chen, Chao Huang</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.06313" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.06313" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">WMoE-CLIP 结合小波增强和 MoE 提示学习，提升零样本异常检测性能。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>视觉-语言模型在零样本异常检测（ZSAD）中表现优异</li>
+<li>现有方法依赖固定文本提示，难以捕获复杂语义</li>
+<li>仅关注空间域特征，限制细微异常检测能力</li>
+<li>WMoE-CLIP 使用：</li>
+<li>小波变换增强特征表示</li>
+<li>MoE 提示学习动态适应不同语义</li>
+<li>提升对复杂和细微异常的检测能力</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>在零样本异常检测任务上优于现有方法。</p></div>
+    </div></div>
+        </section>
+        <section class="date-section" data-date="2026-03-08">
+            <div class="date-header">
                 <h2 class="date-title">2026-03-08</h2>
-                <div class="notes-list">
-            
-                <div class="note-card">
-                    <div class="note-content">
-                        <hr />
-<p>keywords: [LLM Inference, speculative decoding, memory-efficient training, MoE, SLO, resource allocation, prefill-decode disaggregation, quantization, SQNR, CAT, throughput, latency, KV cache, attention optimization, serving, distributed training]
-tags: ["llm-generated", "daily-paper-recommend"]</p>
-<hr />
-<h2 id="_1">今日概览</h2>
-<p>今日推荐的论文主要聚焦于<strong>LLM 推理优化</strong>、<strong>SLO 感知资源分配</strong>、<strong>量化理论</strong>、<strong>内存高效训练</strong>和<strong>MoE 架构创新</strong>等前沿方向。</p>
+                <span class="paper-count">5 篇论文</span>
+            </div>
+            <div class="overview-box"><p>今日推荐的论文主要聚焦于<strong>LLM 推理优化</strong>、<strong>SLO 感知资源分配</strong>、<strong>量化理论</strong>、<strong>内存高效训练</strong>和<strong>MoE 架构创新</strong>等前沿方向。</p>
 <ul>
 <li>
 <p><strong>总体趋势</strong>：今日论文围绕 LLM 推理加速（投机解码、量化）、SLO 约束下的资源优化、内存高效训练和 MoE 架构扩展展开。</p>
@@ -312,15 +478,14 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 <li>最后阅读 <strong>MOUE</strong> 了解 MoE 架构的创新扩展</li>
 </ul>
 <hr />
-<h3 id="balancing-coverage-and-draft-latency-in-vocabulary-trimming-for-faster-speculative-decoding">[[Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding]]</h3>
+<h3 id="balancing-coverage-and-draft-latency-in-vocabulary-trimming-for-faster-speculative-decoding">Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</h3>
 <ul>
 <li><strong>作者</strong>：Ofir Ben Shoham</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05210v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05210v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/Vocabulary-Trimming_Speculative-Decoding]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/Vocabulary-Trimming_Speculative-Decoding</li>
 <li><strong>笔记</strong>：已有详细分析</li>
 </ul>
-<p><img alt="" src="20_Research/Papers/大模型/images/Vocabulary-Trimming_Speculative-Decoding/pareto_front_page1.png" /></p>
 <p><strong>一句话总结</strong>：通过词汇裁剪优化投机解码中的草稿模型，在保持覆盖率的同时降低延迟，实现高达 20% 的吞吐量提升。</p>
 <p><strong>核心贡献/观点</strong>：
 - 投机解码的瓶颈在于草稿模型的语言建模头随词汇量增长而变慢
@@ -329,49 +494,46 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 - 草稿词汇可减少高达 97%，同时保持高覆盖率</p>
 <p><strong>关键结果</strong>：在领域特定任务上实现 16% 延迟降低和 20% 吞吐量提升，在分布外任务上也获得 6.7% 吞吐量增益。</p>
 <hr />
-<h3 id="poet-x-memory-efficient-llm-training-by-scaling-orthogonal-transformation">[[POET-X: Memory-efficient LLM Training by Scaling Orthogonal Transformation]]</h3>
+<h3 id="poet-x-memory-efficient-llm-training-by-scaling-orthogonal-transformation">POET-X: Memory-efficient LLM Training by Scaling Orthogonal Transformation</h3>
 <ul>
 <li><strong>作者</strong>：Zeju Qiu, Lixin Liu, Adrian Weller, Han Shi, Weiyang Liu</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05500v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05500v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training</li>
 <li><strong>笔记</strong>：已有详细分析</li>
 </ul>
-<p><img alt="" src="20_Research/Papers/大模型/images/POET-X_Memory-efficient-LLM-Training/throughput_scale_page1.png" /></p>
-<p><strong>一句话总结</strong>：提出 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|poet-x]]，一种可扩展且内存高效的大模型训练变体，通过正交等价变换在单张 H100 GPU 上预训练十亿参数级别的 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|llm]]。</p>
+<p><strong>一句话总结</strong>：提出 poet-x，一种可扩展且内存高效的大模型训练变体，通过正交等价变换在单张 H100 GPU 上预训练十亿参数级别的 llm。</p>
 <p><strong>核心贡献/观点</strong>：
-- [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|poet-x]] 是 POET 框架的改进版本，显著降低了内存消耗和计算开销
+- poet-x 是 POET 框架的改进版本，显著降低了内存消耗和计算开销
 - 通过减少矩阵乘法计算成本实现高效的训练吞吐量
-- 在单个 Nvidia H100 GPU 上实现十亿参数 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|llm]] 的预训练
+- 在单个 Nvidia H100 GPU 上实现十亿参数 llm 的预训练
 - 在相同设置下，AdamW 等标准优化器会耗尽显存</p>
-<p><strong>关键结果</strong>：[[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|poet-x]] 在保持 POET 的泛化和稳定性优势的同时，实现了显著的吞吐量和内存效率提升。</p>
+<p><strong>关键结果</strong>：poet-x 在保持 POET 的泛化和稳定性优势的同时，实现了显著的吞吐量和内存效率提升。</p>
 <hr />
-<h3 id="mixture-of-universal-experts-scaling-virtual-width-via-depth-width-transformation">[[Mixture of Universal Experts: Scaling Virtual Width via Depth-Width Transformation]]</h3>
+<h3 id="mixture-of-universal-experts-scaling-virtual-width-via-depth-width-transformation">Mixture of Universal Experts: Scaling Virtual Width via Depth-Width Transformation</h3>
 <ul>
 <li><strong>作者</strong>：Yilong Chen, Naibin Gu, Junyuan Shang, Zhenyu Zhang, Yuchen Feng, Jiawei Sheng, Tingwen Liu, Shuohuan Wang, Yu Sun, Hua Wu, Haifeng Wang</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.04971v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.04971v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/MOUE_Virtual-Width-MoE</li>
 <li><strong>笔记</strong>：已有详细分析</li>
 </ul>
-<p><img alt="" src="20_Research/Papers/大模型/images/MOUE_Virtual-Width-MoE/intromoue.pdf" /></p>
-<p><strong>一句话总结</strong>：提出 MOUE (Mixture of Universal Experts)，通过深度-宽度转换引入虚拟宽度新维度，打破 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 模型的物理尺寸限制。</p>
+<p><strong>一句话总结</strong>：提出 MOUE (Mixture of Universal Experts)，通过深度-宽度转换引入虚拟宽度新维度，打破 moe 模型的物理尺寸限制。</p>
 <p><strong>核心贡献/观点</strong>：
 - MOUE 引入虚拟宽度作为新的缩放维度，重用跨层的通用专家池
 - 设计交错旋转拓扑实现结构化专家共享
 - 提出通用专家负载平衡进行深度感知的曝光修正
 - 通用路由器使用轻量级轨迹状态实现连贯的多步路由</p>
-<p><strong>关键结果</strong>：MOUE 在各缩放 regime 下一致超越匹配的 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 基线高达 1.3%，能够渐进转换现有 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 检查点并获得 4.2% 增益。</p>
+<p><strong>关键结果</strong>：MOUE 在各缩放 regime 下一致超越匹配的 moe 基线高达 1.3%，能够渐进转换现有 moe 检查点并获得 4.2% 增益。</p>
 <hr />
-<h3 id="dissecting-quantization-error-a-concentration-alignment-perspective">[[Dissecting Quantization Error: A Concentration-Alignment Perspective]]</h3>
+<h3 id="dissecting-quantization-error-a-concentration-alignment-perspective">Dissecting Quantization Error: A Concentration-Alignment Perspective</h3>
 <ul>
 <li><strong>作者</strong>：Marco Federici, Boris van Breugel, Paul Whatmough, Markus Nagel</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.04359v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.04359v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/Quantization-Error_Concentration-Alignment]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/Quantization-Error_Concentration-Alignment</li>
 <li><strong>笔记</strong>：已有详细分析</li>
 </ul>
-<p><img alt="" src="20_Research/Papers/大模型/images/Quantization-Error_Concentration-Alignment/figone.pdf" /></p>
 <p><strong>一句话总结</strong>：首次将 SQNR 分解为 Concentration 和 Alignment 两个独立分量，提出 CAT 变换联合优化两者，在 4-bit 量化下超越现有方法。</p>
 <p><strong>核心贡献/观点</strong>：
 - 从理论上将线性层量化的 SQNR 分解为集中度和对齐度
@@ -380,15 +542,14 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 - 使用小规模校准集估计协方差，实现后训练量化</p>
 <p><strong>关键结果</strong>：在多个 LLM 上，CAT 在 4-bit 精度下始终匹配或超越现有变换量化方法，SQNR 提升 4.1%，PPL 降低 8.4%。</p>
 <hr />
-<h3 id="slo-aware-compute-resource-allocation-for-prefill-decode-disaggregated-llm-inference">[[SLO-Aware Compute Resource Allocation for Prefill-Decode Disaggregated LLM Inference]]</h3>
+<h3 id="slo-aware-compute-resource-allocation-for-prefill-decode-disaggregated-llm-inference">SLO-Aware Compute Resource Allocation for Prefill-Decode Disaggregated LLM Inference</h3>
 <ul>
 <li><strong>作者</strong>：Luchang Li, Dongfang Li, Bozhao Gong, Yu Zhang</li>
 <li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.04716v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.04716v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：[[20_Research/Papers/大模型/SLO-Aware_Resource_Allocation]]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/SLO-Aware_Resource_Allocation</li>
 <li><strong>笔记</strong>：已有详细分析</li>
 </ul>
-<p><img alt="" src="20_Research/Papers/大模型/images/SLO-Aware_Resource_Allocation/page4_fig1.jpeg" /></p>
 <p><strong>一句话总结</strong>：提出首个 Prefill-Decode 解耦系统的资源分配理论，结合 M/M/1 排队论与经验基准测试，在满足 SLO 约束下实现 15-30% 的资源节省。</p>
 <p><strong>核心贡献/观点</strong>：
 - 首次建立 P/D 解耦系统的资源分配理论模型
@@ -396,17 +557,119 @@ tags: ["llm-generated", "daily-paper-recommend"]</p>
 - 通过批处理优化确定满足 TPOT 约束的 decode 吞吐量
 - 结合理论建模与经验测量的混合方法论</p>
 <p><strong>关键结果</strong>：在所有测试场景下预测的资源分配与实际最优值完全一致，相比静态分配方法节省 15-30% 的 GPU 资源。</p>
-<hr />
-<h2 id="_2">搜索说明</h2>
-<p>本次搜索使用更新后的研究配置，聚焦于：
-- <strong>[[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|llm]] 推理优化</strong>：speculative decoding, quantization, KV cache, attention optimization, serving
-- <strong>AI 基建</strong>：distributed training, FSDP, DeepSpeed, Megatron
-- <strong>性能优化</strong>：SLO, request scheduling, batching, load balancing, GPU utilization</p>
-<p>搜索到 1000 篇最近 30 天内的论文，经过关键词匹配和评分筛选，以上 5 篇论文最符合 LLM Inference / AI Infrastructure 研究领域。</p>
-                    </div>
-                </div>
-                </div></div>
+<hr /></div>
+            <div class="papers-grid">
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</h3>
+            
         </div>
+        <div class="paper-meta">
+            <span class="authors">Ofir Ben Shoham</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.05210v1" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.05210v1" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">通过词汇裁剪优化投机解码中的草稿模型，在保持覆盖率的同时降低延迟，实现高达 20% 的吞吐量提升。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>投机解码的瓶颈在于草稿模型的语言建模头随词汇量增长而变慢</li>
+<li>提出将草稿词汇选择建模为约束优化问题，平衡覆盖率和延迟</li>
+<li>使用 Tree-structured Parzen Estimator 优化覆盖率-延迟帕累托前沿</li>
+<li>草稿词汇可减少高达 97%，同时保持高覆盖率</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>在领域特定任务上实现 16% 延迟降低和 20% 吞吐量提升，在分布外任务上也获得 6.7% 吞吐量增益。</p></div>
     </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">POET-X: Memory-efficient LLM Training by Scaling Orthogonal Transformation</h3>
+            
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Zeju Qiu, Lixin Liu, Adrian Weller, Han Shi, Weiyang Liu</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.05500v1" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.05500v1" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">提出 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|poet-x]]，一种可扩展且内存高效的大模型训练变体，通过正交等价变换在单张 H100 GPU 上预训练十亿参数级别的 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|llm]]。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>poet-x 是 POET 框架的改进版本，显著降低了内存消耗和计算开销</li>
+<li>通过减少矩阵乘法计算成本实现高效的训练吞吐量</li>
+<li>在单个 Nvidia H100 GPU 上实现十亿参数 llm 的预训练</li>
+<li>在相同设置下，AdamW 等标准优化器会耗尽显存</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>[[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|poet-x]] 在保持 POET 的泛化和稳定性优势的同时，实现了显著的吞吐量和内存效率提升。</p></div>
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">Mixture of Universal Experts: Scaling Virtual Width via Depth-Width Transformation</h3>
+            
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Yilong Chen, Naibin Gu, Junyuan Shang, Zhenyu Zhang, Yuchen Feng, Jiawei Sheng, Tingwen Liu, Shuohuan Wang, Yu Sun, Hua Wu, Haifeng Wang</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.04971v1" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.04971v1" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">提出 MOUE (Mixture of Universal Experts)，通过深度-宽度转换引入虚拟宽度新维度，打破 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 模型的物理尺寸限制。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>MOUE 引入虚拟宽度作为新的缩放维度，重用跨层的通用专家池</li>
+<li>设计交错旋转拓扑实现结构化专家共享</li>
+<li>提出通用专家负载平衡进行深度感知的曝光修正</li>
+<li>通用路由器使用轻量级轨迹状态实现连贯的多步路由</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>MOUE 在各缩放 regime 下一致超越匹配的 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 基线高达 1.3%，能够渐进转换现有 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 检查点并获得 4.2% 增益。</p></div>
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">Dissecting Quantization Error: A Concentration-Alignment Perspective</h3>
+            
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Marco Federici, Boris van Breugel, Paul Whatmough, Markus Nagel</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.04359v1" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.04359v1" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">首次将 SQNR 分解为 Concentration 和 Alignment 两个独立分量，提出 CAT 变换联合优化两者，在 4-bit 量化下超越现有方法。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>从理论上将线性层量化的 SQNR 分解为集中度和对齐度</li>
+<li>揭示 Alignment 是被现有量化方法忽略的关键因素</li>
+<li>提出 CAT (Concentration-Alignment Transform) 联合优化两个分量</li>
+<li>使用小规模校准集估计协方差，实现后训练量化</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>在多个 LLM 上，CAT 在 4-bit 精度下始终匹配或超越现有变换量化方法，SQNR 提升 4.1%，PPL 降低 8.4%。</p></div>
+    </div>
+    <div class="paper-card">
+        <div class="paper-header">
+            <h3 class="paper-title">SLO-Aware Compute Resource Allocation for Prefill-Decode Disaggregated LLM Inference</h3>
+            
+        </div>
+        <div class="paper-meta">
+            <span class="authors">Luchang Li, Dongfang Li, Bozhao Gong, Yu Zhang</span>
+            <div class="paper-links"><a href="http://arxiv.org/abs/2603.04716v1" target="_blank" class="tag-link">arXiv</a><a href="https://arxiv.org/pdf/2603.04716v1" target="_blank" class="tag-link">PDF</a></div>
+        </div>
+        <div class="paper-summary">提出首个 Prefill-Decode 解耦系统的资源分配理论，结合 M/M/1 排队论与经验基准测试，在满足 SLO 约束下实现 15-30% 的资源节省。</div>
+        <div class="paper-section"><div class="section-label">核心贡献</div><ul>
+<li>首次建立 P/D 解耦系统的资源分配理论模型</li>
+<li>使用 M/M/1 排队论建模 prefill 阶段，推导 TTFT 约束下的实际吞吐量</li>
+<li>通过批处理优化确定满足 TPOT 约束的 decode 吞吐量</li>
+<li>结合理论建模与经验测量的混合方法论</li>
+</ul></div>
+        <div class="paper-section"><div class="section-label">关键结果</div><p>在所有测试场景下预测的资源分配与实际最优值完全一致，相比静态分配方法节省 15-30% 的 GPU 资源。</p></div>
+    </div></div>
+        </section>
+        </main>
+    </div>
+    <script>
+        function filterDate(date) {
+            const tabs = document.querySelectorAll('.date-tab');
+            tabs.forEach(t => t.classList.toggle('active', t.dataset.date === date));
+            const sections = document.querySelectorAll('.date-section');
+            sections.forEach(s => {
+                if (date === 'all') {
+                    s.classList.remove('hidden');
+                } else {
+                    s.classList.toggle('hidden', s.dataset.date !== date);
+                }
+            });
+        }
+        // 默认激活最新日期
+        const firstTab = document.querySelector('.date-tab:not([data-date="all"])');
+        if (firstTab) {
+            setTimeout(() => filterDate(firstTab.dataset.date), 0);
+        }
+    </script>
 </body>
 </html>

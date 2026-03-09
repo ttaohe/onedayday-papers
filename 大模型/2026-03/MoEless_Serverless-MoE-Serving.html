@@ -4,124 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoEless: Efficient MoE LLM Serving via Serverless Computing</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.2/github-markdown.min.css">
     <style>
-        /* 基础样式 */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #1e1e1e;
-            color: #dcddde;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        /* Back link */
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #7b6cd9;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        /* Override GitHub Markdown CSS for dark theme */
-        .markdown-body {
-            color: #dcddde;
-            background: #1e1e1e;
-        }
-        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-            color: #dcddde;
-            border-color: #333;
-        }
-        .markdown-body a {
-            color: #7b6cd9;
-        }
-        .markdown-body code {
-            background: #2a2a2a;
-            color: #e6edf3;
-        }
-        .markdown-body pre {
-            background: #2a2a2a;
-            border-color: #333;
-        }
-        /* Callout styles */
-        .callout {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 16px 0;
-            border-left: 4px solid;
-        }
-        .callout-tip {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-success {
-            border-color: #4e865e;
-            background: rgba(78, 134, 94, 0.1);
-        }
-        .callout-warning {
-            border-color: #d29922;
-            background: rgba(210, 153, 34, 0.1);
-        }
-        .callout-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #dcddde;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+        background: #f9f8ff;
+        color: #1a1a2e;
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+    a { color: #6c5ce7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .tag-link {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #ede9fe;
+        color: #6c5ce7;
+        font-size: 0.78em;
+        font-weight: 600;
+        transition: background 0.15s;
+    }
+    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
+    .score-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #fef3c7;
+        color: #d97706;
+        font-size: 0.78em;
+        font-weight: 700;
+    }
+    .authors { color: #6b7280; font-size: 0.88em; }
+</style>
+    <style>
+        .detail-section { margin-bottom: 40px; }
+        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
+        .section-body { color: #374151; line-height: 1.8; }
+        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
+        .abstract-en { margin-top: 8px; }
+        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
+        .back-nav { margin-bottom: 32px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
+        .back-link:hover { color: #5a4bd1; }
+        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
+        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
+        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
+        .section-body ul, .section-body ol { padding-left: 1.5em; }
+        .section-body li { margin-bottom: 4px; }
+        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
+        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
+        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
+        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
+        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
+        .callout-success { border-color: #10b981; background: #ecfdf5; }
+        .callout-title { font-weight: 700; margin-bottom: 6px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← 返回首页</a>
-        <div class="markdown-body">
-            <hr />
-<p>date: "2026-03-09"
-paper_id: "arXiv:2603.06350"
-title: "MoEless: Efficient MoE LLM Serving via Serverless Computing"
-authors: "Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang"
-domain: "大模型"
-tags:
-  - 论文笔记
-  - MoE
-  - Serverless-Computing
-  - Expert-Load-Balancing
-  - LLM-Serving
-  - Expert-Parallelism
-quality_score: "8.5/10"
-created: "2026-03-09"
-updated: "2026-03-09"
-status: analyzed</p>
-<hr />
-<h1 id="moeless-efficient-moe-llm-serving-via-serverless-computing">MoEless: Efficient MoE LLM Serving via Serverless Computing</h1>
-<h2 id="_1">核心信息</h2>
-<ul>
-<li><strong>论文ID</strong>：arXiv:2603.06350</li>
-<li><strong>作者</strong>：Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</li>
-<li><strong>发布时间</strong>：2026-03-06</li>
-<li><strong>会议/期刊</strong>：cs.DC (Distributed Computing)</li>
-<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.06350">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06350">PDF</a></li>
-<li><strong>分类</strong>：Distributed Computing</li>
-</ul>
-<h2 id="_2">摘要翻译</h2>
-<h3 id="_3">英文摘要</h3>
-<p>Large Language Models (LLMs) have become a cornerstone of AI, driving progress across diverse domains such as content creation, search and recommendation systems, and AI-assisted workflows. To alleviate extreme training costs and advancing model scales, Mixture-of-Experts (MoE) has become a popular backbone for modern LLMs, which are commonly served in distributed部署 using expert parallelism (EP). However, MoE's sparse activation mechanism leads to severe expert load imbalance, where a few experts become overloaded while others remain idle, resulting in expert stragglers that inflate inference latency and serving cost. Existing expert load balancing solutions assume static resource configurations on serverful infrastructures, limiting expert scalability and elasticity, and resulting in either costly real-time expert swapping or degraded generation quality. We present MoEless, the first serverless MoE serving framework that mitigates expert load imbalance and accelerates inference for MoE LLMs. MoEless strategically adapts to request patterns and expert hotspots with optimized expert placement and dynamic expert scaling, achieving both load balancing and efficient resource utilization. Our evaluations on real-world workloads show that MoEless reduces inference latency by up to 54.9% and cost by up to 36.4% compared to state-of-the-art serverful MoE serving systems.</p>
-<h3 id="_4">中文翻译</h3>
-<p>大语言模型（LLMs）已成为 AI 的基石，推动内容创作、搜索推荐系统和 AI 辅助工作流等领域的进步。为了缓解极端训练成本并推进模型规模，混合专家（MoE）已成为现代 LLM 的流行骨干，通常使用专家并行（EP）进行分布式部署。然而，MoE 的稀疏激活机制导致严重的专家负载不平衡，少数专家过载而其他专家空闲，导致推理延迟和服务成本膨胀的专家落后者。现有的专家负载平衡解决方案假设服务器基础设施上的静态资源配置，限制了专家可扩展性和弹性，导致要么昂贵的实时专家交换，要么生成质量下降。我们提出了 MoEless，首个通过无服务器计算缓解专家负载不平衡并加速 MoE LLM 推理的服务框架。MoEless 通过优化的专家放置和动态专家扩展，战略性适应请求模式和专家热点，实现负载平衡和高效资源利用。在真实工作负载上的评估表明，与最先进的服务器 MoE 服务系统相比，MoEless 将推理延迟降低高达 54.9%，成本降低高达 36.4%。</p>
-<h3 id="_5">核心要点提炼</h3>
-<ul>
+    <div class="container" style="max-width: 800px;">
+        <nav class="back-nav">
+            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
+        </nav>
+        <div class="paper-header-detail">
+            <h1 class="paper-title-detail">MoEless: Efficient MoE LLM Serving via Serverless Computing</h1>
+            <div class="paper-meta-detail">
+                <span class="authors">Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</span>
+                <span class="score-badge large">8.5/10</span>
+                
+        <a href="https://arxiv.org/abs/2603.06350" target="_blank" class="tag-link">arXiv</a>
+        <a href="https://arxiv.org/pdf/2603.06350" target="_blank" class="tag-link">PDF</a>
+            </div>
+        </div>
+        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>大语言模型（LLMs）已成为 AI 的基石，推动内容创作、搜索推荐系统和 AI 辅助工作流等领域的进步。为了缓解极端训练成本并推进模型规模，混合专家（MoE）已成为现代 LLM 的流行骨干，通常使用专家并行（EP）进行分布式部署。然而，MoE 的稀疏激活机制导致严重的专家负载不平衡，少数专家过载而其他专家空闲，导致推理延迟和服务成本膨胀的专家落后者。现有的专家负载平衡解决方案假设服务器基础设施上的静态资源配置，限制了专家可扩展性和弹性，导致要么昂贵的实时专家交换，要么生成质量下降。我们提出了 MoEless，首个通过无服务器计算缓解专家负载不平衡并加速 MoE LLM 推理的服务框架。MoEless 通过优化的专家放置和动态专家扩展，战略性适应请求模式和专家热点，实现负载平衡和高效资源利用。在真实工作负载上的评估表明，与最先进的服务器 MoE 服务系统相比，MoEless 将推理延迟降低高达 54.9%，成本降低高达 36.4%。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">Large Language Models (LLMs) have become a cornerstone of AI, driving progress across diverse domains such as content creation, search and recommendation systems, and AI-assisted workflows. To alleviate extreme training costs and advancing model scales, Mixture-of-Experts (MoE) has become a popular backbone for modern LLMs, which are commonly served in distributed部署 using expert parallelism (EP). However, MoE's sparse activation mechanism leads to severe expert load imbalance, where a few experts become overloaded while others remain idle, resulting in expert stragglers that inflate inference latency and serving cost. Existing expert load balancing solutions assume static resource configurations on serverful infrastructures, limiting expert scalability and elasticity, and resulting in either costly real-time expert swapping or degraded generation quality. We present MoEless, the first serverless MoE serving framework that mitigates expert load imbalance and accelerates inference for MoE LLMs. MoEless strategically adapts to request patterns and expert hotspots with optimized expert placement and dynamic expert scaling, achieving both load balancing and efficient resource utilization. Our evaluations on real-world workloads show that MoEless reduces inference latency by up to 54.9% and cost by up to 36.4% compared to state-of-the-art serverful MoE serving systems.</p></div></section>
+        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
 <li><strong>研究背景</strong>：MoE LLM 使用专家并行分布式部署，存在专家负载不平衡问题</li>
 <li><strong>研究动机</strong>：现有方案假设静态资源配置，限制可扩展性和弹性</li>
 <li><strong>核心方法</strong>：MoEless - 首个无服务器 MoE 服务框架</li>
 <li><strong>主要结果</strong>：推理延迟降低 54.9%，成本降低 36.4%</li>
 <li><strong>研究意义</strong>：首个将无服务器计算应用于 MoE LLM 服务</li>
-</ul>
-<h2 id="_6">研究背景与动机</h2>
-<h3 id="_7">领域现状</h3>
+</ul></div></section>
+        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
 <p><strong>MoE LLM 服务</strong>：
 - 使用专家并行（EP）分布式部署
 - 稀疏激活机制导致专家负载不平衡
@@ -131,24 +102,13 @@ status: analyzed</p>
 - 限制专家可扩展性和弹性
 - 昂贵的实时专家交换
 - 生成质量下降</p>
-<h3 id="_8">研究动机</h3>
+<h3 id="_2">研究动机</h3>
 <p><strong>核心问题</strong>：如何设计弹性可扩展的 MoE LLM 服务系统？</p>
 <p><strong>关键洞察</strong>：
 - 无服务器计算按需付费、弹性扩展
 - 适合 MoE 的稀疏激活特性
-- 动态资源分配缓解负载不平衡</p>
-<h2 id="_9">方法概述</h2>
-<h3 id="_10">核心思想</h3>
-<p>MoEless 是首个无服务器 MoE 服务框架，通过以下技术缓解专家负载不平衡：
-1. <strong>优化的专家放置</strong>：根据请求模式放置专家
-2. <strong>动态专家扩展</strong>：根据热点动态扩展专家容量</p>
-<h3 id="_11">方法框架</h3>
-<p><img alt="系统架构概览" src="images/MoEless_Serverless-MoE-Serving/overview-arch.pdf" /></p>
-<blockquote>
-<p>图1：MoEless 系统架构概览</p>
-</blockquote>
-<h4 id="_12">核心创新</h4>
-<p><strong>创新1：无服务器专家部署</strong>
+- 动态资源分配缓解负载不平衡</p></div></section>
+        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><p><strong>创新1：无服务器专家部署</strong>
 - <strong>功能</strong>：将 MoE 专家部署为无服务器函数
 - <strong>优势</strong>：按需付费、弹性扩展
 - <strong>技术</strong>：专家容器化、冷启动优化</p>
@@ -159,11 +119,8 @@ status: analyzed</p>
 <p><strong>创新3：动态专家扩展</strong>
 - <strong>功能</strong>：检测专家热点并动态扩展容量
 - <strong>优势</strong>：缓解负载不平衡
-- <strong>技术</strong>：热点检测、自动扩展</p>
-<h2 id="_13">实验结果</h2>
-<h3 id="_14">主要结果</h3>
-<p><img alt="成本分解对比" src="images/MoEless_Serverless-MoE-Serving/Fig4_cost_breakdown_stacked.pdf" /></p>
-<table>
+- <strong>技术</strong>：热点检测、自动扩展</p></div></section>
+        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><table>
 <thead>
 <tr>
 <th>对比指标</th>
@@ -184,27 +141,26 @@ status: analyzed</p>
 </tr>
 </tbody>
 </table>
-<p><img alt="按模型成本对比" src="images/MoEless_Serverless-MoE-Serving/Fig9_lmsys_cost_by_model.pdf" /></p>
 <p><strong>结果分析</strong>：
 - 在真实工作负载上验证
 - 多种 MoE 模型（Mixtral, Phi, LLaMA）
-- 显著降低延迟和成本</p>
-<h2 id="_15">深度分析</h2>
-<h3 id="_16">研究价值评估</h3>
-<h4 id="_17">理论贡献</h4>
+- 显著降低延迟和成本</p></div></section>
+        
+        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
+<h4 id="_2">理论贡献</h4>
 <ul>
 <li><strong>贡献1</strong>：首个无服务器 MoE 服务框架</li>
 <li>创新点：将无服务器计算应用于 MoE LLM</li>
 <li>学术价值：开辟新的研究方向</li>
 </ul>
-<h4 id="_18">实际应用价值</h4>
+<h4 id="_3">实际应用价值</h4>
 <ul>
 <li><strong>应用场景</strong>：MoE LLM 云服务</li>
 <li>适用性：直接应用于云上 MoE 模型服务</li>
 <li>优势：弹性扩展、按需付费</li>
 <li>潜在影响：降低 MoE LLM 服务成本</li>
 </ul>
-<h3 id="_19">方法优势详解</h3>
+<h3 id="_4">方法优势详解</h3>
 <h4 id="1">优势1：弹性可扩展</h4>
 <ul>
 <li><strong>描述</strong>：无服务器架构自动扩展</li>
@@ -217,79 +173,13 @@ status: analyzed</p>
 <li><strong>技术基础</strong>：热点检测和自动扩展</li>
 <li><strong>实验验证</strong>：延迟降低 54.9%</li>
 </ul>
-<h3 id="_20">局限性分析</h3>
+<h3 id="_5">局限性分析</h3>
 <h4 id="1_1">局限1：冷启动延迟</h4>
 <ul>
 <li><strong>描述</strong>：无服务器函数冷启动开销</li>
 <li><strong>影响</strong>：首次调用延迟较高</li>
 <li><strong>可能的解决方案</strong>：预热策略、保持最小容量</li>
-</ul>
-<h2 id="_21">与相关论文对比</h2>
-<h3 id="moe">与传统 MoE 服务对比</h3>
-<ul>
-<li><strong>传统方案</strong>：静态资源配置、服务器基础设施</li>
-<li><strong>MoEless</strong>：动态资源配置、无服务器基础设施</li>
-<li><strong>优势</strong>：弹性扩展、按需付费</li>
-</ul>
-<h2 id="_22">我的综合评价</h2>
-<h3 id="_23">价值评分</h3>
-<h4 id="_24">总体评分</h4>
-<p><strong>8.5/10</strong> - 首个无服务器 MoE 服务框架，创新性强，实际效果显著</p>
-<h4 id="_25">分项评分</h4>
-<table>
-<thead>
-<tr>
-<th>评分维度</th>
-<th>分数</th>
-<th>评分理由</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>创新性</td>
-<td>9/10</td>
-<td>首个将无服务器计算应用于 MoE LLM 服务</td>
-</tr>
-<tr>
-<td>技术质量</td>
-<td>8/10</td>
-<td>方法合理，实现完整</td>
-</tr>
-<tr>
-<td>实验充分性</td>
-<td>8/10</td>
-<td>多模型多工作负载验证</td>
-</tr>
-<tr>
-<td>写作质量</td>
-<td>8/10</td>
-<td>结构清晰</td>
-</tr>
-<tr>
-<td>实用性</td>
-<td>9/10</td>
-<td>直接适用于云上 MoE 服务</td>
-</tr>
-</tbody>
-</table>
-<div class="callout callout-tip">
-无服务器计算与 MoE 的稀疏激活特性天然契合，是实现弹性 MoE 服务的理想架构。
-</div>
-<div class="callout callout-success">
-⭐⭐⭐⭐⭐ 强烈推荐！这是 MoE 服务领域的重要创新，为云上 MoE LLM 部署提供了新思路。
-</div>
-<h2 id="_26">相关论文</h2>
-<h3 id="_27">直接相关</h3>
-<ul>
-<li>[[PromptTuner]] - SLO 感知的资源管理系统</li>
-<li>[[SLO-Aware Resource Allocation]] - P/D 解耦系统的资源分配</li>
-</ul>
-<h3 id="_28">背景相关</h3>
-<ul>
-<li>MoE 架构论文（Switch Transformer, GLaM 等）</li>
-<li>无服务器计算研究</li>
-</ul>
-        </div>
+</ul></div></section>
     </div>
 </body>
 </html>
