@@ -4,7 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日论文推荐</title>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #dcddde;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #999;
+            font-size: 1.1em;
+        }
+        .date-section {
+            margin-bottom: 40px;
+        }
+        .date-title {
+            color: #7b6cd9;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        .paper-cards {
+            display: grid;
+            gap: 20px;
+        }
+        .paper-card {
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .paper-card:hover {
+            transform: translateY(-2px);
+        }
+        .paper-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        .paper-title a {
+            color: #dcddde;
+            text-decoration: none;
+        }
+        .paper-title a:hover {
+            color: #7b6cd9;
+        }
+        .paper-authors {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        .paper-summary {
+            color: #999;
+            font-size: 0.95em;
+        }
+        /* Callout styles */
+        .callout {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            background: rgba(123, 108, 217, 0.1);
+        }
+        .callout-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .callout-tip {
+            border-color: #4e865e;
+            background: rgba(78, 134, 94, 0.1);
+        }
+        .callout-success {
+            border-color: #4e865e;
+            background: rgba(78, 134, 94, 0.1);
+        }
+        /* Code blocks */
+        pre {
+            background: #2a2a2a;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        code {
+            background: #2a2a2a;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        /* Links */
+        a {
+            color: #7b6cd9;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        /* Wikilinks */
+        .wikilink {
+            color: #7b6cd9;
+        }
+        /* Tables */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #2a2a2a;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -13,26 +141,109 @@
             <p class="subtitle">LLM Inference & AI Infrastructure</p>
         </header>
 
-        <div class="filters">
-            <label>
-                <span>按日期筛选:</span>
-                <select id="dateFilter">
-                    <option value="all">全部</option>
-                </select>
-            </label>
-            <label>
-                <span>搜索:</span>
-                <input type="text" id="searchInput" placeholder="搜索标题、关键词...">
-            </label>
-        </div>
-
-        <div id="papersList" class="papers-list">
-            <div class="loading">加载中...</div>
-        </div>
+        
+            <div class="date-section">
+                <h2 class="date-title">2026-03-09</h2>
+                <div class="paper-cards">
+                    
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[MoEless: Efficient MoE LLM Serving via Serverless Computing
+                </div>
+                <div class="paper-authors">Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</div>
+                <div class="paper-summary">MoEless 是首个使用无服务器计算优化 MoE LLM 服务的框架，推理延迟降低 54.9%，成本降低 36.4%。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling
+                </div>
+                <div class="paper-authors">Qihang Fan, Huaibo Huang, Zhiying Wu</div>
+                <div class="paper-summary">FlashPrefill 实现超快速长上下文预填充，通过瞬时模式发现和阈值化减少注意力计算。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[CR-QAT: Curriculum Relational Quantization-Aware Training for Open-Vocabulary Object Detection
+                </div>
+                <div class="paper-authors">Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo Baek, Jibum Kim</div>
+                <div class="paper-summary">CR-QAT 首次研究极端量化对视觉-语言对齐的影响，通过课程关系保护保持 4-bit 量化性能。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[MoE Lens -- An Expert Is All You Need
+                </div>
+                <div class="paper-authors">Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval</div>
+                <div class="paper-summary">MoE Lens 系统性分析专家特化行为，发现显著冗余，专家剪枝 50% 保持性能。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[Sparse Crosscoders for diffing MoEs and Dense models
+                </div>
+                <div class="paper-authors">Marmik Chaudhari, Nishkal Hundia, Idhant Gulati</div>
+                <div class="paper-summary">使用稀疏交叉编码器系统比较 MoE 和密集模型的内部表示。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[WMoE-CLIP: Wavelet-Enhanced Mixture-of-Experts Prompt Learning for Zero-Shot Anomaly Detection
+                </div>
+                <div class="paper-authors">Peng Chen, Chao Huang</div>
+                <div class="paper-summary">WMoE-CLIP 结合小波增强和 MoE 提示学习，提升零样本异常检测性能。</div>
+            </div>
+            
+                </div>
+            </div>
+            
+            <div class="date-section">
+                <h2 class="date-title">2026-03-08</h2>
+                <div class="paper-cards">
+                    
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding
+                </div>
+                <div class="paper-authors">Ofir Ben Shoham</div>
+                <div class="paper-summary">通过词汇裁剪优化投机解码中的草稿模型，在保持覆盖率的同时降低延迟，实现高达 20% 的吞吐量提升。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[POET-X: Memory-efficient LLM Training by Scaling Orthogonal Transformation
+                </div>
+                <div class="paper-authors">Zeju Qiu, Lixin Liu, Adrian Weller, Han Shi, Weiyang Liu</div>
+                <div class="paper-summary">提出 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|poet-x]]，一种可扩展且内存高效的大模型训练变体，通过正交等价变换在单张 H100 GPU 上预训练十亿参数级别的 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|llm]]。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[Mixture of Universal Experts: Scaling Virtual Width via Depth-Width Transformation
+                </div>
+                <div class="paper-authors">Yilong Chen, Naibin Gu, Junyuan Shang, Zhenyu Zhang, Yuchen Feng, Jiawei Sheng, Tingwen Liu, Shuohuan Wang, Yu Sun, Hua Wu, Haifeng Wang</div>
+                <div class="paper-summary">提出 MOUE (Mixture of Universal Experts)，通过深度-宽度转换引入虚拟宽度新维度，打破 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 模型的物理尺寸限制。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[Dissecting Quantization Error: A Concentration-Alignment Perspective
+                </div>
+                <div class="paper-authors">Marco Federici, Boris van Breugel, Paul Whatmough, Markus Nagel</div>
+                <div class="paper-summary">首次将 SQNR 分解为 Concentration 和 Alignment 两个独立分量，提出 CAT 变换联合优化两者，在 4-bit 量化下超越现有方法。</div>
+            </div>
+            
+            <div class="paper-card">
+                <div class="paper-title">
+                    🔗 [[SLO-Aware Compute Resource Allocation for Prefill-Decode Disaggregated LLM Inference
+                </div>
+                <div class="paper-authors">Luchang Li, Dongfang Li, Bozhao Gong, Yu Zhang</div>
+                <div class="paper-summary">提出首个 Prefill-Decode 解耦系统的资源分配理论，结合 M/M/1 排队论与经验基准测试，在满足 SLO 约束下实现 15-30% 的资源节省。</div>
+            </div>
+            
+                </div>
+            </div>
+            
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
-    <script src="js/obsidian-plugin.js"></script>
-    <script src="js/app.js"></script>
 </body>
 </html>

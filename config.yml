@@ -1,0 +1,39 @@
+# obsidianhtml 配置
+
+# 输入路径
+obsidian_entrypoint_path_str: '/Users/ttaohe/Documents/Obsidian Vault/10_Daily'
+
+# 输出路径
+html_output_folder_path_str: 'output'
+
+# 站点名称
+site_name: '每日论文推荐'
+
+# HTML URL 前缀
+html_url_prefix: '/'
+
+# 排除模式
+exclude_glob_patterns:
+  - .DS_Store
+
+# 切换设置
+toggles:
+  features:
+    callouts:
+      enabled: true
+    search:
+      enabled: true
+    backlinks:
+      enabled: false
+    graph:
+      enabled: false
+    tags_page:
+      enabled: false
+    rss:
+      enabled: true
+    theme_switcher:
+      enabled: false
+    theme:
+      enabled: true
+  theme:
+    mode: 'dark'
