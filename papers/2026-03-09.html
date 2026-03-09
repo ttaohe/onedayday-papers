@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026-03-09 论文推荐</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" style="color: var(--accent);">&larr; 返回列表</a>
+        <article style="margin-top: 20px;">
+            <h1>2026-03-09 论文推荐</h1>
+            <div class="paper-content">
+                
+## 今日概览
+
+今日推荐的 **6 篇论文**主要聚焦于 **MoE 模型服务优化**、**长上下文预填充加速**、**量化感知训练**和**专家内部机制分析**等前沿方向。
+
+- **最新论文说明**：今天是 2026-03-09（周日），arXiv 无新论文发布。以下是 2026-03-06（周四）的最新论文推荐。
+
+- **总体趋势**：今日论文围绕 MoE 架构的效率优化展开，涵盖无服务器 MoE 服务、专家行为分析、长上下文预填充加速等。
+
+- **质量分布**：今日推荐论文置信度在 0.3-0.9 之间，MoEless 和 FlashPrefill 特别值得关注。
+
+- **研究热点**：
+  - **MoE 服务优化**：MoEless 使用无服务器计算优化 MoE LLM 服务
+  - **长上下文加速**：FlashPrefill 实现超快速长上下文预填充
+  - **专家机制分析**：MoE Lens 和 Sparse Crosscoders 分析专家特化行为
+  - **量化训练**：CR-QAT 课程关系量化感知训练
+
+- **阅读建议**：
+  1. 首先阅读 **MoEless** 了解无服务器 MoE 服务创新（置信度最高）
+  2. 然后阅读 **FlashPrefill** 了解长上下文预填充加速
+  3. 接着阅读 **MoE Lens** 和 **Sparse Crosscoders** 了解专家内部机制
+  4. 最后关注 **CR-QAT** 和 **WMoE-CLIP** 的量化应用
+
+---
+
+### [[MoEless: Efficient MoE LLM Serving via Serverless Computing]]
+- **作者**：Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang
+- **链接**：[arXiv](http://arxiv.org/abs/2603.06350) | [PDF](https://arxiv.org/pdf/2603.06350)
+- **来源**：[arXiv]
+- **详细报告**：[[20_Research/Papers/大模型/MoEless_Serverless-MoE-Serving]]
+- **评分**：8.5/10 | 置信度 0.90
+
+![系统架构](20_Research/Papers/大模型/images/MoEless_Serverless-MoE-Serving/overview-arch.pdf)
+
+**一句话总结**：MoEless 是首个使用无服务器计算优化 MoE LLM 服务的框架，推理延迟降低 54.9%，成本降低 36.4%。
+
+**核心贡献/观点**：
+- MoE LLM 使用专家并行分布式部署存在专家负载不平衡
+- 无服务器计算按需付费、弹性扩展，适合 MoE 的稀疏激活特性
+- 优化的专家放置 + 动态专家扩展缓解负载不平衡
+- 推理延迟降低 54.9%，成本降低 36.4%
+
+---
+
+### [[FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling]]
+- **作者**：Qihang Fan, Huaibo Huang, Zhiying Wu
+- **链接**：[arXiv](http://arxiv.org/abs/2603.06199) | [PDF](https://arxiv.org/pdf/2603.06199)
+- **来源**：[arXiv]
+- **评分**：置信度 0.40
+
+**一句话总结**：FlashPrefill 实现超快速长上下文预填充，通过瞬时模式发现和阈值化减少注意力计算。
+
+**核心贡献/观点**：
+- 长上下文预填充是 LLM 推理的计算瓶颈
+- 现有稀疏注意力方法搜索延迟高或稀疏度不足
+- FlashPrefill 实现瞬时模式发现
+- 自适应阈值化减少计算量
+- 保持模型质量的同时大幅加速
+
+**关键结果**：在长上下文预填充上实现显著加速，同时保持模型性能。
+
+---
+
+### [[CR-QAT: Curriculum Relational Quantization-Aware Training for Open-Vocabulary Object Detection]]
+- **作者**：Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo Baek, Jibum Kim
+- **链接**：[arXiv](http://arxiv.org/abs/2603.05964) | [PDF](https://arxiv.org/pdf/2603.05964)
+- **来源**：[arXiv]
+- **详细报告**：[[20_Research/Papers/大模型/CR-QAT_Quantization-Aware-Training]]
+- **评分**：7.8/10 | 置信度 0.50
+
+![方法概览](20_Research/Papers/大模型/images/CR-QAT_Quantization-Training/fig2_overview_page1.png)
+
+**一句话总结**：CR-QAT 首次研究极端量化对视觉-语言对齐的影响，通过课程关系保护保持 4-bit 量化性能。
+
+**核心贡献/观点**：
+- 极端低比特（4-bit）量化破坏细粒度视觉-语言对齐和区域关系
+- 关系保护正则化 + 课程学习策略
+- 在 4-bit 量化下保持 OVOD 性能
+
+---
+
+### [[MoE Lens -- An Expert Is All You Need]]
+- **作者**：Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval
+- **链接**：[arXiv](http://arxiv.org/abs/2603.05806) | [PDF](https://arxiv.org/pdf/2603.05806)
+- **来源**：[arXiv]
+- **详细报告**：[[20_Research/Papers/大模型/MoE-Lens_Expert-Specialization]]
+- **评分**：8.0/10 | 置信度 0.50
+
+![MoE Lens 分析框架](20_Research/Papers/大模型/images/MoE-Lens_Expert-Specialization/full-lens.png)
+
+**一句话总结**：MoE Lens 系统性分析专家特化行为，发现显著冗余，专家剪枝 50% 保持性能。
+
+**核心贡献/观点**：
+- 领域特定路由模式 + 早期解码框架
+- DeepSeekMoE 存在显著专家特化冗余
+- 专家剪枝策略减少 50% 活动专家
+
+---
+
+### [[Sparse Crosscoders for diffing MoEs and Dense models]]
+- **作者**：Marmik Chaudhari, Nishkal Hundia, Idhant Gulati
+- **链接**：[arXiv](http://arxiv.org/abs/2603.05805) | [PDF](https://arxiv.org/pdf/2603.05805)
+- **来源**：[arXiv]
+- **评分**：置信度 0.50
+
+**一句话总结**：使用稀疏交叉编码器系统比较 MoE 和密集模型的内部表示。
+
+**核心贡献/观点**：
+- MoE 通过稀疏专家路由实现参数高效扩展
+- MoE 内部表示相比密集模型理解不足
+- 使用交叉编码器（稀疏自编码器变体）联合建模多个激活空间
+- 训练 5 层密集和 MoE 模型（相同活动参数）进行比较
+- 揭示 MoE 和密集模型的内部差异
+
+**关键结果**：提供 MoE 和密集模型的系统性比较，揭示内部表示差异。
+
+---
+
+### [[WMoE-CLIP: Wavelet-Enhanced Mixture-of-Experts Prompt Learning for Zero-Shot Anomaly Detection]]
+- **作者**：Peng Chen, Chao Huang
+- **链接**：[arXiv](http://arxiv.org/abs/2603.06313) | [PDF](https://arxiv.org/pdf/2603.06313)
+- **来源**：[arXiv]
+- **评分**：置信度 0.40
+
+**一句话总结**：WMoE-CLIP 结合小波增强和 MoE 提示学习，提升零样本异常检测性能。
+
+**核心贡献/观点**：
+- 视觉-语言模型在零样本异常检测（ZSAD）中表现优异
+- 现有方法依赖固定文本提示，难以捕获复杂语义
+- 仅关注空间域特征，限制细微异常检测能力
+- WMoE-CLIP 使用：
+  - 小波变换增强特征表示
+  - MoE 提示学习动态适应不同语义
+- 提升对复杂和细微异常的检测能力
+
+**关键结果**：在零样本异常检测任务上优于现有方法。
+
+---
+
+## 搜索说明
+
+本次搜索使用 AI 语义分析方法，从 arXiv 获取 **2026-03-06** 的所有计算机相关论文（334 篇），通过分析每篇论文的标题和摘要筛选出相关论文。
+
+**筛选标准**：
+- **LLM Inference / AI Infrastructure**：MoE serving, serverless, long-context, attention optimization
+- **量化**：quantization-aware training, low-bit quantization
+- **MoE 架构**：expert specialization, routing patterns
+- **排除**：图像生成、chatbot、医疗应用、联邦学习等
+
+**结果**：334 篇论文中筛选出 16 篇相关论文（4.8%），推荐评分最高的 6 篇。
+
+**注意**：今天是 2026-03-09（周日），arXiv 无新论文。以上推荐来自 2026-03-06（周四）的最新论文。
+
+            </div>
+        </article>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
+    <script src="../js/obsidian-plugin.js"></script>
+</body>
+</html>
