@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoE Lens -- An Expert Is All You Need</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.2/github-markdown.min.css">
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #dcddde;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Back link */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #7b6cd9;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* Override GitHub Markdown CSS for dark theme */
+        .markdown-body {
+            color: #dcddde;
+            background: #1e1e1e;
+        }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+            color: #dcddde;
+            border-color: #333;
+        }
+        .markdown-body a {
+            color: #7b6cd9;
+        }
+        .markdown-body code {
+            background: #2a2a2a;
+            color: #e6edf3;
+        }
+        .markdown-body pre {
+            background: #2a2a2a;
+            border-color: #333;
+        }
+        /* Callout styles */
+        .callout {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            border-left: 4px solid;
+        }
+        .callout-tip {
+            border-color: #4e865e;
+            background: rgba(78, 134, 94, 0.1);
+        }
+        .callout-success {
+            border-color: #4e865e;
+            background: rgba(78, 134, 94, 0.1);
+        }
+        .callout-warning {
+            border-color: #d29922;
+            background: rgba(210, 153, 34, 0.1);
+        }
+        .callout-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #dcddde;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← 返回首页</a>
+        <div class="markdown-body">
+            <hr />
+<p>date: "2026-03-09"
+paper_id: "arXiv:2603.05806"
+title: "MoE Lens -- An Expert Is All You Need"
+authors: "Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval"
+domain: "大模型"
+tags:
+  - 论文笔记
+  - MoE
+  - Expert-Specialization
+  - Model-Interpretation
+  - Routing-Analysis
+quality_score: "8.0/10"
+created: "2026-03-09"
+updated: "2026-03-09"
+status: analyzed</p>
+<hr />
+<h1 id="moe-lens-an-expert-is-all-you-need">MoE Lens -- An Expert Is All You Need</h1>
+<h2 id="_1">核心信息</h2>
+<ul>
+<li><strong>论文ID</strong>：arXiv:2603.05806</li>
+<li><strong>作者</strong>：Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval</li>
+<li><strong>发布时间</strong>：2026-03-06</li>
+<li><strong>会议/期刊</strong>：cs.LG (Machine Learning)</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.05806">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05806">PDF</a></li>
+</ul>
+<h2 id="_2">摘要翻译</h2>
+<h3 id="_3">英文摘要</h3>
+<p>Mixture of Experts (MoE) models enable parameter-efficient scaling through sparse expert activations, yet optimizing their inference and memory costs remains challenging due to limited understanding of their specialization behavior. We present a systematic analysis of expert specialization in MoEs through two complementary approaches: domain-specific routing patterns and an early decoding framework that tracks expert contributions to output representations. Our analysis of the DeepSeekMoE model reveals that despite having 64 routed experts with 6 active for each layer's computation, the model exhibits significant expert specialization redundancy - a subset of experts consistently dominate computations across layers. Based on these insights, we propose expert pruning strategies that reduce active experts by 50% while maintaining performance.</p>
+<h3 id="_4">中文翻译</h3>
+<p>混合专家（MoE）模型通过稀疏专家激活实现参数高效扩展，但由于对其特化行为的理解有限，优化其推理和内存成本仍然具有挑战性。我们通过两种互补方法系统分析 MoE 中的专家特化：领域特定的路由模式和跟踪专家对输出表示贡献的早期解码框架。我们对 DeepSeekMoE 模型的分析揭示，尽管每层计算有 64 个路由专家和 6 个活动专家，模型表现出显著的专家特化冗余——一个专家子集在各层中持续主导计算。基于这些洞察，我们提出了专家剪枝策略，在保持性能的同时将活动专家减少 50%。</p>
+<h3 id="_5">核心要点提炼</h3>
+<ul>
+<li><strong>研究背景</strong>：MoE 专家特化行为理解有限</li>
+<li><strong>研究动机</strong>：优化推理和内存成本需要理解专家特化</li>
+<li><strong>核心方法</strong>：领域路由模式分析 + 早期解码框架</li>
+<li><strong>主要发现</strong>：存在显著的专家特化冗余</li>
+<li><strong>应用</strong>：专家剪枝策略减少 50% 专家</li>
+</ul>
+<h2 id="_6">方法概述</h2>
+<h3 id="_7">核心思想</h3>
+<p>MoE Lens 提供两种互补方法分析专家特化：
+1. <strong>领域特定路由模式</strong>：分析专家在不同领域的激活
+2. <strong>早期解码框架</strong>：跟踪专家对输出的贡献</p>
+<h3 id="_8">方法框架</h3>
+<p><img alt="MoE Lens 框架" src="images/MoE-Lens_Expert-Specialization/full-lens.png" /></p>
+<blockquote>
+<p>图1：MoE Lens 分析框架</p>
+</blockquote>
+<h2 id="_9">实验结果</h2>
+<p><img alt="专家分析结果" src="images/MoE-Lens_Expert-Specialization/Final_4x3.png" /></p>
+<p><strong>关键发现</strong>：
+- DeepSeekMoE 存在显著专家冗余
+- 50% 专家剪枝保持性能</p>
+<h2 id="_10">我的综合评价</h2>
+<h3 id="_11">价值评分</h3>
+<p><strong>8.0/10</strong> - 系统性分析 MoE 专家特化，发现重要冗余，实用价值高</p>
+<div class="callout callout-tip">
+MoE 模型存在显著的专家特化冗余，可以通过剪枝进一步优化效率。
+</div>
+<div class="callout callout-success">
+⭐⭐⭐⭐ 推荐！对于 MoE 模型理解和优化很有价值。
+</div>
+        </div>
+    </div>
+</body>
+</html>

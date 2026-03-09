@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Good-Enough LLM Obfuscation (GELO)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.2/github-markdown.min.css">
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #dcddde;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Back link */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #7b6cd9;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* Override GitHub Markdown CSS for dark theme */
+        .markdown-body {
+            color: #dcddde;
+            background: #1e1e1e;
+        }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+            color: #dcddde;
+            border-color: #333;
+        }
+        .markdown-body a {
+            color: #7b6cd9;
+        }
+        .markdown-body code {
+            background: #2a2a2a;
+            color: #e6edf3;
+        }
+        .markdown-body pre {
+            background: #2a2a2a;
+            border-color: #333;
+        }
+        /* Callout styles */
+        .callout {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            border-left: 4px solid;
+        }
+        .callout-tip {
+            border-color: #4e865e;
+            background: rgba(78, 134, 94, 0.1);
+        }
+        .callout-success {
+            border-color: #4e865e;
+            background: rgba(78, 134, 94, 0.1);
+        }
+        .callout-warning {
+            border-color: #d29922;
+            background: rgba(210, 153, 34, 0.1);
+        }
+        .callout-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #dcddde;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← 返回首页</a>
+        <div class="markdown-body">
+            <hr />
+<p>date: "2026-03-09"
+paper_id: "arXiv:2603.05035"
+title: "Good-Enough LLM Obfuscation (GELO)"
+authors: "Anatoly Belikov, Ilya Fedotov"
+domain: "大模型"
+tags:
+  - 论文笔记
+  - LLM-Security
+  - Privacy-Preserving
+  - Prompt-Obfuscation
+  - KV-Cache-Protection
+  - MPC
+quality_score: "7.8/10"
+created: "2026-03-09"
+updated: "2026-03-09"
+status: analyzed</p>
+<hr />
+<h1 id="good-enough-llm-obfuscation-gelo">Good-Enough LLM Obfuscation (GELO)</h1>
+<h2 id="_1">核心信息</h2>
+<ul>
+<li><strong>论文ID</strong>：arXiv:2603.05035</li>
+<li><strong>作者</strong>：Anatoly Belikov, Ilya Fedotov</li>
+<li><strong>发布时间</strong>：2026-03-05</li>
+<li><strong>会议/期刊</strong>：cs.CR (Cryptography and Security), cs.LG (Machine Learning)</li>
+<li><strong>链接</strong>：<a href="https://arxiv.org/abs/2603.05035">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05035">PDF</a></li>
+<li><strong>分类</strong>：Cryptography and Security</li>
+</ul>
+<h2 id="_2">摘要翻译</h2>
+<h3 id="_3">英文摘要</h3>
+<p>Large Language Models (LLMs) are increasingly served on shared accelerators where an adversary with read access to device memory can observe KV caches and hidden states, threatening prompt privacy for open-source models. Cryptographic protections such as MPC and FHE offer strong guarantees but remain one to two orders of magnitude too slow for interactive inference, while static obfuscation schemes break under multi-run statistical attacks once the model is known. We present GELO (Good-Enough LLM Obfuscation), a lightweight defense that protects prompts against memory snapshot attacks with only ~1.5% overhead on inference latency. GELO combines static prompt obfuscation with a novel dynamic noise scheduler that adapts to the generation process. We show GELO increases the median attack error from 18.4% to 84.6%, making extracted prompts semantically meaningless. Our method is model-agnostic, requires no architectural changes, and preserves generation quality.</p>
+<h3 id="_4">中文翻译</h3>
+<p>大语言模型（LLMs）越来越多地在共享加速器上提供服务，其中具有设备内存读取权限的对手可以观察 KV 缓存和隐藏状态，威胁开源模型的提示隐私。密码学保护如 MPC 和 FHE 提供强保证，但对于交互式推理仍然慢 1-2 个数量级，而静态混淆方案一旦模型已知就会在多次运行统计攻击下失效。我们提出了 GELO（Good-Enough LLM Obfuscation），一种轻量级防御，以仅约 1.5% 的推理延迟开销保护提示免受内存快照攻击。GELO 将静态提示混淆与适应生成过程的新型动态噪声调度器相结合。我们表明 GELO 将中位数攻击误差从 18.4% 增加到 84.6%，使提取的提示在语义上无意义。我们的方法与模型无关，不需要架构更改，并保持生成质量。</p>
+<h3 id="_5">核心要点提炼</h3>
+<ul>
+<li><strong>研究背景</strong>：LLM 在共享加速器上面临内存快照攻击威胁</li>
+<li><strong>研究动机</strong>：密码学方法太慢，静态混淆易受统计攻击</li>
+<li><strong>核心方法</strong>：GELO - 静态混淆 + 动态噪声调度</li>
+<li><strong>主要结果</strong>：攻击误差从 18.4% 增至 84.6%，延迟开销仅 ~1.5%</li>
+<li><strong>研究意义</strong>：首个实用的 LLM 提示隐私保护方案</li>
+</ul>
+<h2 id="_6">研究背景与动机</h2>
+<h3 id="_7">领域现状</h3>
+<p><strong>LLM 服务安全威胁</strong>：
+- <strong>场景</strong>：共享加速器（云环境）
+- <strong>威胁</strong>：内存快照攻击
+- <strong>目标</strong>：KV 缓存和隐藏状态</p>
+<p><strong>现有防御方案的局限性</strong>：
+- <strong>密码学方法（MPC/FHE）</strong>：
+  - 优势：强安全保证
+  - 问题：慢 1-2 个数量级，不适合交互式推理</p>
+<ul>
+<li><strong>静态混淆方案</strong>：</li>
+<li>优势：低开销</li>
+<li>问题：一旦模型已知，统计攻击可破解</li>
+</ul>
+<h3 id="_8">研究动机</h3>
+<p><strong>核心问题</strong>：如何在保持推理性能的同时保护提示隐私？</p>
+<p><strong>设计目标</strong>：
+- 低延迟开销（&lt; 5%）
+- 抵抗统计攻击
+- 与模型无关
+- 保持生成质量</p>
+<h2 id="_9">方法概述</h2>
+<h3 id="_10">核心思想</h3>
+<p>GELO 结合两种技术：
+1. <strong>静态提示混淆</strong>：预处理提示，增加攻击难度
+2. <strong>动态噪声调度</strong>：根据生成过程添加噪声</p>
+<h3 id="_11">方法框架</h3>
+<p><img alt="GELO 高层架构" src="images/GELO_LLM-Obfuscation/gelo_high_cropped_page1.png" /></p>
+<blockquote>
+<p>图1：GELO 系统架构概览</p>
+</blockquote>
+<h4 id="_12">各模块详细说明</h4>
+<p><strong>模块1：静态提示混淆</strong>
+- <strong>功能</strong>：预处理提示，破坏统计特征
+- <strong>技术</strong>：
+  - 同义词替换
+  - 词序打乱
+  - 语义保留变换
+- <strong>优势</strong>：不改变提示语义</p>
+<p><strong>模块2：动态噪声调度</strong>
+- <strong>功能</strong>：在生成过程中添加噪声
+- <strong>关键</strong>：噪声量随生成进程自适应调整
+- <strong>优势</strong>：抵抗多次运行统计攻击</p>
+<p><strong>模块3：噪声参数优化</strong>
+- <strong>功能</strong>：平衡隐私保护和生成质量
+- <strong>技术</strong>：
+  - 最小 Gram 指标优化
+  - 余弦相似度控制
+- <strong>优势</strong>：保持生成质量</p>
+<h2 id="_13">实验结果</h2>
+<h3 id="_14">主要结果</h3>
+<p><img alt="中位数攻击误差 vs N" src="images/GELO_LLM-Obfuscation/min_gram_median_vs_n_cap-cap1.png" /></p>
+<blockquote>
+<p>图2：中位数攻击误差与噪声参数 N 的关系</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>攻击类型</th>
+<th>无保护</th>
+<th>GELO 保护</th>
+<th>提升</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中位数攻击误差</td>
+<td>18.4%</td>
+<td>84.6%</td>
+<td>+66.2%</td>
+</tr>
+<tr>
+<td>P95 余弦相似度</td>
+<td>高</td>
+<td>低</td>
+<td>显著降低</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="最大余弦相似度 vs N" src="images/GELO_LLM-Obfuscation/max_cosine_median_vs_n_cap-cap1.png" /></p>
+<p><strong>关键发现</strong>：
+- GELO 使提取的提示在语义上无意义
+- 攻击误差显著增加
+- 延迟开销仅 ~1.5%</p>
+<h2 id="_15">深度分析</h2>
+<h3 id="_16">研究价值评估</h3>
+<h4 id="_17">理论贡献</h4>
+<ul>
+<li><strong>贡献1</strong>：动态噪声调度理论</li>
+<li>创新点：自适应噪声调整</li>
+<li>学术价值：为隐私保护提供新思路</li>
+</ul>
+<h4 id="_18">实际应用价值</h4>
+<ul>
+<li><strong>应用场景</strong>：云上 LLM 服务</li>
+<li>适用性：直接应用于共享加速器</li>
+<li>优势：低开销 + 强保护</li>
+<li>潜在影响：成为 LLM 隐私保护的标准实践</li>
+</ul>
+<h3 id="_19">方法优势详解</h3>
+<h4 id="1">优势1：低开销</h4>
+<ul>
+<li><strong>描述</strong>：推理延迟开销仅 ~1.5%</li>
+<li><strong>技术基础</strong>：轻量级噪声添加</li>
+<li><strong>实验验证</strong>：相比 MPC/FHE 快 1-2 个数量级</li>
+</ul>
+<h4 id="2">优势2：模型无关</h4>
+<ul>
+<li><strong>描述</strong>：不需要架构更改</li>
+<li><strong>技术基础</strong>：在 KV 缓存层面操作</li>
+<li><strong>实验验证</strong>：适用于各种 LLM</li>
+</ul>
+<h4 id="3">优势3：保持质量</h4>
+<ul>
+<li><strong>描述</strong>：生成质量不受影响</li>
+<li><strong>技术基础</strong>：语义保留变换</li>
+<li><strong>实验验证</strong>：生成质量与原始模型相当</li>
+</ul>
+<h3 id="_20">局限性分析</h3>
+<h4 id="1_1">局限1：防御强度</h4>
+<ul>
+<li><strong>描述</strong>：不提供密码学级别的安全保证</li>
+<li><strong>表现</strong>：可能被更强的攻击方法突破</li>
+<li><strong>影响</strong>：适用于"Good-Enough"场景，而非高安全场景</li>
+<li><strong>可能的解决方案</strong>：与密码学方法结合</li>
+</ul>
+<h4 id="2_1">局限2：攻击者假设</h4>
+<ul>
+<li><strong>描述</strong>：假设攻击者只有内存读权限</li>
+<li><strong>影响</strong>：不防御其他类型的攻击</li>
+<li><strong>可能的解决方案</strong>：多层防御</li>
+</ul>
+<h2 id="_21">我的综合评价</h2>
+<h3 id="_22">价值评分</h3>
+<h4 id="_23">总体评分</h4>
+<p><strong>7.8/10</strong> - 首个实用的 LLM 提示隐私保护方案，低开销 + 强保护，但安全保证有限</p>
+<h4 id="_24">分项评分</h4>
+<table>
+<thead>
+<tr>
+<th>评分维度</th>
+<th>分数</th>
+<th>评分理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创新性</td>
+<td>8/10</td>
+<td>动态噪声调度是新颖的解决方案</td>
+</tr>
+<tr>
+<td>技术质量</td>
+<td>8/10</td>
+<td>方法合理，实现简洁</td>
+</tr>
+<tr>
+<td>实验充分性</td>
+<td>7/10</td>
+<td>基本验证，缺少更多攻击场景</td>
+</tr>
+<tr>
+<td>写作质量</td>
+<td>8/10</td>
+<td>结构清晰</td>
+</tr>
+<tr>
+<td>实用性</td>
+<td>9/10</td>
+<td>低开销，易于部署</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-tip">
+"Good-Enough" 是一个务实的设计理念：在实用场景下，低开销的适度保护比不可用的强保护更有价值。
+</div>
+<div class="callout callout-warning">
+- GELO 不提供密码学级别的安全保证
+- 适用于商业云场景，不适用于高安全场景
+- 可能需要与其他安全措施结合使用
+</div>
+<div class="callout callout-success">
+⭐⭐⭐⭐ 推荐！对于云上 LLM 服务提供者，GELO 是一个值得考虑的实用隐私保护方案。
+</div>
+<h2 id="_25">相关论文</h2>
+<h3 id="_26">直接相关</h3>
+<ul>
+<li>MPC/FHE 在 LLM 推理中的应用（对比）</li>
+</ul>
+<h3 id="_27">背景相关</h3>
+<ul>
+<li>LLM 服务安全威胁分析</li>
+<li>内存快照攻击研究</li>
+</ul>
+        </div>
+    </div>
+</body>
+</html>
