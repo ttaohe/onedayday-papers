@@ -92,41 +92,60 @@ a:hover { text-decoration: underline; }
 
 /* ── paper card ── */
 .paper-card {
-    background: #fff; border: 1px solid #ede9fe;
-    border-radius: 12px; padding: 20px 22px;
+    background: #fff;
+    border: 1px solid #e8e4f8;
+    border-radius: 12px;
+    padding: 20px 22px;
     cursor: pointer;
     transition: box-shadow .15s, transform .15s, border-color .15s;
-    text-decoration: none; color: inherit; display: block;
+    text-decoration: none !important;
+    color: inherit;
+    display: block;
+    overflow: hidden;
 }
 .paper-card:hover {
-    box-shadow: 0 6px 24px rgba(92,79,207,.12);
+    box-shadow: 0 6px 24px rgba(92,79,207,.13);
     transform: translateY(-2px);
     border-color: #c4b5fd;
     text-decoration: none;
 }
+/* 标题行 */
 .card-top {
     display: flex; align-items: flex-start;
-    justify-content: space-between; gap: 12px; margin-bottom: 6px;
+    justify-content: space-between; gap: 12px;
+    margin-bottom: 8px;
 }
 .card-title {
-    font-size: 1.02em; font-weight: 700; color: #1a1a2e; line-height: 1.4;
+    font-size: 1.02em; font-weight: 700; color: #1a1a2e;
+    line-height: 1.4; flex: 1;
 }
+/* 作者 + 链接：同一行，不再用 chip 包裹作者 */
 .card-meta {
     display: flex; align-items: center;
-    justify-content: space-between; gap: 8px; margin-bottom: 12px;
+    justify-content: space-between;
+    gap: 8px; margin-bottom: 12px;
+    flex-wrap: nowrap;
 }
-.card-links { display: flex; gap: 6px; flex-shrink: 0; }
+.card-authors {
+    color: #6b7280; font-size: .84em;
+    flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-links { display: flex; gap: 5px; flex-shrink: 0; }
+/* 摘要 */
 .card-summary {
     font-size: .9em; color: #374151; line-height: 1.7;
-    padding: 10px 14px; background: #f9f8ff; border-radius: 8px;
-    margin-bottom: 10px;
+    padding: 10px 14px; background: #f9f8ff;
+    border-radius: 8px; margin-bottom: 10px;
 }
+/* 核心贡献 */
 .card-contrib-label {
     font-size: .72em; font-weight: 700; color: #9ca3af;
     text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px;
 }
-.card-contrib ul { padding-left: 1.2em; color: #374151; font-size: .88em; line-height: 1.7; }
+.card-contrib ul { padding-left: 1.2em; color: #374151; font-size: .88em; line-height: 1.7; margin: 0; }
 .card-contrib li { margin-bottom: 3px; }
+.card-contrib p  { color: #374151; font-size: .88em; line-height: 1.7; margin: 0; }
 </style>
 
 </head>
@@ -279,7 +298,7 @@ a:hover { text-decoration: underline; }
         <span class="chip chip-amber">8.5/10 | 置信度 0.90</span>
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</span>
+        <span class="card-authors">Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06350" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06350" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">MoEless 是首个使用无服务器计算优化 MoE LLM 服务的框架，推理延迟降低 54.9%，成本降低 36.4%。</div>
@@ -296,7 +315,7 @@ a:hover { text-decoration: underline; }
         <span class="chip chip-amber">置信度 0.40</span>
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Qihang Fan, Huaibo Huang, Zhiying Wu</span>
+        <span class="card-authors">Qihang Fan, Huaibo Huang, Zhiying Wu</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06199" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06199" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">FlashPrefill 实现超快速长上下文预填充，通过瞬时模式发现和阈值化减少注意力计算。</div>
@@ -315,7 +334,7 @@ a:hover { text-decoration: underline; }
         <span class="chip chip-amber">7.8/10 | 置信度 0.50</span>
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo …</span>
+        <span class="card-authors">Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo Baek, Jibum Kim</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05964" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05964" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">CR-QAT 首次研究极端量化对视觉-语言对齐的影响，通过课程关系保护保持 4-bit 量化性能。</div>
@@ -331,7 +350,7 @@ a:hover { text-decoration: underline; }
         <span class="chip chip-amber">8.0/10 | 置信度 0.50</span>
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karr…</span>
+        <span class="card-authors">Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05806" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05806" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">MoE Lens 系统性分析专家特化行为，发现显著冗余，专家剪枝 50% 保持性能。</div>
@@ -347,7 +366,7 @@ a:hover { text-decoration: underline; }
         <span class="chip chip-amber">置信度 0.50</span>
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Marmik Chaudhari, Nishkal Hundia, Idhant Gulati</span>
+        <span class="card-authors">Marmik Chaudhari, Nishkal Hundia, Idhant Gulati</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05805" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05805" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">使用稀疏交叉编码器系统比较 MoE 和密集模型的内部表示。</div>
@@ -366,7 +385,7 @@ a:hover { text-decoration: underline; }
         <span class="chip chip-amber">置信度 0.40</span>
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Peng Chen, Chao Huang</span>
+        <span class="card-authors">Peng Chen, Chao Huang</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06313" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06313" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">WMoE-CLIP 结合小波增强和 MoE 提示学习，提升零样本异常检测性能。</div>
@@ -502,7 +521,7 @@ a:hover { text-decoration: underline; }
         
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Ofir Ben Shoham</span>
+        <span class="card-authors">Ofir Ben Shoham</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05210v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05210v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">通过词汇裁剪优化投机解码中的草稿模型，在保持覆盖率的同时降低延迟，实现高达 20% 的吞吐量提升。</div>
@@ -520,7 +539,7 @@ a:hover { text-decoration: underline; }
         
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Zeju Qiu, Lixin Liu, Adrian Weller, Han Shi, Weiyang Liu</span>
+        <span class="card-authors">Zeju Qiu, Lixin Liu, Adrian Weller, Han Shi, Weiyang Liu</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05500v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05500v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">提出 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|poet-x]]，一种可扩展且内存高效的大模型训练变体，通过正交等价变换在单张 H100 GPU 上预训练十亿参数级别的 [[20_Research/Papers/大模型/POET-X_Memory-efficient-LLM-Training.md|llm]]。</div>
@@ -538,7 +557,7 @@ a:hover { text-decoration: underline; }
         
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Yilong Chen, Naibin Gu, Junyuan Shang, Zhenyu Zhang, Yuchen …</span>
+        <span class="card-authors">Yilong Chen, Naibin Gu, Junyuan Shang, Zhenyu Zhang, Yuchen Feng, Jiawei Sheng, Tingwen Liu, Shuohuan Wang, Yu Sun, Hua Wu, Haifeng Wang</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.04971v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.04971v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">提出 MOUE (Mixture of Universal Experts)，通过深度-宽度转换引入虚拟宽度新维度，打破 [[20_Research/Papers/大模型/MOUE_Virtual-Width-MoE.md|moe]] 模型的物理尺寸限制。</div>
@@ -556,7 +575,7 @@ a:hover { text-decoration: underline; }
         
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Marco Federici, Boris van Breugel, Paul Whatmough, Markus Na…</span>
+        <span class="card-authors">Marco Federici, Boris van Breugel, Paul Whatmough, Markus Nagel</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.04359v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.04359v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">首次将 SQNR 分解为 Concentration 和 Alignment 两个独立分量，提出 CAT 变换联合优化两者，在 4-bit 量化下超越现有方法。</div>
@@ -574,7 +593,7 @@ a:hover { text-decoration: underline; }
         
     </div>
     <div class="card-meta">
-        <span class="chip chip-gray authors-txt">Luchang Li, Dongfang Li, Bozhao Gong, Yu Zhang</span>
+        <span class="card-authors">Luchang Li, Dongfang Li, Bozhao Gong, Yu Zhang</span>
         <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.04716v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.04716v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
     <div class="card-summary">提出首个 Prefill-Decode 解耦系统的资源分配理论，结合 M/M/1 排队论与经验基准测试，在满足 SLO 约束下实现 15-30% 的资源节省。</div>
