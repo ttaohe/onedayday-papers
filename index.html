@@ -693,6 +693,215 @@ a:hover { text-decoration: underline; }
 <hr /></div>
 </div></div>
     </section>
+    <section class="date-section" data-date="2026-03-06">
+        <div class="date-header">
+            <h2 class="date-heading">2026-03-06</h2>
+            <span class="paper-count">6 篇论文</span>
+        </div>
+        <div class="overview-box"><p>今日推荐的 <strong>6 篇论文</strong>主要聚焦于 <strong>moe 推理服务</strong>、<strong>长上下文加速</strong>、<strong>Transformer 训练效率优化</strong> 与 <strong>信息流感知稀疏化</strong> 等方向。</p>
+<ul>
+<li><strong>总体趋势</strong>：3 月 6 日的新论文里，和你当前研究方向最相关的主题集中在 llm serving / inference efficiency / sparse attention / training acceleration。</li>
+<li><strong>质量分布</strong>：本次推荐论文综合评分约在 <strong>8.5 - 11.5</strong> 区间，其中 <strong>moeless</strong>、<strong>NOBLE</strong>、<strong>FlashPrefill</strong> 最值得优先读。</li>
+<li><strong>研究热点</strong>：</li>
+<li><strong>moe 服务系统</strong>：moeless 把 serverless 资源弹性引入专家负载均衡。</li>
+<li><strong>长上下文推理</strong>：FlashPrefill、Stem 都在 prefill / sparse attention 上做结构性优化。</li>
+<li><strong>训练效率</strong>：NOBLE 通过结构增强提升从头预训练效率。</li>
+<li><strong>阅读建议</strong>：</li>
+<li>先读 <strong>moeless</strong>，最贴近你当前的 serving / infrastructure 主线。</li>
+<li>再读 <strong>FlashPrefill</strong> 和 <strong>Stem</strong>，看 long-context prefill 与 sparse attention 两条不同提速思路。</li>
+<li>然后看 <strong>NOBLE</strong>，补充训练效率方向的新结构设计。</li>
+<li>最后按兴趣浏览 TaPD 和 script similarity 这两篇偏跨领域但方法上有启发的工作。</li>
+</ul>
+<hr />
+<h3>MoEless: Efficient MoE LLM Serving via Serverless Computing</h3>
+<ul>
+<li><strong>作者</strong>：Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06350">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06350">PDF</a></li>
+<li><strong>来源</strong>：[arXiv]</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/2026-03/MoEless_Serverless-MoE-Serving</li>
+<li><strong>评分</strong>：11.5/10</li>
+</ul>
+<p><strong>一句话总结</strong>：moeless 把无服务器专家扩展引入 moe 推理服务，在真实工作负载上同时显著降低延迟与成本。</p>
+<p><strong>核心贡献/观点</strong>：
+- 针对 moe 专家负载不均衡导致的 straggler 问题提出 serverless serving 框架
+- 用轻量 layer-aware predictor 预测专家负载并提前识别热点
+- 通过 expert scaling + placement 提升 locality、GPU 利用率与负载均衡</p>
+<p><strong>关键结果</strong>：在 8-GPU testbed 上，相比现有方案推理延迟降低 43%，推理成本降低 84%。</p>
+<hr />
+<h3>NOBLE: Accelerating Transformers with Nonlinear Low-Rank Branches</h3>
+<ul>
+<li><strong>作者</strong>：Ethan Smith</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06492">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06492">PDF</a></li>
+<li><strong>来源</strong>：[arXiv]</li>
+<li><strong>评分</strong>：10.3/10</li>
+</ul>
+<p><strong>一句话总结</strong>：NOBLE 通过在线性层中加入永久性的非线性低秩分支，提高 Transformer 从头预训练效率。</p>
+<p><strong>核心贡献/观点</strong>：
+- 不同于 LoRA，NOBLE 不是微调 adapter，而是 pretraining-time 的结构增强
+- 提出 nonlinear low-rank branch，并发现 CosNet 非线性效果最好
+- 在 llm、BERT、ViT、VQGAN 上普遍提升训练效率</p>
+<p><strong>关键结果</strong>：最高可实现 1.47x 达到基线 loss 的 step speedup，净 wallclock speedup 最高 1.22x。</p>
+<hr />
+<h3>Contrastive-to-Self-Supervised: A Two-Stage Framework for Script Similarity Learning</h3>
+<ul>
+<li><strong>作者</strong>：Claire Roman, Philippe Meyer</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06180">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06180">PDF</a></li>
+<li><strong>来源</strong>：[arXiv]</li>
+<li><strong>评分</strong>：9.5/10</li>
+</ul>
+<p><strong>一句话总结</strong>：该工作提出两阶段框架，在缺乏可靠历史标签时学习跨文字系统的相似性表示。</p>
+<p><strong>核心贡献/观点</strong>：
+- 先在 invented alphabets 上做 supervised contrastive learning 获得 teacher encoder
+- 再通过 teacher-student distillation 将知识迁移到真实历史文字系统
+- 兼顾 hard boundaries 与 soft similarities，适合争议性历史关系建模</p>
+<p><strong>关键结果</strong>：在 few-shot glyph recognition 和 script clustering 上取得有效结果。</p>
+<hr />
+<h3>FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling</h3>
+<ul>
+<li><strong>作者</strong>：Qihang Fan, Huaibo Huang, Zhiying Wu, Juqiu Wang, Bingning Wang, Ran He</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06199">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06199">PDF</a></li>
+<li><strong>来源</strong>：[arXiv]</li>
+<li><strong>评分</strong>：9.1/10</li>
+</ul>
+<p><strong>一句话总结</strong>：FlashPrefill 用即时模式发现与动态阈值化，大幅加速长上下文 prefill。</p>
+<p><strong>核心贡献/观点</strong>：
+- 同时发现 vertical、slash 与 block-sparse attention 模式
+- 避免排序与累积开销，用动态阈值去掉长尾注意力分布
+- 兼顾超长上下文和短上下文场景的实际效率</p>
+<p><strong>关键结果</strong>：256K 序列上最高 27.78x 加速，在 4K 上仍保持 1.71x speedup。</p>
+<hr />
+<h3>TaPD: Temporal-adaptive Progressive Distillation for Observation-Adaptive Trajectory Forecasting in Autonomous Driving</h3>
+<ul>
+<li><strong>作者</strong>：Mingyu Fan, Yi Liu, Hao Zhou, Deheng Qian, Mohammad Haziq Khan, Matthias Raetsch</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06231">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06231">PDF</a></li>
+<li><strong>来源</strong>：[arXiv]</li>
+<li><strong>评分</strong>：8.7/10</li>
+</ul>
+<p><strong>一句话总结</strong>：TaPD 面向自动驾驶中的可变观测长度轨迹预测，用渐进蒸馏和历史回填增强短观测场景。</p>
+<p><strong>核心贡献/观点</strong>：
+- 提出 Observation-Adaptive Forecaster 处理不同历史长度输入
+- 用 progressive knowledge distillation 把长历史教师知识迁移给短历史学生
+- 再通过 Temporal Backfilling Module 重建缺失历史以增强极短观测场景</p>
+<p><strong>关键结果</strong>：在 Argoverse 1/2 上对不同 observation lengths 都优于强基线。</p>
+<hr />
+<h3>Stem: Rethinking Causal Information Flow in Sparse Attention</h3>
+<ul>
+<li><strong>作者</strong>：Lin Niu, Xin Luo, Linchuan Xie, Yifu Sun, Guanghua Yu, Jianchen Zhu, S Kevin Zhou</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06274">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06274">PDF</a></li>
+<li><strong>来源</strong>：[arXiv]</li>
+<li><strong>评分</strong>：8.5/10</li>
+</ul>
+<p><strong>一句话总结</strong>：Stem 从因果信息流角度重新设计 sparse attention，减少 prefill 计算同时保持精度。</p>
+<p><strong>核心贡献/观点</strong>：
+- 指出早期 token 在 causal attention 中承担递归依赖，不能统一 top-k 截断
+- 提出 Token Position-Decay，根据位置采用不同 top-k 策略
+- 提出 Output-Aware Metric 优先保留高影响 token</p>
+<p><strong>关键结果</strong>：实验显示在降低计算与 prefill latency 的同时取得更高精度。</p>
+<hr /></div>
+        <div class="papers-grid"><div class="paper-card" onclick="window.location.href='大模型/2026-03/MoEless_Serverless-MoE-Serving.html'">
+    <div class="card-top">
+        <div class="card-title">MoEless: Efficient MoE LLM Serving via Serverless Computing</div>
+        <span class="chip chip-amber">11.5/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06350" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06350" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">[[20_Research/Papers/大模型/2026-03/MoEless_Serverless-MoE-Serving.md|moeless]] 把无服务器专家扩展引入 [[20_Research/Papers/大模型/2026-03/MoEless_Serverless-MoE-Serving.md|moe]] 推理服务，在真实工作负载上同时显著降低延迟与成本。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>针对 moe 专家负载不均衡导致的 straggler 问题提出 serverless serving 框架</li>
+<li>用轻量 layer-aware predictor 预测专家负载并提前识别热点</li>
+<li>通过 expert scaling + placement 提升 locality、GPU 利用率与负载均衡</li>
+</ul>
+<p><strong>关键结果</strong>：在 8-GPU testbed 上，相比现有方案推理延迟降低 43%，推理成本降低 84%。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">NOBLE: Accelerating Transformers with Nonlinear Low-Rank Branches</div>
+        <span class="chip chip-amber">10.3/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Ethan Smith</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06492" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06492" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">NOBLE 通过在线性层中加入永久性的非线性低秩分支，提高 Transformer 从头预训练效率。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>不同于 LoRA，NOBLE 不是微调 adapter，而是 pretraining-time 的结构增强</li>
+<li>提出 nonlinear low-rank branch，并发现 CosNet 非线性效果最好</li>
+<li>在 llm、BERT、ViT、VQGAN 上普遍提升训练效率</li>
+</ul>
+<p><strong>关键结果</strong>：最高可实现 1.47x 达到基线 loss 的 step speedup，净 wallclock speedup 最高 1.22x。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">Contrastive-to-Self-Supervised: A Two-Stage Framework for Script Similarity Learning</div>
+        <span class="chip chip-amber">9.5/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Claire Roman, Philippe Meyer</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06180" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06180" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">该工作提出两阶段框架，在缺乏可靠历史标签时学习跨文字系统的相似性表示。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>先在 invented alphabets 上做 supervised contrastive learning 获得 teacher encoder</li>
+<li>再通过 teacher-student distillation 将知识迁移到真实历史文字系统</li>
+<li>兼顾 hard boundaries 与 soft similarities，适合争议性历史关系建模</li>
+</ul>
+<p><strong>关键结果</strong>：在 few-shot glyph recognition 和 script clustering 上取得有效结果。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling</div>
+        <span class="chip chip-amber">9.1/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Qihang Fan, Huaibo Huang, Zhiying Wu, Juqiu Wang, Bingning Wang, Ran He</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06199" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06199" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">FlashPrefill 用即时模式发现与动态阈值化，大幅加速长上下文 prefill。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>同时发现 vertical、slash 与 block-sparse attention 模式</li>
+<li>避免排序与累积开销，用动态阈值去掉长尾注意力分布</li>
+<li>兼顾超长上下文和短上下文场景的实际效率</li>
+</ul>
+<p><strong>关键结果</strong>：256K 序列上最高 27.78x 加速，在 4K 上仍保持 1.71x speedup。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">TaPD: Temporal-adaptive Progressive Distillation for Observation-Adaptive Trajectory Forecasting in Autonomous Driving</div>
+        <span class="chip chip-amber">8.7/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Mingyu Fan, Yi Liu, Hao Zhou, Deheng Qian, Mohammad Haziq Khan, Matthias Raetsch</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06231" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06231" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">TaPD 面向自动驾驶中的可变观测长度轨迹预测，用渐进蒸馏和历史回填增强短观测场景。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>提出 Observation-Adaptive Forecaster 处理不同历史长度输入</li>
+<li>用 progressive knowledge distillation 把长历史教师知识迁移给短历史学生</li>
+<li>再通过 Temporal Backfilling Module 重建缺失历史以增强极短观测场景</li>
+</ul>
+<p><strong>关键结果</strong>：在 Argoverse 1/2 上对不同 observation lengths 都优于强基线。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">Stem: Rethinking Causal Information Flow in Sparse Attention</div>
+        <span class="chip chip-amber">8.5/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Lin Niu, Xin Luo, Linchuan Xie, Yifu Sun, Guanghua Yu, Jianchen Zhu, S Kevin Zhou</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06274" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06274" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">Stem 从因果信息流角度重新设计 sparse attention，减少 prefill 计算同时保持精度。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>指出早期 token 在 causal attention 中承担递归依赖，不能统一 top-k 截断</li>
+<li>提出 Token Position-Decay，根据位置采用不同 top-k 策略</li>
+<li>提出 Output-Aware Metric 优先保留高影响 token</li>
+</ul>
+<p><strong>关键结果</strong>：实验显示在降低计算与 prefill latency 的同时取得更高精度。</p>
+<hr /></div>
+</div></div>
+    </section>
 </main>
 <div class="date-modal" id="dateModal" onclick="closeDateModal(event)">
     <div class="date-dialog" onclick="event.stopPropagation()">
@@ -707,7 +916,7 @@ a:hover { text-decoration: underline; }
     </div>
 </div>
 <script>
-const availableDates = ["2026-03-09", "2026-03-08"];
+const availableDates = ["2026-03-09", "2026-03-08", "2026-03-06"];
 let currentDate = 'all';
 
 function filterDate(date) {
