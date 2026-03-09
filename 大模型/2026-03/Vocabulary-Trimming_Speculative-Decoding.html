@@ -4,100 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</title>
-    <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
-        background: #f9f8ff;
-        color: #1a1a2e;
-        line-height: 1.6;
-        min-height: 100vh;
-    }
-    .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px 60px;
-    }
-    a { color: #6c5ce7; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .tag-link {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #ede9fe;
-        color: #6c5ce7;
-        font-size: 0.78em;
-        font-weight: 600;
-        transition: background 0.15s;
-    }
-    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
-    .score-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #fef3c7;
-        color: #d97706;
-        font-size: 0.78em;
-        font-weight: 700;
-    }
-    .authors { color: #6b7280; font-size: 0.88em; }
+    
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+    background: #f7f7fb;
+    color: #1a1a2e;
+    line-height: 1.65;
+    min-height: 100vh;
+}
+a { color: #5c4fcf; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 11px; border-radius: 999px;
+    font-size: .75em; font-weight: 600; line-height: 1.4;
+}
+.chip-purple { background: #ede9fe; color: #5c4fcf; }
+.chip-amber  { background: #fef3c7; color: #b45309; }
+.chip-gray   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+.chip-link:hover { background: #ddd6fe; text-decoration: none; }
 </style>
-    <style>
-        .detail-section { margin-bottom: 40px; }
-        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
-        .section-body { color: #374151; line-height: 1.8; }
-        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
-        .abstract-en { margin-top: 8px; }
-        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
-        .back-nav { margin-bottom: 32px; }
-        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
-        .back-link:hover { color: #5a4bd1; }
-        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
-        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
-        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
-        .section-body ul, .section-body ol { padding-left: 1.5em; }
-        .section-body li { margin-bottom: 4px; }
-        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
-        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
-        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
-        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
-        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
-        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
-        .callout-success { border-color: #10b981; background: #ecfdf5; }
-        .callout-title { font-weight: 700; margin-bottom: 6px; }
-    </style>
+
+    
+<style>
+.container { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+.back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5c4fcf; font-size: .88em; font-weight: 500;
+    margin-bottom: 28px; cursor: pointer;
+}
+.back-btn:hover { color: #4338ca; }
+.paper-title-h1 {
+    font-size: 1.65em; font-weight: 800; color: #1a1a2e;
+    line-height: 1.3; margin-bottom: 14px;
+}
+.meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px; }
+.authors-txt { color: #6b7280; font-size: .88em; }
+
+/* sections */
+.section { margin-bottom: 36px; }
+.section-title {
+    font-size: 1em; font-weight: 700; color: #5c4fcf;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+    content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+.section-body { color: #374151; font-size: .95em; line-height: 1.8; }
+.section-body ul, .section-body ol { padding-left: 1.4em; }
+.section-body li { margin-bottom: 5px; }
+.section-body strong { color: #1a1a2e; }
+.section-body code {
+    background: #f3f0ff; color: #5c4fcf;
+    padding: 2px 6px; border-radius: 4px; font-size: .88em;
+}
+.section-body pre {
+    background: #f8f9fa; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0;
+}
+.section-body blockquote {
+    border-left: 3px solid #d1d5db; margin: 12px 0;
+    padding-left: 14px; color: #6b7280;
+}
+.section-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+.section-body th, .section-body td {
+    border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left;
+}
+.section-body th { background: #f9f8ff; font-weight: 600; }
+
+/* abstract */
+.abstract-zh {
+    background: #f9f8ff; border-left: 3px solid #5c4fcf;
+    border-radius: 0 8px 8px 0; padding: 16px 20px;
+    color: #374151; line-height: 1.9; font-size: .95em;
+    margin-bottom: 12px;
+}
+.abstract-en {
+    color: #6b7280; font-size: .88em; line-height: 1.75;
+}
+.en-label {
+    font-size: .72em; font-weight: 700; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 6px;
+}
+
+/* callout */
+.callout {
+    padding: 12px 16px; border-radius: 8px;
+    margin: 14px 0; border-left: 3px solid;
+}
+.callout-tip     { border-color: #5c4fcf; background: #f3f0ff; }
+.callout-success { border-color: #10b981; background: #ecfdf5; }
+.callout-warning { border-color: #f59e0b; background: #fffbeb; }
+.callout-info    { border-color: #3b82f6; background: #eff6ff; }
+.callout-icon { margin-right: 4px; }
+.callout-body { margin-top: 6px; font-size: .92em; color: #374151; }
+</style>
+
 </head>
 <body>
-    <div class="container" style="max-width: 800px;">
-        <nav class="back-nav">
-            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
-        </nav>
-        <div class="paper-header-detail">
-            <h1 class="paper-title-detail">Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</h1>
-            <div class="paper-meta-detail">
-                <span class="authors">Ofir Ben Shoham</span>
-                <span class="score-badge large">9.2/10</span>
-                
-        <a href="https://arxiv.org/abs/2603.05210" target="_blank" class="tag-link">arXiv</a>
-        <a href="https://arxiv.org/pdf/2603.05210" target="_blank" class="tag-link">PDF</a>
-            </div>
+<div class="container">
+    <a class="back-btn" href="../../index.html">← 返回每日推荐</a>
+    <h1 class="paper-title-h1">Balancing Coverage and Draft Latency in Vocabulary Trimming for Faster Speculative Decoding</h1>
+    <div class="meta-row">
+        <span class="authors-txt">Ofir Ben Shoham</span>
+        <span class="chip chip-amber">9.2/10</span>
+        
+        <a class="chip chip-purple chip-link" href="https://arxiv.org/abs/2603.05210" target="_blank">arXiv ↗</a>
+        <a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05210" target="_blank">PDF ↗</a>
+    </div>
+    
+        <div class="section">
+            <div class="section-title">📄 摘要</div>
+            <div class="abstract-zh">投机解码通过使用轻量级草稿模型提出候选令牌，然后由更大的目标模型并行验证，从而加速大语言模型的推理。先前研究表明，草稿模型通常主导投机解码的延迟，因为它顺序生成令牌，并且随着词汇表大小的增长，语言建模头产生高成本。这暴露了草稿模型设计中的一个基本权衡：更大的词汇表提高了令牌覆盖率和与目标模型的一致性，但会产生更高的草稿延迟，而较小的词汇表降低了延迟，但有错过准确草稿生成所需令牌的风险。我们通过草稿模型的词汇裁剪来解决这一权衡，其动机是观察到领域特定的工作负载只使用完整词汇表的一小部分。我们将草稿词汇选择建模为一个平衡令牌覆盖率和草稿延迟的约束优化问题。覆盖率是根据训练数据中的助手响应计算的，而延迟是使用架构感知的 FLOPs 估算的，它捕获了语言建模头作为词汇表大小函数的成本。我们使用 Tree-structured Parzen Estimator 优化效用函数，在最小覆盖率约束下高效探索覆盖率-延迟帕累托前沿。实验表明，在将草稿词汇减少高达 97% 的同时保持高覆盖率，改善了投机解码的吞吐量。在领域特定任务上，我们实现了高达 16% 的延迟降低和 20% 的吞吐量提升，在各种分布外任务上实现了高达 6.7% 的吞吐量增益。</div>
+            <div class="abstract-en"><div class="en-label">原文</div><p>Speculative decoding accelerates inference for Large Language Models by using a lightweight draft model to propose candidate tokens that are verified in parallel by a larger target model. Prior work shows that the draft model often dominates speculative decoding latency, since it generates tokens sequentially and incurs high cost from its language modeling head as vocabulary size grows. This exposes a fundamental trade-off in draft model design: larger vocabularies improve token coverage and agreement with the target model, but incur higher draft latency, while smaller vocabularies reduce latency at the risk of missing tokens required for accurate draft generation. We address this trade-off through vocabulary trimming for draft models, motivated by the observation that domain-specific workloads use only a small fraction of the full vocabulary. We cast draft vocabulary selection as a constrained optimization problem that balances token coverage and draft latency. Coverage is computed over assistant responses in the training data, while latency is estimated using architecture-aware FLOPs that capture the cost of the language modeling head as a function of vocabulary size. We optimize a utility function with a Tree-structured Parzen Estimator to efficiently explore the coverage-latency Pareto frontier under a minimum coverage constraint. Experiments show improved speculative decoding throughput while reducing draft vocabularies by up to 97% with high coverage. On domain-specific tasks, we achieve up to 16% latency reduction and 20% throughput improvement, and up to 6.7% throughput gains on diverse out-of-distribution tasks.</p></div>
         </div>
-        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>投机解码通过使用轻量级草稿模型提出候选令牌，然后由更大的目标模型并行验证，从而加速大语言模型的推理。先前研究表明，草稿模型通常主导投机解码的延迟，因为它顺序生成令牌，并且随着词汇表大小的增长，语言建模头产生高成本。这暴露了草稿模型设计中的一个基本权衡：更大的词汇表提高了令牌覆盖率和与目标模型的一致性，但会产生更高的草稿延迟，而较小的词汇表降低了延迟，但有错过准确草稿生成所需令牌的风险。我们通过草稿模型的词汇裁剪来解决这一权衡，其动机是观察到领域特定的工作负载只使用完整词汇表的一小部分。我们将草稿词汇选择建模为一个平衡令牌覆盖率和草稿延迟的约束优化问题。覆盖率是根据训练数据中的助手响应计算的，而延迟是使用架构感知的 FLOPs 估算的，它捕获了语言建模头作为词汇表大小函数的成本。我们使用 Tree-structured Parzen Estimator 优化效用函数，在最小覆盖率约束下高效探索覆盖率-延迟帕累托前沿。实验表明，在将草稿词汇减少高达 97% 的同时保持高覆盖率，改善了投机解码的吞吐量。在领域特定任务上，我们实现了高达 16% 的延迟降低和 20% 的吞吐量提升，在各种分布外任务上实现了高达 6.7% 的吞吐量增益。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">Speculative decoding accelerates inference for Large Language Models by using a lightweight draft model to propose candidate tokens that are verified in parallel by a larger target model. Prior work shows that the draft model often dominates speculative decoding latency, since it generates tokens sequentially and incurs high cost from its language modeling head as vocabulary size grows. This exposes a fundamental trade-off in draft model design: larger vocabularies improve token coverage and agreement with the target model, but incur higher draft latency, while smaller vocabularies reduce latency at the risk of missing tokens required for accurate draft generation. We address this trade-off through vocabulary trimming for draft models, motivated by the observation that domain-specific workloads use only a small fraction of the full vocabulary. We cast draft vocabulary selection as a constrained optimization problem that balances token coverage and draft latency. Coverage is computed over assistant responses in the training data, while latency is estimated using architecture-aware FLOPs that capture the cost of the language modeling head as a function of vocabulary size. We optimize a utility function with a Tree-structured Parzen Estimator to efficiently explore the coverage-latency Pareto frontier under a minimum coverage constraint. Experiments show improved speculative decoding throughput while reducing draft vocabularies by up to 97% with high coverage. On domain-specific tasks, we achieve up to 16% latency reduction and 20% throughput improvement, and up to 6.7% throughput gains on diverse out-of-distribution tasks.</p></div></section>
-        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
-<li><strong>研究背景</strong>：投机解码的瓶颈在于草稿模型的语言建模头</li>
-<li><strong>研究动机</strong>：领域特定工作负载只使用完整词汇表的一小部分</li>
-<li><strong>核心方法</strong>：将草稿词汇选择建模为约束优化问题</li>
-<li><strong>主要结果</strong>：草稿词汇减少 97%，吞吐量提升 20%</li>
-<li><strong>研究意义</strong>：为投机解码的优化提供了新方向</li>
-</ul></div></section>
-        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
+    
+        <div class="section">
+            <div class="section-title">🔍 研究问题与背景</div>
+            <div class="section-body"><h3>领域现状</h3>
 <p>投机解码是 LLM 推理加速的重要技术：
 - <strong>基本原理</strong>：小模型快速生成候选，大模型并行验证
 - <strong>性能瓶颈</strong>：草稿模型的顺序生成和 LM head 计算
 - <strong>现有优化</strong>：草稿模型架构设计、训练策略</p>
-<h3 id="_2">现有方法的局限性</h3>
+<h3>现有方法的局限性</h3>
 <ol>
 <li><strong>词汇表困境</strong>：</li>
 <li>完整词汇表：覆盖率好但延迟高</li>
@@ -112,18 +146,22 @@
 <li>通用词汇表包含大量无关令牌</li>
 <li>草稿模型不需要处理所有可能令牌</li>
 </ol>
-<h3 id="_3">研究动机</h3>
+<h3>研究动机</h3>
 <p>核心洞察：<strong>不同领域/任务的词汇分布差异巨大</strong>
 - 代码生成：主要使用编程关键词和标识符
 - 数学推理：主要使用数学符号和数字
-- 对话系统：主要使用常用词汇</p></div></section>
-        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><h3 id="_1">核心思想</h3>
+- 对话系统：主要使用常用词汇</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">💡 核心创新点</div>
+            <div class="section-body"><h3>核心思想</h3>
 <p>将草稿词汇选择建模为<strong>约束优化问题</strong>：
 - <strong>目标函数</strong>：最大化覆盖率，最小化延迟
 - <strong>约束条件</strong>：最小覆盖率阈值
 - <strong>优化算法</strong>：Tree-structured Parzen Estimator (TPE)</p>
-<h3 id="_2">方法框架</h3>
-<h4 id="_3">整体架构</h4>
+<h3>方法框架</h3>
+<h4>整体架构</h4>
 <div class="highlight"><pre><span></span><code>训练数据分析
       ↓
 计算令牌频率分布
@@ -145,7 +183,7 @@
 <blockquote>
 <p>图1：覆盖率-延迟的帕累托前沿，展示不同词汇大小的权衡</p>
 </blockquote>
-<h4 id="_4">各模块详细说明</h4>
+<h4>各模块详细说明</h4>
 <p><strong>模块1：令牌覆盖率计算</strong>
 - <strong>功能</strong>：分析训练数据中的令牌使用频率
 - <strong>输入</strong>：训练数据（助手响应）
@@ -180,12 +218,16 @@
   - Tree-structured Parzen Estimator
   - 帕累托优化
   - 约束满足</p>
-<h3 id="_5">方法架构图</h3>
+<h3>方法架构图</h3>
 <blockquote>
 <p>图2：效用分数随词汇大小的变化曲线</p>
 <p>图3：最优词汇大小与训练数据大小的关系</p>
-</blockquote></div></section>
-        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><h4 id="_1">主实验结果（领域特定任务）</h4>
+</blockquote></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">📊 实验结果</div>
+            <div class="section-body"><h4>主实验结果（领域特定任务）</h4>
 <table>
 <thead>
 <tr>
@@ -230,7 +272,7 @@
 <blockquote>
 <p>注：<strong>粗体</strong>表示最优结果</p>
 </blockquote>
-<h4 id="_2">主实验结果（分布外任务）</h4>
+<h4>主实验结果（分布外任务）</h4>
 <table>
 <thead>
 <tr>
@@ -261,14 +303,18 @@
 </tr>
 </tbody>
 </table>
-<h4 id="_3">结果分析</h4>
+<h4>结果分析</h4>
 <ol>
 <li><strong>领域内任务</strong>：显著的性能提升（16-20%）</li>
 <li><strong>分布外任务</strong>：仍有可观的增益（6.7%）</li>
 <li><strong>词汇缩减</strong>：可减少高达 97% 的词汇</li>
 <li><strong>泛化能力</strong>：裁剪后的词汇表在不同任务上仍有效</li>
-</ol></div></section>
-        <section class="detail-section"><h2 class="section-title">未来展望</h2><div class="section-body"><h3 id="_1">作者建议的未来工作</h3>
+</ol></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🚀 未来展望</div>
+            <div class="section-body"><h3>作者建议的未来工作</h3>
 <ol>
 <li><strong>建议1</strong>：多领域自适应</li>
 <li>可行性：中</li>
@@ -283,7 +329,7 @@
 <li>价值：进一步提升推理效率</li>
 <li>难度：需要联合优化多个组件</li>
 </ol>
-<h3 id="_2">基于分析的未来方向</h3>
+<h3>基于分析的未来方向</h3>
 <ol>
 <li><strong>方向1</strong>：在线词汇自适应</li>
 <li>动机：推理时动态调整词汇</li>
@@ -308,9 +354,13 @@
 <li>可能的方法：学习通用核心词汇</li>
 <li>预期成果：减少优化数据需求</li>
 <li>挑战：识别真正共享的令牌</li>
-</ol></div></section>
-        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
-<h4 id="_2">理论贡献</h4>
+</ol></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🧠 深度分析</div>
+            <div class="section-body"><h3>研究价值评估</h3>
+<h4>理论贡献</h4>
 <ul>
 <li><strong>贡献1</strong>：投机解码优化新范式</li>
 <li>创新点：将词汇选择建模为优化问题</li>
@@ -325,7 +375,7 @@
 <li>学术价值：推动领域特定推理优化研究</li>
 <li>影响范围：模型部署、边缘计算</li>
 </ul>
-<h4 id="_3">实际应用价值</h4>
+<h4>实际应用价值</h4>
 <ul>
 <li><strong>应用场景1</strong>：代码生成服务</li>
 <li>适用性：代码助手、IDE 集成</li>
@@ -348,37 +398,37 @@
 <li>优势：降低响应延迟</li>
 <li>潜在影响：提升用户体验</li>
 </ul>
-<h4 id="_4">领域影响</h4>
+<h4>领域影响</h4>
 <ul>
 <li><strong>短期影响</strong>：为现有投机解码系统提供简单优化方案</li>
 <li><strong>中期影响</strong>：推动领域自适应推理优化研究</li>
 <li><strong>长期影响</strong>：可能成为标准优化技术</li>
 <li><strong>潜在变革</strong>：改变"一刀切"的词汇表设计</li>
 </ul>
-<h3 id="_5">方法优势详解</h3>
-<h4 id="1">优势1：大幅减少词汇表</h4>
+<h3>方法优势详解</h3>
+<h4>优势1：大幅减少词汇表</h4>
 <ul>
 <li><strong>描述</strong>：在领域特定任务上减少 97% 词汇</li>
 <li><strong>技术基础</strong>：领域词汇分布分析</li>
 <li><strong>实验验证</strong>：多个数据集验证有效性</li>
 <li><strong>对比分析</strong>：相比完整词汇表显著降低计算</li>
 </ul>
-<h4 id="2">优势2：自动化优化流程</h4>
+<h4>优势2：自动化优化流程</h4>
 <ul>
 <li><strong>描述</strong>：使用 TPE 自动找到最优词汇</li>
 <li><strong>技术基础</strong>：贝叶斯优化理论</li>
 <li><strong>实验验证</strong>：优于启发式方法</li>
 <li><strong>对比分析</strong>：无需手工调参</li>
 </ul>
-<h4 id="3">优势3：良好的泛化能力</h4>
+<h4>优势3：良好的泛化能力</h4>
 <ul>
 <li><strong>描述</strong>：在分布外任务上仍有效</li>
 <li><strong>技术基础</strong>：保留高频通用令牌</li>
 <li><strong>实验验证</strong>：6.7% 跨域性能提升</li>
 <li><strong>对比分析</strong>：优于领域过度特化的方法</li>
 </ul>
-<h3 id="_6">局限性分析</h3>
-<h4 id="1_1">局限1：需要训练数据</h4>
+<h3>局限性分析</h3>
+<h4>局限1：需要训练数据</h4>
 <ul>
 <li><strong>描述</strong>：需要收集领域特定的训练数据</li>
 <li><strong>表现</strong>：在完全新领域需要重新优化</li>
@@ -386,7 +436,7 @@
 <li><strong>影响</strong>：增加部署前的准备步骤</li>
 <li><strong>可能的解决方案</strong>：使用通用预训练数据近似</li>
 </ul>
-<h4 id="2_1">局限2：动态领域适应性</h4>
+<h4>局限2：动态领域适应性</h4>
 <ul>
 <li><strong>描述</strong>：对于多领域混合的场景可能效果下降</li>
 <li><strong>表现</strong>：需要为每个领域训练不同的草稿模型</li>
@@ -394,7 +444,7 @@
 <li><strong>影响</strong>：增加系统复杂度</li>
 <li><strong>可能的解决方案</strong>：多词汇表动态切换</li>
 </ul>
-<h4 id="3-">局限3：覆盖率-延迟权衡</h4>
+<h4>局限3：覆盖率-延迟权衡</h4>
 <ul>
 <li><strong>描述</strong>：在某些场景下可能需要更高的覆盖率</li>
 <li><strong>表现</strong>：极端低延迟可能影响接受率</li>
@@ -402,8 +452,8 @@
 <li><strong>影响</strong>：需要根据应用场景调参</li>
 <li><strong>可能的解决方案</strong>：动态调整覆盖率约束</li>
 </ul>
-<h3 id="_7">场景分析</h3>
-<h4 id="_8">适用场景</h4>
+<h3>场景分析</h3>
+<h4>适用场景</h4>
 <ul>
 <li><strong>场景1</strong>：单一领域应用</li>
 <li>适用原因：领域词汇分布稳定</li>
@@ -426,7 +476,7 @@
 <li>预期效果：减少服务器数量</li>
 <li>注意事项：需验证服务稳定性</li>
 </ul>
-<h4 id="_9">不适用场景</h4>
+<h4>不适用场景</h4>
 <ul>
 <li><strong>场景1</strong>：完全通用任务</li>
 <li>不适用原因：需要处理所有可能令牌</li>
@@ -438,7 +488,8 @@
 </li>
 <li>不适用原因：词汇分布不稳定</li>
 <li>替代方案：定期重新优化或使用通用模型</li>
-</ul></div></section>
-    </div>
+</ul></div>
+        </div>
+</div>
 </body>
 </html>

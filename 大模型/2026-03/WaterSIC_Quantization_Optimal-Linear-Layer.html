@@ -4,105 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WaterSIC: Information-Theoretically (Near) Optimal Linear Layer Quantization</title>
-    <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
-        background: #f9f8ff;
-        color: #1a1a2e;
-        line-height: 1.6;
-        min-height: 100vh;
-    }
-    .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px 60px;
-    }
-    a { color: #6c5ce7; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .tag-link {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #ede9fe;
-        color: #6c5ce7;
-        font-size: 0.78em;
-        font-weight: 600;
-        transition: background 0.15s;
-    }
-    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
-    .score-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #fef3c7;
-        color: #d97706;
-        font-size: 0.78em;
-        font-weight: 700;
-    }
-    .authors { color: #6b7280; font-size: 0.88em; }
+    
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+    background: #f7f7fb;
+    color: #1a1a2e;
+    line-height: 1.65;
+    min-height: 100vh;
+}
+a { color: #5c4fcf; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 11px; border-radius: 999px;
+    font-size: .75em; font-weight: 600; line-height: 1.4;
+}
+.chip-purple { background: #ede9fe; color: #5c4fcf; }
+.chip-amber  { background: #fef3c7; color: #b45309; }
+.chip-gray   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+.chip-link:hover { background: #ddd6fe; text-decoration: none; }
 </style>
-    <style>
-        .detail-section { margin-bottom: 40px; }
-        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
-        .section-body { color: #374151; line-height: 1.8; }
-        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
-        .abstract-en { margin-top: 8px; }
-        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
-        .back-nav { margin-bottom: 32px; }
-        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
-        .back-link:hover { color: #5a4bd1; }
-        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
-        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
-        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
-        .section-body ul, .section-body ol { padding-left: 1.5em; }
-        .section-body li { margin-bottom: 4px; }
-        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
-        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
-        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
-        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
-        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
-        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
-        .callout-success { border-color: #10b981; background: #ecfdf5; }
-        .callout-title { font-weight: 700; margin-bottom: 6px; }
-    </style>
+
+    
+<style>
+.container { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+.back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5c4fcf; font-size: .88em; font-weight: 500;
+    margin-bottom: 28px; cursor: pointer;
+}
+.back-btn:hover { color: #4338ca; }
+.paper-title-h1 {
+    font-size: 1.65em; font-weight: 800; color: #1a1a2e;
+    line-height: 1.3; margin-bottom: 14px;
+}
+.meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px; }
+.authors-txt { color: #6b7280; font-size: .88em; }
+
+/* sections */
+.section { margin-bottom: 36px; }
+.section-title {
+    font-size: 1em; font-weight: 700; color: #5c4fcf;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+    content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+.section-body { color: #374151; font-size: .95em; line-height: 1.8; }
+.section-body ul, .section-body ol { padding-left: 1.4em; }
+.section-body li { margin-bottom: 5px; }
+.section-body strong { color: #1a1a2e; }
+.section-body code {
+    background: #f3f0ff; color: #5c4fcf;
+    padding: 2px 6px; border-radius: 4px; font-size: .88em;
+}
+.section-body pre {
+    background: #f8f9fa; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0;
+}
+.section-body blockquote {
+    border-left: 3px solid #d1d5db; margin: 12px 0;
+    padding-left: 14px; color: #6b7280;
+}
+.section-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+.section-body th, .section-body td {
+    border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left;
+}
+.section-body th { background: #f9f8ff; font-weight: 600; }
+
+/* abstract */
+.abstract-zh {
+    background: #f9f8ff; border-left: 3px solid #5c4fcf;
+    border-radius: 0 8px 8px 0; padding: 16px 20px;
+    color: #374151; line-height: 1.9; font-size: .95em;
+    margin-bottom: 12px;
+}
+.abstract-en {
+    color: #6b7280; font-size: .88em; line-height: 1.75;
+}
+.en-label {
+    font-size: .72em; font-weight: 700; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 6px;
+}
+
+/* callout */
+.callout {
+    padding: 12px 16px; border-radius: 8px;
+    margin: 14px 0; border-left: 3px solid;
+}
+.callout-tip     { border-color: #5c4fcf; background: #f3f0ff; }
+.callout-success { border-color: #10b981; background: #ecfdf5; }
+.callout-warning { border-color: #f59e0b; background: #fffbeb; }
+.callout-info    { border-color: #3b82f6; background: #eff6ff; }
+.callout-icon { margin-right: 4px; }
+.callout-body { margin-top: 6px; font-size: .92em; color: #374151; }
+</style>
+
 </head>
 <body>
-    <div class="container" style="max-width: 800px;">
-        <nav class="back-nav">
-            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
-        </nav>
-        <div class="paper-header-detail">
-            <h1 class="paper-title-detail">WaterSIC: Information-Theoretically (Near) Optimal Linear Layer Quantization</h1>
-            <div class="paper-meta-detail">
-                <span class="authors">Egor Lifar, Semyon Savkin, Or Ordentlich, Yury Polyanskiy</span>
-                <span class="score-badge large">8.5/10</span>
-                
-        <a href="https://arxiv.org/abs/2603.04956" target="_blank" class="tag-link">arXiv</a>
-        <a href="https://arxiv.org/pdf/2603.04956" target="_blank" class="tag-link">PDF</a>
-            </div>
+<div class="container">
+    <a class="back-btn" href="../../index.html">← 返回每日推荐</a>
+    <h1 class="paper-title-h1">WaterSIC: Information-Theoretically (Near) Optimal Linear Layer Quantization</h1>
+    <div class="meta-row">
+        <span class="authors-txt">Egor Lifar, Semyon Savkin, Or Ordentlich, Yury Polyanskiy</span>
+        <span class="chip chip-amber">8.5/10</span>
+        
+        <a class="chip chip-purple chip-link" href="https://arxiv.org/abs/2603.04956" target="_blank">arXiv ↗</a>
+        <a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.04956" target="_blank">PDF ↗</a>
+    </div>
+    
+        <div class="section">
+            <div class="section-title">📄 摘要</div>
+            <div class="abstract-zh">本文考虑将给定的密集线性层转换为低精度的问题。从信息论角度分析了压缩长度与输出差异之间的权衡。研究表明，流行的 GPTQ 算法与信息论极限之间可能存在任意大的差距。为了缓解这个问题，提出了一种名为 "WaterSIC" 的新算法，并被证明在所有可能的输入激活协方差矩阵上，与信息论极限的速率差距在 0.255 比特以内。此外，该算法通过残差补偿（RC）模块进行了扩展，显著提高了实际性能，在各种模型上达到与 GPTQ 相当或更好的效果。在 LLaMA-3 1B/8B、LLaMA-2 7B 和 Qwen-3 8B 上的实验表明，WaterSIC-RC 在 3-4 比特下实现了与 GPTQ 相当或更好的困惑度，同时接近信息论最优性。</div>
+            <div class="abstract-en"><div class="en-label">原文</div><p>This paper considers the problem of converting a given dense linear layer to low precision. The tradeoff between compressed length and output discrepancy is analyzed information theoretically (IT). It is shown that a popular GPTQ algorithm may have an arbitrarily large gap to the IT limit. To alleviate this problem, a novel algorithm, termed 'WaterSIC', is proposed and is shown to be within a rate gap of 0.255 bits to the IT limit, uniformly over all possible covariance matrices of input activation. Furthermore, the algorithm is extended with a residual compensation (RC) module that significantly improves practical performance, bringing it on par with or better than GPTQ across various models. Experiments across LLaMA-3 1B/8B, LLaMA-2 7B, and Qwen-3 8B demonstrate that WaterSIC-RC achieves comparable or better perplexity than GPTQ at 3-4 bits, while approaching information-theoretic optimality.</p></div>
         </div>
-        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>本文考虑将给定的密集线性层转换为低精度的问题。从信息论角度分析了压缩长度与输出差异之间的权衡。研究表明，流行的 GPTQ 算法与信息论极限之间可能存在任意大的差距。为了缓解这个问题，提出了一种名为 "WaterSIC" 的新算法，并被证明在所有可能的输入激活协方差矩阵上，与信息论极限的速率差距在 0.255 比特以内。此外，该算法通过残差补偿（RC）模块进行了扩展，显著提高了实际性能，在各种模型上达到与 GPTQ 相当或更好的效果。在 LLaMA-3 1B/8B、LLaMA-2 7B 和 Qwen-3 8B 上的实验表明，WaterSIC-RC 在 3-4 比特下实现了与 GPTQ 相当或更好的困惑度，同时接近信息论最优性。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">This paper considers the problem of converting a given dense linear layer to low precision. The tradeoff between compressed length and output discrepancy is analyzed information theoretically (IT). It is shown that a popular GPTQ algorithm may have an arbitrarily large gap to the IT limit. To alleviate this problem, a novel algorithm, termed 'WaterSIC', is proposed and is shown to be within a rate gap of 0.255 bits to the IT limit, uniformly over all possible covariance matrices of input activation. Furthermore, the algorithm is extended with a residual compensation (RC) module that significantly improves practical performance, bringing it on par with or better than GPTQ across various models. Experiments across LLaMA-3 1B/8B, LLaMA-2 7B, and Qwen-3 8B demonstrate that WaterSIC-RC achieves comparable or better perplexity than GPTQ at 3-4 bits, while approaching information-theoretic optimality.</p></div></section>
-        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
-<li><strong>研究背景</strong>：线性层量化是 LLM 压缩的关键技术</li>
-<li><strong>研究动机</strong>：GPTQ 等流行算法与信息论极限存在差距</li>
-<li><strong>核心方法</strong>：WaterSIC - 信息论近似最优的量化算法</li>
-<li><strong>主要结果</strong>：速率差距 &lt; 0.255 bits，实际性能与 GPTQ 相当或更好</li>
-<li><strong>研究意义</strong>：首次从信息论角度分析线性层量化的最优性</li>
-</ul></div></section>
-        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
+    
+        <div class="section">
+            <div class="section-title">🔍 研究问题与背景</div>
+            <div class="section-body"><h3>领域现状</h3>
 <p><strong>线性层量化</strong>：
 - GPTQ 是最流行的量化算法之一
 - 实际应用广泛，但理论基础不足
 - 与信息论极限的关系不明确</p>
-<h3 id="_2">研究动机</h3>
+<h3>研究动机</h3>
 <p><strong>核心问题</strong>：GPTQ 算法与信息论最优性的差距有多大？</p>
 <p><strong>关键发现</strong>：
 - GPTQ 与信息论极限可能存在<strong>任意大</strong>的差距
-- 需要设计更接近理论最优的算法</p></div></section>
-        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><p><strong>创新1：信息论理论框架</strong>
+- 需要设计更接近理论最优的算法</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">💡 核心创新点</div>
+            <div class="section-body"><p><strong>创新1：信息论理论框架</strong>
 - <strong>贡献</strong>：建立线性层量化的率失真理论
 - <strong>发现</strong>：GPTQ 与最优性的差距可任意大
 - <strong>意义</strong>：提供量化算法的理论基准</p>
@@ -113,8 +151,12 @@
 <p><strong>创新3：残差补偿模块</strong>
 - <strong>贡献</strong>：WaterSIC-RC 提升实际性能
 - <strong>效果</strong>：与 GPTQ 相当或更好
-- <strong>优势</strong>：保持理论最优性</p></div></section>
-        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><table>
+- <strong>优势</strong>：保持理论最优性</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">📊 实验结果</div>
+            <div class="section-body"><table>
 <thead>
 <tr>
 <th>模型</th>
@@ -158,10 +200,14 @@
 <p><strong>关键发现</strong>：
 - WaterSIC-RC 在实际性能上与 GPTQ 相当或更好
 - 理论上接近信息论最优性
-- 适用于各种模型规模</p></div></section>
-        
-        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
-<h4 id="_2">理论贡献</h4>
+- 适用于各种模型规模</p></div>
+        </div>
+    
+    
+        <div class="section">
+            <div class="section-title">🧠 深度分析</div>
+            <div class="section-body"><h3>研究价值评估</h3>
+<h4>理论贡献</h4>
 <ul>
 <li><strong>贡献1</strong>：首次建立线性层量化的信息论框架</li>
 <li>创新点：率失真理论应用于量化</li>
@@ -174,26 +220,27 @@
 <li>创新点：证明 GPTQ 与最优性差距可任意大</li>
 <li>学术价值：揭示现有算法的不足</li>
 </ul>
-<h4 id="_3">实际应用价值</h4>
+<h4>实际应用价值</h4>
 <ul>
 <li><strong>应用场景</strong>：LLM 量化压缩</li>
 <li>适用性：直接应用于线性层量化</li>
 <li>优势：理论保证 + 实际性能</li>
 <li>潜在影响：成为量化算法的新标准</li>
 </ul>
-<h3 id="_4">方法优势详解</h3>
-<h4 id="1">优势1：理论最优性保证</h4>
+<h3>方法优势详解</h3>
+<h4>优势1：理论最优性保证</h4>
 <ul>
 <li><strong>描述</strong>：速率差距 &lt; 0.255 bits</li>
 <li><strong>技术基础</strong>：信息论率失真理论</li>
 <li><strong>实验验证</strong>：在所有协方差矩阵上成立</li>
 </ul>
-<h4 id="2">优势2：实际性能优异</h4>
+<h4>优势2：实际性能优异</h4>
 <ul>
 <li><strong>描述</strong>：与 GPTQ 相当或更好</li>
 <li><strong>技术基础</strong>：残差补偿模块</li>
 <li><strong>实验验证</strong>：多模型验证</li>
-</ul></div></section>
-    </div>
+</ul></div>
+        </div>
+</div>
 </body>
 </html>

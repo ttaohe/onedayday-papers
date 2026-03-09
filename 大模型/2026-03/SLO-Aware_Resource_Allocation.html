@@ -4,120 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SLO-Aware Compute Resource Allocation for Prefill-Decode Disaggregated LLM Inference</title>
-    <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
-        background: #f9f8ff;
-        color: #1a1a2e;
-        line-height: 1.6;
-        min-height: 100vh;
-    }
-    .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px 60px;
-    }
-    a { color: #6c5ce7; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .tag-link {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #ede9fe;
-        color: #6c5ce7;
-        font-size: 0.78em;
-        font-weight: 600;
-        transition: background 0.15s;
-    }
-    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
-    .score-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #fef3c7;
-        color: #d97706;
-        font-size: 0.78em;
-        font-weight: 700;
-    }
-    .authors { color: #6b7280; font-size: 0.88em; }
+    
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+    background: #f7f7fb;
+    color: #1a1a2e;
+    line-height: 1.65;
+    min-height: 100vh;
+}
+a { color: #5c4fcf; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 11px; border-radius: 999px;
+    font-size: .75em; font-weight: 600; line-height: 1.4;
+}
+.chip-purple { background: #ede9fe; color: #5c4fcf; }
+.chip-amber  { background: #fef3c7; color: #b45309; }
+.chip-gray   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+.chip-link:hover { background: #ddd6fe; text-decoration: none; }
 </style>
-    <style>
-        .detail-section { margin-bottom: 40px; }
-        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
-        .section-body { color: #374151; line-height: 1.8; }
-        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
-        .abstract-en { margin-top: 8px; }
-        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
-        .back-nav { margin-bottom: 32px; }
-        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
-        .back-link:hover { color: #5a4bd1; }
-        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
-        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
-        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
-        .section-body ul, .section-body ol { padding-left: 1.5em; }
-        .section-body li { margin-bottom: 4px; }
-        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
-        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
-        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
-        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
-        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
-        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
-        .callout-success { border-color: #10b981; background: #ecfdf5; }
-        .callout-title { font-weight: 700; margin-bottom: 6px; }
-    </style>
+
+    
+<style>
+.container { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+.back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5c4fcf; font-size: .88em; font-weight: 500;
+    margin-bottom: 28px; cursor: pointer;
+}
+.back-btn:hover { color: #4338ca; }
+.paper-title-h1 {
+    font-size: 1.65em; font-weight: 800; color: #1a1a2e;
+    line-height: 1.3; margin-bottom: 14px;
+}
+.meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px; }
+.authors-txt { color: #6b7280; font-size: .88em; }
+
+/* sections */
+.section { margin-bottom: 36px; }
+.section-title {
+    font-size: 1em; font-weight: 700; color: #5c4fcf;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+    content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+.section-body { color: #374151; font-size: .95em; line-height: 1.8; }
+.section-body ul, .section-body ol { padding-left: 1.4em; }
+.section-body li { margin-bottom: 5px; }
+.section-body strong { color: #1a1a2e; }
+.section-body code {
+    background: #f3f0ff; color: #5c4fcf;
+    padding: 2px 6px; border-radius: 4px; font-size: .88em;
+}
+.section-body pre {
+    background: #f8f9fa; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0;
+}
+.section-body blockquote {
+    border-left: 3px solid #d1d5db; margin: 12px 0;
+    padding-left: 14px; color: #6b7280;
+}
+.section-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+.section-body th, .section-body td {
+    border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left;
+}
+.section-body th { background: #f9f8ff; font-weight: 600; }
+
+/* abstract */
+.abstract-zh {
+    background: #f9f8ff; border-left: 3px solid #5c4fcf;
+    border-radius: 0 8px 8px 0; padding: 16px 20px;
+    color: #374151; line-height: 1.9; font-size: .95em;
+    margin-bottom: 12px;
+}
+.abstract-en {
+    color: #6b7280; font-size: .88em; line-height: 1.75;
+}
+.en-label {
+    font-size: .72em; font-weight: 700; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 6px;
+}
+
+/* callout */
+.callout {
+    padding: 12px 16px; border-radius: 8px;
+    margin: 14px 0; border-left: 3px solid;
+}
+.callout-tip     { border-color: #5c4fcf; background: #f3f0ff; }
+.callout-success { border-color: #10b981; background: #ecfdf5; }
+.callout-warning { border-color: #f59e0b; background: #fffbeb; }
+.callout-info    { border-color: #3b82f6; background: #eff6ff; }
+.callout-icon { margin-right: 4px; }
+.callout-body { margin-top: 6px; font-size: .92em; color: #374151; }
+</style>
+
 </head>
 <body>
-    <div class="container" style="max-width: 800px;">
-        <nav class="back-nav">
-            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
-        </nav>
-        <div class="paper-header-detail">
-            <h1 class="paper-title-detail">SLO-Aware Compute Resource Allocation for Prefill-Decode Disaggregated LLM Inference</h1>
-            <div class="paper-meta-detail">
-                <span class="authors">Luchang Li, Dongfang Li, Bozhao Gong, Yu Zhang</span>
-                <span class="score-badge large">8.8/10</span>
-                
-        <a href="https://arxiv.org/abs/2603.04716" target="_blank" class="tag-link">arXiv</a>
-        <a href="https://arxiv.org/pdf/2603.04716" target="_blank" class="tag-link">PDF</a>
-            </div>
+<div class="container">
+    <a class="back-btn" href="../../index.html">← 返回每日推荐</a>
+    <h1 class="paper-title-h1">SLO-Aware Compute Resource Allocation for Prefill-Decode Disaggregated LLM Inference</h1>
+    <div class="meta-row">
+        <span class="authors-txt">Luchang Li, Dongfang Li, Bozhao Gong, Yu Zhang</span>
+        <span class="chip chip-amber">8.8/10</span>
+        
+        <a class="chip chip-purple chip-link" href="https://arxiv.org/abs/2603.04716" target="_blank">arXiv ↗</a>
+        <a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.04716" target="_blank">PDF ↗</a>
+    </div>
+    
+        <div class="section">
+            <div class="section-title">📄 摘要</div>
+            <div class="abstract-zh">Prefill-Decode (P/D) 解耦已成为广泛采用的大语言模型 (LLM) 推理优化策略。然而，目前尚无成熟的方法来确定在总吞吐量、服务级别目标 (SLO) 和请求特征（具体指输入和输出长度）约束下 P/D 硬件资源的最佳数量。为解决这一问题，我们提出了一种结合理论建模与经验基准测试的混合方法。首先，我们提出了一个计算 P/D 资源数量的理论模型，该模型基于总吞吐量需求、请求输入输出长度以及 prefill 和 decode 吞吐量。然后，为了获得 SLO 约束下的实际 prefill 和 decode 吞吐量，我们使用 M/M/1 排队论对 prefill 过程进行建模，从基准测试的最大 prefill 吞吐量和首token延迟 (TTFT) 推导出实际可达的 prefill 吞吐量。对于 decode 阶段，我们确定满足每输出token延迟 (TPOT) 要求的 decode 批次大小，并通过经验测量获得相应的 decode 吞吐量。实验结果表明，所提方法可以在真实 LLM 推理场景中准确预测最优的 P/D 资源分配。</div>
+            <div class="abstract-en"><div class="en-label">原文</div><p>Prefill-Decode (P/D) disaggregation has emerged as a widely adopted optimization strategy for Large Language Model (LLM) inference. However, there currently exists no well-established methodology for determining the optimal number of P/D hardware resources, subject to constraints on total throughput, service level objectives (SLOs), and request characteristics - specifically input and output lengths. To address this gap, we propose a hybrid approach that combines theoretical modeling with empirical benchmarking. First, we present a theoretical model for calculating P/D resource counts, which is based on total throughput requirements, request input and output lengths, as well as prefill and decode throughput. Then, to obtain the actual prefill and decode throughput under SLO constraints, we model the prefill process using M/M/1 queuing theory, deriving the achieved prefill throughput from the benchmarked maximum prefill throughput and Time-To-First-Token (TTFT). For the decode phase, we determine the decode batch sizes that meet Time-Per-Output-Token (TPOT) requirements and obtain the corresponding decode throughput through empirical measurements. Our experimental results demonstrate that the proposed method can accurately predict optimal P/D resource allocation in real-world LLM inference scenarios.</p></div>
         </div>
-        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>Prefill-Decode (P/D) 解耦已成为广泛采用的大语言模型 (LLM) 推理优化策略。然而，目前尚无成熟的方法来确定在总吞吐量、服务级别目标 (SLO) 和请求特征（具体指输入和输出长度）约束下 P/D 硬件资源的最佳数量。为解决这一问题，我们提出了一种结合理论建模与经验基准测试的混合方法。首先，我们提出了一个计算 P/D 资源数量的理论模型，该模型基于总吞吐量需求、请求输入输出长度以及 prefill 和 decode 吞吐量。然后，为了获得 SLO 约束下的实际 prefill 和 decode 吞吐量，我们使用 M/M/1 排队论对 prefill 过程进行建模，从基准测试的最大 prefill 吞吐量和首token延迟 (TTFT) 推导出实际可达的 prefill 吞吐量。对于 decode 阶段，我们确定满足每输出token延迟 (TPOT) 要求的 decode 批次大小，并通过经验测量获得相应的 decode 吞吐量。实验结果表明，所提方法可以在真实 LLM 推理场景中准确预测最优的 P/D 资源分配。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">Prefill-Decode (P/D) disaggregation has emerged as a widely adopted optimization strategy for Large Language Model (LLM) inference. However, there currently exists no well-established methodology for determining the optimal number of P/D hardware resources, subject to constraints on total throughput, service level objectives (SLOs), and request characteristics - specifically input and output lengths. To address this gap, we propose a hybrid approach that combines theoretical modeling with empirical benchmarking. First, we present a theoretical model for calculating P/D resource counts, which is based on total throughput requirements, request input and output lengths, as well as prefill and decode throughput. Then, to obtain the actual prefill and decode throughput under SLO constraints, we model the prefill process using M/M/1 queuing theory, deriving the achieved prefill throughput from the benchmarked maximum prefill throughput and Time-To-First-Token (TTFT). For the decode phase, we determine the decode batch sizes that meet Time-Per-Output-Token (TPOT) requirements and obtain the corresponding decode throughput through empirical measurements. Our experimental results demonstrate that the proposed method can accurately predict optimal P/D resource allocation in real-world LLM inference scenarios.</p></div></section>
-        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
-<li><strong>研究背景</strong>：P/D 解耦是 LLM 推理的优化策略，但缺乏确定最优资源配置的方法论</li>
-<li><strong>研究动机</strong>：需要在吞吐量、SLO 和请求特征约束下优化 P/D 资源分配</li>
-<li><strong>核心方法</strong>：结合理论建模（M/M/1 排队论）与经验基准测试的混合方法</li>
-<li><strong>主要结果</strong>：所提方法能准确预测真实场景中的最优 P/D 资源分配</li>
-<li><strong>研究意义</strong>：为 LLM 推理系统的资源管理提供了理论指导</li>
-</ul></div></section>
-        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
+    
+        <div class="section">
+            <div class="section-title">🔍 研究问题与背景</div>
+            <div class="section-body"><h3>领域现状</h3>
 <p>LLM 推理系统广泛采用 <strong>Prefill-Decode 解耦架构</strong>，将计算密集型的 prefill 阶段和内存密集型的 decode 阶段分离到不同的计算节点上。这种架构能够：
 - 独立扩展 prefill 和 decode 资源
 - 提高整体资源利用率
 - 降低推理成本</p>
-<h3 id="_2">现有方法的局限性</h3>
+<h3>现有方法的局限性</h3>
 <p>当前 P/D 解耦系统存在一个关键问题：<strong>缺乏系统的资源配置方法论</strong>
 - 无法确定最优的 prefill/decode 节点比例
 - 资源分配不当会导致浪费或 SLO 违规
 - 请求特征（输入/输出长度）对资源配置的影响未量化</p>
-<h3 id="_3">研究动机</h3>
+<h3>研究动机</h3>
 <p>在满足以下约束条件下，如何确定最优的 P/D 资源分配：
 1. <strong>总吞吐量需求</strong>：系统需要处理的请求数
 2. <strong>SLO 约束</strong>：TTFT 和 TPOT 要求
-3. <strong>请求特征</strong>：输入长度 (L_in) 和输出长度 (L_out)</p></div></section>
-        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><h3 id="_1">核心思想</h3>
+3. <strong>请求特征</strong>：输入长度 (L_in) 和输出长度 (L_out)</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">💡 核心创新点</div>
+            <div class="section-body"><h3>核心思想</h3>
 <p>提出<strong>混合方法论</strong>，结合理论建模和经验基准测试：
 1. <strong>理论模型</strong>：计算 P/D 资源数量基础公式
 2. <strong>排队论建模</strong>：使用 M/M/1 模型推导 SLO 约束下的实际吞吐量
 3. <strong>经验测量</strong>：通过基准测试获得实际性能数据</p>
-<h3 id="_2">方法框架</h3>
-<h4 id="_3">整体架构</h4>
+<h3>方法框架</h3>
+<h4>整体架构</h4>
 <blockquote>
 <p>图1：SLO-Aware 资源分配框架，包括理论建模、排队论分析和经验基准测试三个主要组件</p>
 </blockquote>
-<h4 id="_4">各模块详细说明</h4>
+<h4>各模块详细说明</h4>
 <p><strong>模块1：理论资源计算模型</strong>
 - <strong>功能</strong>：计算满足吞吐量需求的 P/D 资源数量基础值
 - <strong>输入</strong>：总吞吐量需求、请求输入/输出长度、prefill/decode 吞吐量
@@ -143,11 +181,15 @@
   1. 测量不同批次大小下的 decode 延迟
   2. 找到满足 TPOT 约束的最大批大小
   3. 计算对应的 decode 吞吐量
-- <strong>关键技术</strong>：批处理优化、延迟-吞吐量权衡</p></div></section>
-        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><blockquote>
+- <strong>关键技术</strong>：批处理优化、延迟-吞吐量权衡</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">📊 实验结果</div>
+            <div class="section-body"><blockquote>
 <p>图2：不同工作负载下的资源分配结果，展示所提方法预测的资源分配与实际最优值的对比</p>
 </blockquote>
-<h4 id="_1">主实验结果</h4>
+<h4>主实验结果</h4>
 <table>
 <thead>
 <tr>
@@ -204,7 +246,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="_2">结果分析</h4>
+<h4>结果分析</h4>
 <ul>
 <li><strong>准确性</strong>：在所有测试场景下，预测的资源分配与实际最优值完全一致</li>
 <li><strong>SLO 满足率</strong>：所提方法在所有场景下都满足 TTFT 和 TPOT 约束</li>
@@ -212,10 +254,14 @@
 </ul>
 <blockquote>
 <p>图3：与静态分配方法的性能对比，展示所提方法在不同工作负载下的资源节省</p>
-</blockquote></div></section>
-        <section class="detail-section"><h2 class="section-title">未来展望</h2><div class="section-body"><h3 id="_1">作者建议的未来工作</h3>
+</blockquote></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🚀 未来展望</div>
+            <div class="section-body"><h3>作者建议的未来工作</h3>
 <p>论文未明确提及未来工作方向。</p>
-<h3 id="_2">基于分析的未来方向</h3>
+<h3>基于分析的未来方向</h3>
 <ol>
 <li><strong>方向1</strong>：动态资源分配</li>
 <li>动机：应对负载波动</li>
@@ -241,7 +287,7 @@
 <li>预期成果：成本-aware 的资源分配策略</li>
 <li>挑战：需要考虑云平台的定价机制</li>
 </ol>
-<h3 id="_3">改进建议</h3>
+<h3>改进建议</h3>
 <ol>
 <li><strong>改进1</strong>：更通用的排队模型</li>
 <li>当前问题：M/M/1 假设过于理想化</li>
@@ -255,9 +301,13 @@
 <li>当前问题：依赖离线基准测试</li>
 <li>改进方案：添加在线性能监控和模型更新</li>
 <li>预期效果：适应系统状态变化</li>
-</ol></div></section>
-        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
-<h4 id="_2">理论贡献</h4>
+</ol></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🧠 深度分析</div>
+            <div class="section-body"><h3>研究价值评估</h3>
+<h4>理论贡献</h4>
 <ul>
 <li><strong>贡献1</strong>：建立了 P/D 解耦系统的资源分配理论模型</li>
 <li>创新点：首次系统性地将排队论应用于 LLM 推理的资源分配问题</li>
@@ -272,7 +322,7 @@
 <li>学术价值：为系统优化问题提供了新的解决思路</li>
 <li>影响范围：Systems Research, Computer Architecture</li>
 </ul>
-<h4 id="_3">实际应用价值</h4>
+<h4>实际应用价值</h4>
 <ul>
 <li><strong>应用场景1</strong>：云服务提供商的 LLM 推理服务</li>
 <li>适用性：直接适用于提供 LLM API 服务的云平台</li>
@@ -287,37 +337,37 @@
 <li>优势：优化硬件采购决策，提高资源利用率</li>
 <li>潜在影响：降低 LLM 部署的硬件门槛</li>
 </ul>
-<h4 id="_4">领域影响</h4>
+<h4>领域影响</h4>
 <ul>
 <li><strong>短期影响</strong>：为 P/D 解耦系统的部署提供配置指导</li>
 <li><strong>中期影响</strong>：可能被集成到主流 LLM 推理框架中（如 vLLM, TensorRT-LLM）</li>
 <li><strong>长期影响</strong>：推动 LLM 推理系统从"经验驱动"向"理论驱动"转变</li>
 <li><strong>潜在变革</strong>：建立 LLM 推理系统的资源管理理论体系</li>
 </ul>
-<h3 id="_5">方法优势详解</h3>
-<h4 id="1">优势1：理论严谨性</h4>
+<h3>方法优势详解</h3>
+<h4>优势1：理论严谨性</h4>
 <ul>
 <li><strong>描述</strong>：方法建立在坚实的排队论和优化理论基础之上</li>
 <li><strong>技术基础</strong>：M/M/1 排队模型、利特尔定理、资源优化理论</li>
 <li><strong>实验验证</strong>：在多种工作负载下验证了理论的正确性</li>
 <li><strong>对比分析</strong>：相比启发式方法，具有更好的泛化性和可解释性</li>
 </ul>
-<h4 id="2">优势2：实用性强</h4>
+<h4>优势2：实用性强</h4>
 <ul>
 <li><strong>描述</strong>：方法结合了经验测量，能够适应真实系统的复杂性</li>
 <li><strong>技术基础</strong>：基准测试框架、性能监控</li>
 <li><strong>实验验证</strong>：在实际硬件（A100 GPU）和主流模型（Llama-2）上验证</li>
 <li><strong>对比分析</strong>：纯理论方法难以捕获实际系统行为</li>
 </ul>
-<h4 id="3">优势3：端到端解决方案</h4>
+<h4>优势3：端到端解决方案</h4>
 <ul>
 <li><strong>描述</strong>：从需求分析到资源分配的完整解决方案</li>
 <li><strong>技术基础</strong>：整合了资源建模、SLO 约束、性能测量</li>
 <li><strong>实验验证</strong>：展示了在真实场景中的端到端效果</li>
 <li><strong>对比分析</strong>：现有工作通常只关注问题的一部分</li>
 </ul>
-<h3 id="_6">局限性分析</h3>
-<h4 id="1_1">局限1：模型假设</h4>
+<h3>局限性分析</h3>
+<h4>局限1：模型假设</h4>
 <ul>
 <li><strong>描述</strong>：M/M/1 排队模型假设请求到达和预处理时间服从指数分布</li>
 <li><strong>表现</strong>：真实场景可能不满足这些假设</li>
@@ -325,7 +375,7 @@
 <li><strong>影响</strong>：可能导致预测误差</li>
 <li><strong>可能的解决方案</strong>：使用更一般的排队模型（如 G/G/1）</li>
 </ul>
-<h4 id="2_1">局限2：单模型假设</h4>
+<h4>局限2：单模型假设</h4>
 <ul>
 <li><strong>描述</strong>：当前方法针对单一 LLM 模型</li>
 <li><strong>表现</strong>：无法直接应用于多模型共存的场景</li>
@@ -333,7 +383,7 @@
 <li><strong>影响</strong>：限制了在复杂部署场景中的应用</li>
 <li><strong>可能的解决方案</strong>：扩展方法支持多模型资源分配</li>
 </ul>
-<h4 id="3_1">局限3：静态负载假设</h4>
+<h4>局限3：静态负载假设</h4>
 <ul>
 <li><strong>描述</strong>：假设工作负载特征已知且稳定</li>
 <li><strong>表现</strong>：难以应对突发的流量变化</li>
@@ -341,8 +391,8 @@
 <li><strong>影响</strong>：动态场景下可能需要重新配置</li>
 <li><strong>可能的解决方案</strong>：结合在线学习和动态调整</li>
 </ul>
-<h3 id="_7">场景分析</h3>
-<h4 id="_8">适用场景</h4>
+<h3>场景分析</h3>
+<h4>适用场景</h4>
 <ul>
 <li><strong>场景1</strong>：稳定的 API 服务</li>
 <li>适用原因：流量模式相对稳定，SLO 要求明确</li>
@@ -357,7 +407,7 @@
 <li>预期效果：最大化硬件资源利用率</li>
 <li>注意事项：需要根据具体工作负载定制参数</li>
 </ul>
-<h4 id="_9">不适用场景</h4>
+<h4>不适用场景</h4>
 <ul>
 <li><strong>场景1</strong>：突发流量场景</li>
 <li>不适用原因：负载剧烈波动，静态分配失效</li>
@@ -369,7 +419,8 @@
 </li>
 <li>不适用原因：资源竞争复杂，模型假设不成立</li>
 <li>替代方案：考虑租户隔离和资源配额管理</li>
-</ul></div></section>
-    </div>
+</ul></div>
+        </div>
+</div>
 </body>
 </html>

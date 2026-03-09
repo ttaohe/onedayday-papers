@@ -4,100 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mixture of Universal Experts: Scaling Virtual Width via Depth-Width Transformation</title>
-    <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
-        background: #f9f8ff;
-        color: #1a1a2e;
-        line-height: 1.6;
-        min-height: 100vh;
-    }
-    .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px 60px;
-    }
-    a { color: #6c5ce7; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .tag-link {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #ede9fe;
-        color: #6c5ce7;
-        font-size: 0.78em;
-        font-weight: 600;
-        transition: background 0.15s;
-    }
-    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
-    .score-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #fef3c7;
-        color: #d97706;
-        font-size: 0.78em;
-        font-weight: 700;
-    }
-    .authors { color: #6b7280; font-size: 0.88em; }
+    
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+    background: #f7f7fb;
+    color: #1a1a2e;
+    line-height: 1.65;
+    min-height: 100vh;
+}
+a { color: #5c4fcf; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 11px; border-radius: 999px;
+    font-size: .75em; font-weight: 600; line-height: 1.4;
+}
+.chip-purple { background: #ede9fe; color: #5c4fcf; }
+.chip-amber  { background: #fef3c7; color: #b45309; }
+.chip-gray   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+.chip-link:hover { background: #ddd6fe; text-decoration: none; }
 </style>
-    <style>
-        .detail-section { margin-bottom: 40px; }
-        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
-        .section-body { color: #374151; line-height: 1.8; }
-        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
-        .abstract-en { margin-top: 8px; }
-        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
-        .back-nav { margin-bottom: 32px; }
-        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
-        .back-link:hover { color: #5a4bd1; }
-        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
-        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
-        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
-        .section-body ul, .section-body ol { padding-left: 1.5em; }
-        .section-body li { margin-bottom: 4px; }
-        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
-        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
-        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
-        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
-        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
-        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
-        .callout-success { border-color: #10b981; background: #ecfdf5; }
-        .callout-title { font-weight: 700; margin-bottom: 6px; }
-    </style>
+
+    
+<style>
+.container { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+.back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5c4fcf; font-size: .88em; font-weight: 500;
+    margin-bottom: 28px; cursor: pointer;
+}
+.back-btn:hover { color: #4338ca; }
+.paper-title-h1 {
+    font-size: 1.65em; font-weight: 800; color: #1a1a2e;
+    line-height: 1.3; margin-bottom: 14px;
+}
+.meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px; }
+.authors-txt { color: #6b7280; font-size: .88em; }
+
+/* sections */
+.section { margin-bottom: 36px; }
+.section-title {
+    font-size: 1em; font-weight: 700; color: #5c4fcf;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+    content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+.section-body { color: #374151; font-size: .95em; line-height: 1.8; }
+.section-body ul, .section-body ol { padding-left: 1.4em; }
+.section-body li { margin-bottom: 5px; }
+.section-body strong { color: #1a1a2e; }
+.section-body code {
+    background: #f3f0ff; color: #5c4fcf;
+    padding: 2px 6px; border-radius: 4px; font-size: .88em;
+}
+.section-body pre {
+    background: #f8f9fa; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0;
+}
+.section-body blockquote {
+    border-left: 3px solid #d1d5db; margin: 12px 0;
+    padding-left: 14px; color: #6b7280;
+}
+.section-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+.section-body th, .section-body td {
+    border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left;
+}
+.section-body th { background: #f9f8ff; font-weight: 600; }
+
+/* abstract */
+.abstract-zh {
+    background: #f9f8ff; border-left: 3px solid #5c4fcf;
+    border-radius: 0 8px 8px 0; padding: 16px 20px;
+    color: #374151; line-height: 1.9; font-size: .95em;
+    margin-bottom: 12px;
+}
+.abstract-en {
+    color: #6b7280; font-size: .88em; line-height: 1.75;
+}
+.en-label {
+    font-size: .72em; font-weight: 700; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 6px;
+}
+
+/* callout */
+.callout {
+    padding: 12px 16px; border-radius: 8px;
+    margin: 14px 0; border-left: 3px solid;
+}
+.callout-tip     { border-color: #5c4fcf; background: #f3f0ff; }
+.callout-success { border-color: #10b981; background: #ecfdf5; }
+.callout-warning { border-color: #f59e0b; background: #fffbeb; }
+.callout-info    { border-color: #3b82f6; background: #eff6ff; }
+.callout-icon { margin-right: 4px; }
+.callout-body { margin-top: 6px; font-size: .92em; color: #374151; }
+</style>
+
 </head>
 <body>
-    <div class="container" style="max-width: 800px;">
-        <nav class="back-nav">
-            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
-        </nav>
-        <div class="paper-header-detail">
-            <h1 class="paper-title-detail">Mixture of Universal Experts: Scaling Virtual Width via Depth-Width Transformation</h1>
-            <div class="paper-meta-detail">
-                <span class="authors">Yilong Chen, Naibin Gu, Junyuan Shang, Zhenyu Zhang, Yuchen Feng, Jiawei Sheng, Tingwen Liu, Shuohuan Wang, Yu Sun, Hua Wu, Haifeng Wang</span>
-                <span class="score-badge large">9.0/10</span>
-                
-        <a href="https://arxiv.org/abs/2603.04971" target="_blank" class="tag-link">arXiv</a>
-        <a href="https://arxiv.org/pdf/2603.04971" target="_blank" class="tag-link">PDF</a>
-            </div>
+<div class="container">
+    <a class="back-btn" href="../../index.html">← 返回每日推荐</a>
+    <h1 class="paper-title-h1">Mixture of Universal Experts: Scaling Virtual Width via Depth-Width Transformation</h1>
+    <div class="meta-row">
+        <span class="authors-txt">Yilong Chen, Naibin Gu, Junyuan Shang, Zhenyu Zhang, Yuchen Feng, Jiawei Sheng, Tingwen Liu, Shuohuan Wang, Yu Sun, Hua Wu, Haifeng Wang</span>
+        <span class="chip chip-amber">9.0/10</span>
+        
+        <a class="chip chip-purple chip-link" href="https://arxiv.org/abs/2603.04971" target="_blank">arXiv ↗</a>
+        <a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.04971" target="_blank">PDF ↗</a>
+    </div>
+    
+        <div class="section">
+            <div class="section-title">📄 摘要</div>
+            <div class="abstract-zh">混合专家（MoE）将模型容量与每令牌计算解耦，但其可扩展性仍然受到深度和宽度物理尺寸的限制。为了克服这一点，我们提出了通用专家混合（MOUE），这是 MoE 的一个推广，引入了一个新的缩放维度：虚拟宽度。总的来说，MOUE 旨在跨层重用通用的与层无关的专家池，在固定的每令牌激活预算下将深度转换为虚拟宽度。然而，仍然存在两个挑战：由于递归专家重用导致的路由路径爆炸，以及重用引起的曝光与传统负载平衡目标之间的不匹配。我们通过三个核心组件来解决这些问题：用于结构化专家共享的交错旋转拓扑、用于深度感知曝光修正的通用专家负载平衡，以及具有轻量级轨迹状态用于连贯多步路由的通用路由器。在实证上，MOUE 在各缩放 regime 下一致超越匹配的 MoE 基线高达 1.3%，能够对现有 MoE 检查点进行渐进转换并获得高达 4.2% 的增益，并为 MoE 架构揭示了一个新的缩放维度。</div>
+            <div class="abstract-en"><div class="en-label">原文</div><p>Mixture-of-Experts (MoE) decouples model capacity from per-token computation, yet their scalability remains limited by the physical dimensions of depth and width. To overcome this, we propose Mixture of Universal Experts (MOUE), a MoE generalization introducing a novel scaling dimension: Virtual Width. In general, MOUE aims to reuse a universal layer-agnostic expert pool across layers, converting depth into virtual width under a fixed per-token activation budget. However, two challenges remain: a routing path explosion from recursive expert reuse, and a mismatch between the exposure induced by reuse and the conventional load-balancing objectives. We address these with three core components: a Staggered Rotational Topology for structured expert sharing, a Universal Expert Load Balance for depth-aware exposure correction, and a Universal Router with lightweight trajectory state for coherent multi-step路由. Empirically, MOUE consistently outperforms matched MoE baselines by up to 1.3% across scaling regimes, enables progressive conversion of existing MoE checkpoints with up to 4.2% gains, and reveals a new scaling dimension for MoE architectures.</p></div>
         </div>
-        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>混合专家（MoE）将模型容量与每令牌计算解耦，但其可扩展性仍然受到深度和宽度物理尺寸的限制。为了克服这一点，我们提出了通用专家混合（MOUE），这是 MoE 的一个推广，引入了一个新的缩放维度：虚拟宽度。总的来说，MOUE 旨在跨层重用通用的与层无关的专家池，在固定的每令牌激活预算下将深度转换为虚拟宽度。然而，仍然存在两个挑战：由于递归专家重用导致的路由路径爆炸，以及重用引起的曝光与传统负载平衡目标之间的不匹配。我们通过三个核心组件来解决这些问题：用于结构化专家共享的交错旋转拓扑、用于深度感知曝光修正的通用专家负载平衡，以及具有轻量级轨迹状态用于连贯多步路由的通用路由器。在实证上，MOUE 在各缩放 regime 下一致超越匹配的 MoE 基线高达 1.3%，能够对现有 MoE 检查点进行渐进转换并获得高达 4.2% 的增益，并为 MoE 架构揭示了一个新的缩放维度。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">Mixture-of-Experts (MoE) decouples model capacity from per-token computation, yet their scalability remains limited by the physical dimensions of depth and width. To overcome this, we propose Mixture of Universal Experts (MOUE), a MoE generalization introducing a novel scaling dimension: Virtual Width. In general, MOUE aims to reuse a universal layer-agnostic expert pool across layers, converting depth into virtual width under a fixed per-token activation budget. However, two challenges remain: a routing path explosion from recursive expert reuse, and a mismatch between the exposure induced by reuse and the conventional load-balancing objectives. We address these with three core components: a Staggered Rotational Topology for structured expert sharing, a Universal Expert Load Balance for depth-aware exposure correction, and a Universal Router with lightweight trajectory state for coherent multi-step路由. Empirically, MOUE consistently outperforms matched MoE baselines by up to 1.3% across scaling regimes, enables progressive conversion of existing MoE checkpoints with up to 4.2% gains, and reveals a new scaling dimension for MoE architectures.</p></div></section>
-        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
-<li><strong>研究背景</strong>：MoE 受物理尺寸（深度、宽度）限制</li>
-<li><strong>研究动机</strong>：引入虚拟宽度作为新缩放维度</li>
-<li><strong>核心方法</strong>：MOUE 框架，重用跨层通用专家池</li>
-<li><strong>主要结果</strong>：超越基线 1.3%，现有检查点转换增益 4.2%</li>
-<li><strong>研究意义</strong>：揭示 MoE 的新缩放维度</li>
-</ul></div></section>
-        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
+    
+        <div class="section">
+            <div class="section-title">🔍 研究问题与背景</div>
+            <div class="section-body"><h3>领域现状</h3>
 <p>混合专家（MoE）是大规模模型的重要架构：
 - <strong>基本原理</strong>：稀疏激活专家，增加容量而不增加计算
 - <strong>代表工作</strong>：Switch Transformer, GLaM, Mixtral
 - <strong>性能优势</strong>：在相同计算下超越密集模型</p>
-<h3 id="_2">现有方法的局限性</h3>
+<h3>现有方法的局限性</h3>
 <ol>
 <li><strong>物理尺寸限制</strong>：</li>
 <li>深度：受训练稳定性和梯度传播限制</li>
@@ -112,18 +146,22 @@
 <li>每层需要独立的专家集合</li>
 <li>跨层相似功能重复实现</li>
 </ol>
-<h3 id="_3">研究动机</h3>
+<h3>研究动机</h3>
 <p>核心洞察：<strong>深度和宽度可以相互转换</strong>
 - 不同层的专家可以共享相似的功能
 - 虚拟宽度：用深度换取宽度
-- 打破物理尺寸的限制</p></div></section>
-        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><h3 id="_1">核心思想</h3>
+- 打破物理尺寸的限制</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">💡 核心创新点</div>
+            <div class="section-body"><h3>核心思想</h3>
 <p>MOUE 引入<strong>虚拟宽度</strong>作为新缩放维度：
 - <strong>传统 MoE</strong>：每层独立专家
 - <strong>MOUE</strong>：跨层共享通用专家池
 - <strong>转换</strong>：在固定激活预算下，深度 → 虚拟宽度</p>
-<h3 id="_2">方法框架</h3>
-<h4 id="_3">整体架构</h4>
+<h3>方法框架</h3>
+<h4>整体架构</h4>
 <div class="highlight"><pre><span></span><code>传统 MoE:
 Layer 1: [专家1, 专家2, ..., 专家N]
 Layer 2: [专家1, 专家2, ..., 专家N]
@@ -138,7 +176,7 @@ MOUE:
 <blockquote>
 <p>图1：MOUE 整体架构，展示通用专家池和跨层重用</p>
 </blockquote>
-<h4 id="_4">各模块详细说明</h4>
+<h4>各模块详细说明</h4>
 <p><strong>模块1：交错旋转拓扑（Staggered Rotational Topology）</strong>
 - <strong>功能</strong>：实现结构化的跨层专家共享
 - <strong>输入</strong>：层数、专家数
@@ -175,12 +213,16 @@ MOUE:
   - 轨迹状态建模
   - 多步一致性
   - 低开销路由</p>
-<h3 id="_5">方法架构图</h3>
+<h3>方法架构图</h3>
 <blockquote>
 <p>图2：MOUE 详细架构，展示专家共享和路由机制</p>
 <p>图3：专家共享的邻接关系可视化</p>
-</blockquote></div></section>
-        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><h4 id="_1">主实验结果（缩放性能）</h4>
+</blockquote></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">📊 实验结果</div>
+            <div class="section-body"><h4>主实验结果（缩放性能）</h4>
 <table>
 <thead>
 <tr>
@@ -218,7 +260,7 @@ MOUE:
 <blockquote>
 <p>注：指标为验证 Perplexity，越低越好，<strong>粗体</strong>表示最优</p>
 </blockquote>
-<h4 id="_2">主实验结果（下游任务）</h4>
+<h4>主实验结果（下游任务）</h4>
 <table>
 <thead>
 <tr>
@@ -253,13 +295,17 @@ MOUE:
 </tr>
 </tbody>
 </table>
-<h4 id="_3">结果分析</h4>
+<h4>结果分析</h4>
 <ol>
 <li><strong>缩放优势</strong>：在各规模下一致超越基线</li>
 <li><strong>参数效率</strong>：更少的激活参数实现更好性能</li>
 <li><strong>下游任务</strong>：在多项任务上获得提升</li>
-</ol></div></section>
-        <section class="detail-section"><h2 class="section-title">未来展望</h2><div class="section-body"><h3 id="_1">作者建议的未来工作</h3>
+</ol></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🚀 未来展望</div>
+            <div class="section-body"><h3>作者建议的未来工作</h3>
 <ol>
 <li><strong>建议1</strong>：自适应专家共享</li>
 <li>可行性：高</li>
@@ -274,7 +320,7 @@ MOUE:
 <li>价值：进一步提升效率</li>
 <li>难度：需要协调不同稀疏维度</li>
 </ol>
-<h3 id="_2">基于分析的未来方向</h3>
+<h3>基于分析的未来方向</h3>
 <ol>
 <li><strong>方向1</strong>：分层虚拟宽度</li>
 <li>动机：不同层可能有不同的最优宽度</li>
@@ -299,9 +345,13 @@ MOUE:
 <li>可能的方法：扩展 MOUE 到视觉-语言模型</li>
 <li>预期成果：多模态模型的效率提升</li>
 <li>挑战：跨模态专家定义</li>
-</ol></div></section>
-        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
-<h4 id="_2">理论贡献</h4>
+</ol></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🧠 深度分析</div>
+            <div class="section-body"><h3>研究价值评估</h3>
+<h4>理论贡献</h4>
 <ul>
 <li><strong>贡献1</strong>：虚拟宽度新维度</li>
 <li>创新点：打破深度和宽度的物理限制</li>
@@ -324,7 +374,7 @@ MOUE:
 <li>学术价值：提供模型优化新方法</li>
 <li>影响范围：模型部署、效率优化</li>
 </ul>
-<h4 id="_3">实际应用价值</h4>
+<h4>实际应用价值</h4>
 <ul>
 <li><strong>应用场景1</strong>：大规模预训练</li>
 <li>适用性：需要大容量模型的场景</li>
@@ -347,37 +397,37 @@ MOUE:
 <li>优势：无需重新训练，渐进转换</li>
 <li>潜在影响：提升现有系统性能</li>
 </ul>
-<h4 id="_4">领域影响</h4>
+<h4>领域影响</h4>
 <ul>
 <li><strong>短期影响</strong>：为 MoE 提供新的优化方向</li>
 <li><strong>中期影响</strong>：推动虚拟宽度研究</li>
 <li><strong>长期影响</strong>：可能成为 MoE 的标准设计模式</li>
 <li><strong>潜在变革</strong>：改变模型缩放的思维模式</li>
 </ul>
-<h3 id="_5">方法优势详解</h3>
-<h4 id="1">优势1：打破物理尺寸限制</h4>
+<h3>方法优势详解</h3>
+<h4>优势1：打破物理尺寸限制</h4>
 <ul>
 <li><strong>描述</strong>：通过虚拟宽度突破深度和宽度约束</li>
 <li><strong>技术基础</strong>：深度-宽度转换理论</li>
 <li><strong>实验验证</strong>：在各规模下超越基线</li>
 <li><strong>对比分析</strong>：传统 MoE 受限于物理尺寸</li>
 </ul>
-<h4 id="2">优势2：更高的资源利用率</h4>
+<h4>优势2：更高的资源利用率</h4>
 <ul>
 <li><strong>描述</strong>：跨层重用专家，减少冗余</li>
 <li><strong>技术基础</strong>：通用专家池设计</li>
 <li><strong>实验验证</strong>：更少专家实现更好性能</li>
 <li><strong>对比分析</strong>：标准 MoE 需要更多专家</li>
 </ul>
-<h4 id="3">优势3：向后兼容</h4>
+<h4>优势3：向后兼容</h4>
 <ul>
 <li><strong>描述</strong>：可应用于现有 MoE 模型</li>
 <li><strong>技术基础</strong>：渐进式转换方法</li>
 <li><strong>实验验证</strong>：现有检查点获得 4.2% 提升</li>
 <li><strong>对比分析</strong>：无需从头训练</li>
 </ul>
-<h3 id="_6">局限性分析</h3>
-<h4 id="1_1">局限1：路由复杂度增加</h4>
+<h3>局限性分析</h3>
+<h4>局限1：路由复杂度增加</h4>
 <ul>
 <li><strong>描述</strong>：通用路由器需要维护轨迹状态</li>
 <li><strong>表现</strong>：路由开销可能随规模增长</li>
@@ -385,7 +435,7 @@ MOUE:
 <li><strong>影响</strong>：可能限制最大可扩展性</li>
 <li><strong>可能的解决方案</strong>：分层路由、近似算法</li>
 </ul>
-<h4 id="2_1">层限2：专家利用率不均</h4>
+<h4>层限2：专家利用率不均</h4>
 <ul>
 <li><strong>描述</strong>：部分专家可能过度使用，部分利用不足</li>
 <li><strong>表现</strong>：负载平衡仍然是挑战</li>
@@ -393,7 +443,7 @@ MOUE:
 <li><strong>影响</strong>：可能影响整体性能</li>
 <li><strong>可能的解决方案</strong>：动态负载平衡</li>
 </ul>
-<h4 id="3_1">局限3：训练稳定性</h4>
+<h4>局限3：训练稳定性</h4>
 <ul>
 <li><strong>描述</strong>：跨层重用可能影响梯度流动</li>
 <li><strong>表现</strong>：需要仔细调节学习率</li>
@@ -401,8 +451,8 @@ MOUE:
 <li><strong>影响</strong>：训练难度增加</li>
 <li><strong>可能的解决方案</strong>：梯度裁剪、warm-up 策略</li>
 </ul>
-<h3 id="_7">场景分析</h3>
-<h4 id="_8">适用场景</h4>
+<h3>场景分析</h3>
+<h4>适用场景</h4>
 <ul>
 <li><strong>场景1</strong>：大规模预训练</li>
 <li>适用原因：需要大容量模型</li>
@@ -425,7 +475,7 @@ MOUE:
 <li>预期效果：在新任务上快速适应</li>
 <li>注意事项：可能需要微调路由器</li>
 </ul>
-<h4 id="_9">不适用场景</h4>
+<h4>不适用场景</h4>
 <ul>
 <li><strong>场景1</strong>：极小模型</li>
 <li>不适用原因：小模型不需要复杂架构</li>
@@ -437,7 +487,8 @@ MOUE:
 </li>
 <li>不适用原因：专家数量可能超过数据支持</li>
 <li>替代方案：使用更小的模型或正则化</li>
-</ul></div></section>
-    </div>
+</ul></div>
+        </div>
+</div>
 </body>
 </html>

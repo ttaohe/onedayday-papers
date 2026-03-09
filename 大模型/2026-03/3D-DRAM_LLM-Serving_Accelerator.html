@@ -4,98 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hardware-Software Co-design for 3D-DRAM-based LLM Serving Accelerator</title>
-    <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
-        background: #f9f8ff;
-        color: #1a1a2e;
-        line-height: 1.6;
-        min-height: 100vh;
-    }
-    .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px 60px;
-    }
-    a { color: #6c5ce7; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .tag-link {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #ede9fe;
-        color: #6c5ce7;
-        font-size: 0.78em;
-        font-weight: 600;
-        transition: background 0.15s;
-    }
-    .tag-link:hover { background: #ddd6fe; text-decoration: none; }
-    .score-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        background: #fef3c7;
-        color: #d97706;
-        font-size: 0.78em;
-        font-weight: 700;
-    }
-    .authors { color: #6b7280; font-size: 0.88em; }
+    
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+    background: #f7f7fb;
+    color: #1a1a2e;
+    line-height: 1.65;
+    min-height: 100vh;
+}
+a { color: #5c4fcf; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 11px; border-radius: 999px;
+    font-size: .75em; font-weight: 600; line-height: 1.4;
+}
+.chip-purple { background: #ede9fe; color: #5c4fcf; }
+.chip-amber  { background: #fef3c7; color: #b45309; }
+.chip-gray   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+.chip-link:hover { background: #ddd6fe; text-decoration: none; }
 </style>
-    <style>
-        .detail-section { margin-bottom: 40px; }
-        .section-title { font-size: 1.2em; font-weight: 700; color: #1a1a2e; border-bottom: 2px solid #e8e4f3; padding-bottom: 8px; margin-bottom: 16px; }
-        .section-body { color: #374151; line-height: 1.8; }
-        .abstract-zh { background: #f8f7ff; border-left: 4px solid #6c5ce7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 16px; color: #374151; line-height: 1.9; }
-        .abstract-en { margin-top: 8px; }
-        .en-label { font-size: 0.75em; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-        .abstract-text { color: #6b7280; font-size: 0.9em; line-height: 1.7; }
-        .back-nav { margin-bottom: 32px; }
-        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #6c5ce7; text-decoration: none; font-weight: 500; font-size: 0.9em; }
-        .back-link:hover { color: #5a4bd1; }
-        .paper-header-detail { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb; }
-        .paper-title-detail { font-size: 1.8em; font-weight: 800; color: #1a1a2e; line-height: 1.3; margin-bottom: 12px; }
-        .paper-meta-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-        .score-badge.large { font-size: 0.95em; padding: 6px 14px; }
-        .section-body ul, .section-body ol { padding-left: 1.5em; }
-        .section-body li { margin-bottom: 4px; }
-        .section-body code { background: #f3f0ff; color: #6c5ce7; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
-        .section-body pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; overflow-x: auto; }
-        .section-body blockquote { border-left: 4px solid #d1d5db; margin-left: 0; padding-left: 16px; color: #6b7280; }
-        .callout { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
-        .callout-tip { border-color: #6c5ce7; background: #f3f0ff; }
-        .callout-warning { border-color: #f59e0b; background: #fffbeb; }
-        .callout-success { border-color: #10b981; background: #ecfdf5; }
-        .callout-title { font-weight: 700; margin-bottom: 6px; }
-    </style>
+
+    
+<style>
+.container { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+.back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5c4fcf; font-size: .88em; font-weight: 500;
+    margin-bottom: 28px; cursor: pointer;
+}
+.back-btn:hover { color: #4338ca; }
+.paper-title-h1 {
+    font-size: 1.65em; font-weight: 800; color: #1a1a2e;
+    line-height: 1.3; margin-bottom: 14px;
+}
+.meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px; }
+.authors-txt { color: #6b7280; font-size: .88em; }
+
+/* sections */
+.section { margin-bottom: 36px; }
+.section-title {
+    font-size: 1em; font-weight: 700; color: #5c4fcf;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+    content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+.section-body { color: #374151; font-size: .95em; line-height: 1.8; }
+.section-body ul, .section-body ol { padding-left: 1.4em; }
+.section-body li { margin-bottom: 5px; }
+.section-body strong { color: #1a1a2e; }
+.section-body code {
+    background: #f3f0ff; color: #5c4fcf;
+    padding: 2px 6px; border-radius: 4px; font-size: .88em;
+}
+.section-body pre {
+    background: #f8f9fa; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0;
+}
+.section-body blockquote {
+    border-left: 3px solid #d1d5db; margin: 12px 0;
+    padding-left: 14px; color: #6b7280;
+}
+.section-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+.section-body th, .section-body td {
+    border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left;
+}
+.section-body th { background: #f9f8ff; font-weight: 600; }
+
+/* abstract */
+.abstract-zh {
+    background: #f9f8ff; border-left: 3px solid #5c4fcf;
+    border-radius: 0 8px 8px 0; padding: 16px 20px;
+    color: #374151; line-height: 1.9; font-size: .95em;
+    margin-bottom: 12px;
+}
+.abstract-en {
+    color: #6b7280; font-size: .88em; line-height: 1.75;
+}
+.en-label {
+    font-size: .72em; font-weight: 700; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 6px;
+}
+
+/* callout */
+.callout {
+    padding: 12px 16px; border-radius: 8px;
+    margin: 14px 0; border-left: 3px solid;
+}
+.callout-tip     { border-color: #5c4fcf; background: #f3f0ff; }
+.callout-success { border-color: #10b981; background: #ecfdf5; }
+.callout-warning { border-color: #f59e0b; background: #fffbeb; }
+.callout-info    { border-color: #3b82f6; background: #eff6ff; }
+.callout-icon { margin-right: 4px; }
+.callout-body { margin-top: 6px; font-size: .92em; color: #374151; }
+</style>
+
 </head>
 <body>
-    <div class="container" style="max-width: 800px;">
-        <nav class="back-nav">
-            <a href="../../index.html" class="back-link">← 返回每日推荐</a>
-        </nav>
-        <div class="paper-header-detail">
-            <h1 class="paper-title-detail">Hardware-Software Co-design for 3D-DRAM-based LLM Serving Accelerator</h1>
-            <div class="paper-meta-detail">
-                <span class="authors">Cong Li, Yihan Yin, Chenhao Xue, Zhao Wang, Fujun Bai, Yixin Guo, Xiping Jiang, Qiang Wu, Yuan Xie, Guangyu Sun</span>
-                <span class="score-badge large">8.7/10</span>
-                
-        <a href="https://arxiv.org/abs/2603.04797" target="_blank" class="tag-link">arXiv</a>
-        <a href="https://arxiv.org/pdf/2603.04797" target="_blank" class="tag-link">PDF</a>
-            </div>
-        </div>
-        <section class="detail-section"><h2 class="section-title">摘要</h2><div class="abstract-zh"><p>大语言模型（LLM）已被广泛用于在线生成服务，其中大量 LLM 实例共同处理请求到达率波动和请求长度变化的负载。为了高效执行共存的计算密集型和内存密集型算子，基于近内存处理（NMP）的计算范式已被广泛提出。然而，现有的 NMP 设计采用粗粒度的 KV cache 管理和不灵活的 attention 执行流程。这些限制阻碍了这些提案高效处理高度动态的 LLM serving 工作负载，限制了它们加速 LLM serving 的能力。</p>
-<p>为了解决这些问题，我们提出了 Helios，一个基于混合键合的 LLM Serving 加速器。Helios 旨在弥合 LLM serving 中 KV cache 管理的动态特性与 NMP 处理引擎（PE）之间分布式、非均匀内存抽象之间的根本差距。为此，我们设计了用于分布式分块 attention 执行的 PE 内执行流程和 PE 间通信原语。我们进一步提出了空间感知的 KV cache 分配机制，以平衡 attention 工作负载分布，同时最小化 PE 间数据传输开销。与现有 GPU/NMP 设计相比，Helios 实现了 3.25 倍（几何平均）加速和 3.36 倍（几何平均）更好的能效，P50/P99 token 间时间延迟最多降低 72%/76%。</p></div><div class="abstract-en"><p class="en-label">原文</p><p class="abstract-text">Large language models (LLMs) have been widely deployed for online generative services, where numerous LLM instances jointly handle workloads with fluctuating request arrival rates and variable request lengths. To efficiently execute coexisting compute-intensive and memory-intensive operators, near-memory processing (NMP) based computing paradigm has been extensively proposed. However, existing NMP designs adopt coarse-grained KV cache management and inflexible attention execution flow. Such limitations hinder these proposals from efficiently handling highly dynamic LLM serving workloads, limiting their ability to accelerate LLM serving.
+<div class="container">
+    <a class="back-btn" href="../../index.html">← 返回每日推荐</a>
+    <h1 class="paper-title-h1">Hardware-Software Co-design for 3D-DRAM-based LLM Serving Accelerator</h1>
+    <div class="meta-row">
+        <span class="authors-txt">Cong Li, Yihan Yin, Chenhao Xue, Zhao Wang, Fujun Bai, Yixin Guo, Xiping Jiang, Qiang Wu, Yuan Xie, Guangyu Sun</span>
+        <span class="chip chip-amber">8.7/10</span>
+        
+        <a class="chip chip-purple chip-link" href="https://arxiv.org/abs/2603.04797" target="_blank">arXiv ↗</a>
+        <a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.04797" target="_blank">PDF ↗</a>
+    </div>
+    
+        <div class="section">
+            <div class="section-title">📄 摘要</div>
+            <div class="abstract-zh">大语言模型（LLM）已被广泛用于在线生成服务，其中大量 LLM 实例共同处理请求到达率波动和请求长度变化的负载。为了高效执行共存的计算密集型和内存密集型算子，基于近内存处理（NMP）的计算范式已被广泛提出。然而，现有的 NMP 设计采用粗粒度的 KV cache 管理和不灵活的 attention 执行流程。这些限制阻碍了这些提案高效处理高度动态的 LLM serving 工作负载，限制了它们加速 LLM serving 的能力。
 
-To tackle these problems, we propose Helios, a Hybrid-bonding-based LLM Serving accelerator. Helios aims to bridge the fundamental gap between the dynamic nature of KV cache management in LLM serving and the distributed, non-uniform memory abstraction among NMP processing engines (PEs). To this end, we design both the intra-PE execution flow and the inter-PE communication primitives for distributed tiled attention execution. We further propose spatially-aware KV cache allocation mechanism to balance the attention workload distribution while minimizing the inter-PE data transfer overhead. Compared with existing GPU/NMP designs, Helios achieves 3.25 times (geomean) speedup and 3.36 times (geomean) better energy efficiency, along with up to 72%/76% P50/P99 time-between-tokens degradation.</p></div></section>
-        <section class="detail-section"><h2 class="section-title">核心要点</h2><div class="section-body"><ul>
-<li><strong>研究背景</strong>：LLM serving 面临高度动态工作负载，需要更高效的硬件支持</li>
-<li><strong>研究动机</strong>：现有 NMP 设计的 KV cache 管理和 attention 执行不够灵活</li>
-<li><strong>核心方法</strong>：Helios - 混合键合 3D-DRAM LLM serving 加速器</li>
-<li><strong>主要结果</strong>：3.25x 加速，3.36x 能效提升，P50/P99 延迟降低 72%/76%</li>
-<li><strong>研究意义</strong>：首个针对 LLM serving 的 3D-DRAM 硬件协同设计</li>
-</ul></div></section>
-        <section class="detail-section"><h2 class="section-title">研究背景与动机</h2><div class="section-body"><h3 id="_1">领域现状</h3>
+为了解决这些问题，我们提出了 Helios，一个基于混合键合的 LLM Serving 加速器。Helios 旨在弥合 LLM serving 中 KV cache 管理的动态特性与 NMP 处理引擎（PE）之间分布式、非均匀内存抽象之间的根本差距。为此，我们设计了用于分布式分块 attention 执行的 PE 内执行流程和 PE 间通信原语。我们进一步提出了空间感知的 KV cache 分配机制，以平衡 attention 工作负载分布，同时最小化 PE 间数据传输开销。与现有 GPU/NMP 设计相比，Helios 实现了 3.25 倍（几何平均）加速和 3.36 倍（几何平均）更好的能效，P50/P99 token 间时间延迟最多降低 72%/76%。</div>
+            <div class="abstract-en"><div class="en-label">原文</div><p>Large language models (LLMs) have been widely deployed for online generative services, where numerous LLM instances jointly handle workloads with fluctuating request arrival rates and variable request lengths. To efficiently execute coexisting compute-intensive and memory-intensive operators, near-memory processing (NMP) based computing paradigm has been extensively proposed. However, existing NMP designs adopt coarse-grained KV cache management and inflexible attention execution flow. Such limitations hinder these proposals from efficiently handling highly dynamic LLM serving workloads, limiting their ability to accelerate LLM serving.
+
+To tackle these problems, we propose Helios, a Hybrid-bonding-based LLM Serving accelerator. Helios aims to bridge the fundamental gap between the dynamic nature of KV cache management in LLM serving and the distributed, non-uniform memory abstraction among NMP processing engines (PEs). To this end, we design both the intra-PE execution flow and the inter-PE communication primitives for distributed tiled attention execution. We further propose spatially-aware KV cache allocation mechanism to balance the attention workload distribution while minimizing the inter-PE data transfer overhead. Compared with existing GPU/NMP designs, Helios achieves 3.25 times (geomean) speedup and 3.36 times (geomean) better energy efficiency, along with up to 72%/76% P50/P99 time-between-tokens degradation.</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🔍 研究问题与背景</div>
+            <div class="section-body"><h3>领域现状</h3>
 <p><strong>LLM Serving 的挑战</strong>：
 - 请求到达率波动
 - 请求长度变化
@@ -104,18 +139,22 @@ To tackle these problems, we propose Helios, a Hybrid-bonding-based LLM Serving 
 - 将计算移到内存附近，减少数据传输
 - 但现有设计采用粗粒度 KV cache 管理
 - Attention 执行流程不够灵活</p>
-<h3 id="_2">研究动机</h3>
-<p><strong>核心问题</strong>：如何设计高效的 3D-DRAM LLM serving 加速器？</p></div></section>
-        <section class="detail-section"><h2 class="section-title">创新点与方法</h2><div class="section-body"><h3 id="_1">核心思想</h3>
+<h3>研究动机</h3>
+<p><strong>核心问题</strong>：如何设计高效的 3D-DRAM LLM serving 加速器？</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">💡 核心创新点</div>
+            <div class="section-body"><h3>核心思想</h3>
 <p>Helios 是一个基于混合键合（Hybrid-bonding）的 3D-DRAM LLM serving 加速器，通过软硬件协同设计解决以下问题：
 1. PE 内执行流程优化
 2. PE 间通信原语
 3. 空间感知的 KV cache 分配</p>
-<h3 id="_2">方法框架</h3>
+<h3>方法框架</h3>
 <blockquote>
 <p>图1：Helios 系统架构概览</p>
 </blockquote>
-<h4 id="_3">各模块详细说明</h4>
+<h4>各模块详细说明</h4>
 <p><strong>模块1：混合键合技术</strong>
 - <strong>功能</strong>：实现高性能 3D-DRAM 集成
 - <strong>技术</strong>：Hybrid bonding 连接不同类型的 DRAM
@@ -127,8 +166,12 @@ To tackle these problems, we propose Helios, a Hybrid-bonding-based LLM Serving 
 <p><strong>模块3：KV Cache 管理优化</strong>
 - <strong>功能</strong>：细粒度 KV cache 管理
 - <strong>技术</strong>：动态 KV cache 分配和迁移
-- <strong>优势</strong>：适应动态工作负载</p></div></section>
-        <section class="detail-section"><h2 class="section-title">实验结果</h2><div class="section-body"><table>
+- <strong>优势</strong>：适应动态工作负载</p></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">📊 实验结果</div>
+            <div class="section-body"><table>
 <thead>
 <tr>
 <th>对比指标</th>
@@ -157,28 +200,33 @@ To tackle these problems, we propose Helios, a Hybrid-bonding-based LLM Serving 
 <p><strong>结果分析</strong>：
 - 与现有 GPU/NMP 设计相比显著提升
 - 空间感知 KV cache 分配有效
-- 混合键合技术实现高性能集成</p></div></section>
-        
-        <section class="detail-section"><h2 class="section-title">深度分析</h2><div class="section-body"><h3 id="_1">研究价值评估</h3>
-<h4 id="_2">实际应用价值</h4>
+- 混合键合技术实现高性能集成</p></div>
+        </div>
+    
+    
+        <div class="section">
+            <div class="section-title">🧠 深度分析</div>
+            <div class="section-body"><h3>研究价值评估</h3>
+<h4>实际应用价值</h4>
 <ul>
 <li><strong>应用场景</strong>：LLM serving 硬件加速</li>
 <li>适用性：直接应用于 LLM 推理服务</li>
 <li>优势：大幅提升性能和能效</li>
 <li>潜在影响：可能成为 LLM serving 硬件设计的新方向</li>
 </ul>
-<h4 id="_3">硬件创新</h4>
+<h4>硬件创新</h4>
 <ul>
 <li><strong>3D-DRAM 集成</strong>：混合键合技术实现高性能</li>
 <li><strong>分布式架构</strong>：多 PE 协同执行</li>
 </ul>
-<h3 id="_4">局限性分析</h3>
-<h4 id="1">局限1：硬件依赖</h4>
+<h3>局限性分析</h3>
+<h4>局限1：硬件依赖</h4>
 <ul>
 <li><strong>描述</strong>：需要 3D-DRAM 硬件支持</li>
 <li><strong>影响</strong>：部署门槛较高</li>
 <li><strong>可能的解决方案</strong>：等待硬件生态成熟</li>
-</ul></div></section>
-    </div>
+</ul></div>
+        </div>
+</div>
 </body>
 </html>
