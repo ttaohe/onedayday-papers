@@ -256,235 +256,229 @@ a:hover { text-decoration: underline; }
             <h2 class="date-heading">2026-03-09</h2>
             <span class="paper-count">6 篇论文</span>
         </div>
-        <div class="overview-box"><p>今日推荐的 <strong>6 篇论文</strong>主要聚焦于 <strong>MoE 模型服务优化</strong>、<strong>长上下文预填充加速</strong>、<strong>量化感知训练</strong>和<strong>专家内部机制分析</strong>等前沿方向。</p>
+        <div class="overview-box"><p>今日推荐的 <strong>6 篇论文</strong>主要聚焦于 <strong>多语言推理</strong>、<strong>高效推理加速</strong>、<strong>联邦微调</strong>、<strong>可解释奖励建模</strong> 和 <strong>推理时并行搜索</strong> 等方向。</p>
 <ul>
 <li>
-<p><strong>最新论文说明</strong>：今天是 2026-03-09（周日），arXiv 无新论文发布。以下是 2026-03-06（周四）的最新论文推荐。</p>
+<p><strong>总体趋势</strong>：一方面，研究者继续围绕 LLM 推理效率做文章，如扩散式 LLM 的 token 选择加速、并行 reasoning 的理论分析；另一方面，也有工作开始把 attention 放到跨语言泛化、联邦 LoRA 聚合与可解释对齐信号上。</p>
 </li>
 <li>
-<p><strong>总体趋势</strong>：今日论文围绕 MoE 架构的效率优化展开，涵盖无服务器 MoE 服务、专家行为分析、长上下文预填充加速等。</p>
-</li>
-<li>
-<p><strong>质量分布</strong>：今日推荐论文置信度在 0.3-0.9 之间，MoEless 和 FlashPrefill 特别值得关注。</p>
+<p><strong>质量分布</strong>：今日推荐论文的推荐评分主要分布在 <strong>8.1-9.5</strong> 区间，整体质量较高。其中 <strong>continuous CoT</strong> 和 <strong>DyLLM</strong> 最值得优先阅读。</p>
 </li>
 <li>
 <p><strong>研究热点</strong>：</p>
 </li>
-<li><strong>MoE 服务优化</strong>：MoEless 使用无服务器计算优化 MoE LLM 服务</li>
-<li><strong>长上下文加速</strong>：FlashPrefill 实现超快速长上下文预填充</li>
-<li><strong>专家机制分析</strong>：MoE Lens 和 Sparse Crosscoders 分析专家特化行为</li>
+<li><strong>跨语言推理</strong>：连续潜变量推理是否比显式 CoT 更具语言不变性</li>
+<li><strong>推理加速</strong>：利用 token saliency 与 partial attention 降低扩散式 LLM 推理成本</li>
+<li><strong>对齐与评估</strong>：通过 rubric 生成提升 reward modeling 的可靠性与可解释性</li>
 <li>
-<p><strong>量化训练</strong>：CR-QAT 课程关系量化感知训练</p>
+<p><strong>训练系统</strong>：联邦 LoRA 微调中如何保留跨轮次训练动量</p>
 </li>
 <li>
 <p><strong>阅读建议</strong>：</p>
 </li>
-<li>首先阅读 <strong>MoEless</strong> 了解无服务器 MoE 服务创新（置信度最高）</li>
-<li>然后阅读 <strong>FlashPrefill</strong> 了解长上下文预填充加速</li>
-<li>接着阅读 <strong>MoE Lens</strong> 和 <strong>Sparse Crosscoders</strong> 了解专家内部机制</li>
-<li>最后关注 <strong>CR-QAT</strong> 和 <strong>WMoE-CLIP</strong> 的量化应用</li>
+<li>先读 <strong>Is continuous CoT better suited for multi-lingual reasoning?</strong>，了解连续推理在跨语言泛化上的价值。</li>
+<li>再读 <strong>DyLLM</strong>，把握扩散式 LLM 推理加速的核心思路。</li>
+<li>然后读 <strong>FedMomentum</strong> 和 <strong>CDRRM</strong>，分别理解训练系统与对齐评估的新设计。</li>
+<li>最后阅读 <strong>Reject, Resample, Repeat</strong>，补足对 inference-time parallel reasoning 的理论视角。</li>
 </ul>
 <hr />
-<h3>MoEless: Efficient MoE LLM Serving via Serverless Computing</h3>
+<h3>Is continuous CoT better suited for multi-lingual reasoning?</h3>
 <ul>
-<li><strong>作者</strong>：Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</li>
-<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06350">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06350">PDF</a></li>
+<li><strong>作者</strong>：Ali Hamza Bashir, Behzad Shomali, Markus Frey, Mehdi Ali, Rafet Sifa, David Berghaus</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.08177v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.08177v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：20_Research/Papers/大模型/MoEless_Serverless-MoE-Serving</li>
-<li><strong>评分</strong>：8.5/10 | 置信度 0.90</li>
+<li><strong>评分</strong>：9.47/10</li>
 </ul>
-<p><strong>一句话总结</strong>：MoEless 是首个使用无服务器计算优化 MoE LLM 服务的框架，推理延迟降低 54.9%，成本降低 36.4%。</p>
+<p><strong>一句话总结</strong>：该工作表明，把推理过程放入连续潜空间，可能比显式文字 CoT 更适合多语言泛化，尤其对低资源语言和 zero-shot 场景更有效。</p>
 <p><strong>核心贡献/观点</strong>：
-- MoE LLM 使用专家并行分布式部署存在专家负载不平衡
-- 无服务器计算按需付费、弹性扩展，适合 MoE 的稀疏激活特性
-- 优化的专家放置 + 动态专家扩展缓解负载不平衡
-- 推理延迟降低 54.9%，成本降低 36.4%</p>
+- 系统比较连续 Chain-of-Thought 与标准监督微调在多语言推理中的表现。
+- 覆盖英语、中文、德语、法语、乌尔都语五种语言，验证语言不变性的实际收益。
+- 在低资源语言与未见语言 zero-shot 设置下，连续推理明显优于显式推理。
+- 推理轨迹还可压缩约 <strong>29x-50x</strong>，兼顾泛化与效率。</p>
+<p><strong>关键结果</strong>：在 GSM8k 和 CommonsenseQA 上，continuous reasoning 在低资源语言上的鲁棒性更强，并显著压缩推理痕迹长度。</p>
 <hr />
-<h3>FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling</h3>
+<h3>DyLLM: Efficient Diffusion LLM Inference via Saliency-based Token Selection and Partial Attention</h3>
 <ul>
-<li><strong>作者</strong>：Qihang Fan, Huaibo Huang, Zhiying Wu</li>
-<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06199">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06199">PDF</a></li>
+<li><strong>作者</strong>：Younjoo Lee, Junghoo Lee, Seungkyun Dan, Jaiyoung Park, Jung Ho Ahn</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.08026v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.08026v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>评分</strong>：置信度 0.40</li>
+<li><strong>评分</strong>：8.80/10</li>
 </ul>
-<p><strong>一句话总结</strong>：FlashPrefill 实现超快速长上下文预填充，通过瞬时模式发现和阈值化减少注意力计算。</p>
+<p><strong>一句话总结</strong>：DyLLM 利用相邻扩散步之间 token 表示的稳定性，只重算真正“显著”的 token，大幅提升扩散式 LLM 解码吞吐。</p>
 <p><strong>核心贡献/观点</strong>：
-- 长上下文预填充是 LLM 推理的计算瓶颈
-- 现有稀疏注意力方法搜索延迟高或稀疏度不足
-- FlashPrefill 实现瞬时模式发现
-- 自适应阈值化减少计算量
-- 保持模型质量的同时大幅加速</p>
-<p><strong>关键结果</strong>：在长上下文预填充上实现显著加速，同时保持模型性能。</p>
+- 观察到扩散式 LLM 在迭代去噪过程中，多数 token 的表示变化很小。
+- 提出基于 attention context 余弦相似度的 saliency 判定机制，找出需要更新的 token。
+- 仅对 salient tokens 重新执行 FFN 和 attention，其余 token 复用缓存激活。
+- 无需重新训练即可部署，是一种 training-free 的 inference acceleration 框架。</p>
+<p><strong>关键结果</strong>：在 reasoning 和 code generation 基准上，DyLLM 可达到最高 <strong>9.6x</strong> 吞吐提升，同时大体保持 LLaDA、Dream 等基线模型精度。</p>
 <hr />
-<h3>CR-QAT: Curriculum Relational Quantization-Aware Training for Open-Vocabulary Object Detection</h3>
+<h3>FedMomentum: Preserving LoRA Training Momentum in Federated Fine-Tuning</h3>
 <ul>
-<li><strong>作者</strong>：Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo Baek, Jibum Kim</li>
-<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05964">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05964">PDF</a></li>
+<li><strong>作者</strong>：Peishen Yan, Yang Hua, Hao Wang, Jiaru Zhang, Xiaoyu Wu, Tao Song, Haibing Guan</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.08014v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.08014v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：20_Research/Papers/大模型/CR-QAT_Quantization-Aware-Training</li>
-<li><strong>评分</strong>：7.8/10 | 置信度 0.50</li>
+<li><strong>评分</strong>：8.80/10</li>
 </ul>
-<p><strong>一句话总结</strong>：CR-QAT 首次研究极端量化对视觉-语言对齐的影响，通过课程关系保护保持 4-bit 量化性能。</p>
+<p><strong>一句话总结</strong>：FedMomentum 通过对正确聚合后的低秩更新做 SVD 重构，尽量保留联邦 LoRA 微调中的跨轮次训练动量。</p>
 <p><strong>核心贡献/观点</strong>：
-- 极端低比特（4-bit）量化破坏细粒度视觉-语言对齐和区域关系
-- 关系保护正则化 + 课程学习策略
-- 在 4-bit 量化下保持 OVOD 性能</p>
+- 指出直接分别平均 LoRA 的 down/up 矩阵在数学上并不正确，会引入额外噪声。
+- 认为现有无噪声聚合方法又会牺牲 LoRA 的结构表达能力与客户端个性化信息。
+- 将问题抽象为“训练动量丢失”，即多轮训练更新无法有效累积。
+- 提出基于 SVD 的 momentum-preserving 聚合方式，并支持保留 residual 信息增强鲁棒性。</p>
+<p><strong>关键结果</strong>：在多个任务上，FedMomentum 相比现有方法在收敛速度和最终精度上都更稳定、更优。</p>
 <hr />
-<h3>MoE Lens -- An Expert Is All You Need</h3>
+<h3>Foley-Flow: Coordinated Video-to-Audio Generation with Masked Audio-Visual Alignment and Dynamic Conditional Flows</h3>
 <ul>
-<li><strong>作者</strong>：Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval</li>
-<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05806">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05806">PDF</a></li>
+<li><strong>作者</strong>：Shentong Mo, Yibing Song</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.08126v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.08126v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>详细报告</strong>：20_Research/Papers/大模型/MoE-Lens_Expert-Specialization</li>
-<li><strong>评分</strong>：8.0/10 | 置信度 0.50</li>
+<li><strong>评分</strong>：8.53/10</li>
 </ul>
-<p><strong>一句话总结</strong>：MoE Lens 系统性分析专家特化行为，发现显著冗余，专家剪枝 50% 保持性能。</p>
+<p><strong>一句话总结</strong>：Foley-Flow 通过 masked audio-visual alignment 与动态条件 flow，同步提升视频到音频生成的语义一致性和节奏对齐。</p>
 <p><strong>核心贡献/观点</strong>：
-- 领域特定路由模式 + 早期解码框架
-- DeepSeekMoE 存在显著专家特化冗余
-- 专家剪枝策略减少 50% 活动专家</p>
+- 指出以往对比学习式 AV 对齐更擅长语义匹配，但对时序节奏同步支持不足。
+- 使用 masked modeling 训练方式，让视频片段直接指导音频片段恢复，增强局部对应关系。
+- 在生成阶段引入 dynamic conditional flow，用时变视频特征动态调制音频生成。
+- 同时建模 semantic consistency 与 rhythmic consistency，更适合真实 Foley 生成场景。</p>
+<p><strong>关键结果</strong>：在标准 benchmark 上，Foley-Flow 在多项指标上明显优于现有方法，音频与视频的语义和节奏协调性更强。</p>
 <hr />
-<h3>Sparse Crosscoders for diffing MoEs and Dense models</h3>
+<h3>CDRRM: Contrast-Driven Rubric Generation for Reliable and Interpretable Reward Modeling</h3>
 <ul>
-<li><strong>作者</strong>：Marmik Chaudhari, Nishkal Hundia, Idhant Gulati</li>
-<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.05805">arXiv</a> | <a href="https://arxiv.org/pdf/2603.05805">PDF</a></li>
+<li><strong>作者</strong>：Dengcan Liu, Fengkai Yang, Xiaohan Wang, Shurui Yan, Jiajun Chai, Jiahao Li, Yikun Ban, Zhendong Mao, Wei Lin, Guojun Yin</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.08035v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.08035v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>评分</strong>：置信度 0.50</li>
+<li><strong>评分</strong>：8.13/10</li>
 </ul>
-<p><strong>一句话总结</strong>：使用稀疏交叉编码器系统比较 MoE 和密集模型的内部表示。</p>
+<p><strong>一句话总结</strong>：CDRRM 先做对比式偏好剖析，再自动综合出高质量 rubric，以更可解释、更高数据效率的方式完成 reward modeling。</p>
 <p><strong>核心贡献/观点</strong>：
-- MoE 通过稀疏专家路由实现参数高效扩展
-- MoE 内部表示相比密集模型理解不足
-- 使用交叉编码器（稀疏自编码器变体）联合建模多个激活空间
-- 训练 5 层密集和 MoE 模型（相同活动参数）进行比较
-- 揭示 MoE 和密集模型的内部差异</p>
-<p><strong>关键结果</strong>：提供 MoE 和密集模型的系统性比较，揭示内部表示差异。</p>
+- 传统 reward model 依赖昂贵标注且可解释性差，rubric-based 方法又常产生冗余和噪声标准。
+- 提出 Contrast-then-Synthesis 范式，先识别偏好样本中的关键因果差异，再生成紧凑 rubric。
+- 这些 rubric 可直接指导 preference judgment，并减少 verbosity / position 等评估偏差。
+- 通过少量高质量样本训练 rubric generator，就能增强冻结 judge model 的表现。</p>
+<p><strong>关键结果</strong>：在 RewardBench、RMBench、RMB 上取得 SOTA，并且仅用 <strong>3k</strong> 高质量样本就能让冻结判别模型超过完全微调基线。</p>
 <hr />
-<h3>WMoE-CLIP: Wavelet-Enhanced Mixture-of-Experts Prompt Learning for Zero-Shot Anomaly Detection</h3>
+<h3>Reject, Resample, Repeat: Understanding Parallel Reasoning in Language Model Inference</h3>
 <ul>
-<li><strong>作者</strong>：Peng Chen, Chao Huang</li>
-<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.06313">arXiv</a> | <a href="https://arxiv.org/pdf/2603.06313">PDF</a></li>
+<li><strong>作者</strong>：Noah Golowich, Fan Chen, Dhruv Rohatgi, Raghav Singhal, Carles Domingo-Enrich, Dylan J. Foster, Akshay Krishnamurthy</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.07887v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.07887v1">PDF</a></li>
 <li><strong>来源</strong>：[arXiv]</li>
-<li><strong>评分</strong>：置信度 0.40</li>
+<li><strong>评分</strong>：8.13/10</li>
 </ul>
-<p><strong>一句话总结</strong>：WMoE-CLIP 结合小波增强和 MoE 提示学习，提升零样本异常检测性能。</p>
+<p><strong>一句话总结</strong>：该论文用 particle filtering / SMC 理论重新理解并行 reasoning 推理策略，为 accuracy-cost tradeoff 提供了更严格的分析框架。</p>
 <p><strong>核心贡献/观点</strong>：
-- 视觉-语言模型在零样本异常检测（ZSAD）中表现优异
-- 现有方法依赖固定文本提示，难以捕获复杂语义
-- 仅关注空间域特征，限制细微异常检测能力
-- WMoE-CLIP 使用：
-  - 小波变换增强特征表示
-  - MoE 提示学习动态适应不同语义
-- 提升对复杂和细微异常的检测能力</p>
-<p><strong>关键结果</strong>：在零样本异常检测任务上优于现有方法。</p>
+- 把 inference-time 采样、聚合、裁剪等并行 reasoning 方法统一到 Sequential Monte Carlo 视角下。
+- 研究在给定 process reward evaluations 预算时，如何更准确地逼近目标分布。
+- 从理论上给出非渐近保证成立的简单条件，并讨论 SMC 的算法改进方向。
+- 指出所有 particle filtering 方法都面临某种基本极限，说明并行 reasoning 并非“免费午餐”。</p>
+<p><strong>关键结果</strong>：实证结果显示，理论条件确实能较好解释 SMC 的 sampling error，但最终 accuracy 仍受更多因素影响。</p>
 <hr /></div>
-        <div class="papers-grid"><div class="paper-card" onclick="window.location.href='大模型/2026-03/MoEless_Serverless-MoE-Serving.html'">
+        <div class="papers-grid"><div class="paper-card" onclick="window.location.href='#'">
     <div class="card-top">
-        <div class="card-title">MoEless: Efficient MoE LLM Serving via Serverless Computing</div>
-        <span class="chip chip-amber">8.5/10 | 置信度 0.90</span>
+        <div class="card-title">Is continuous CoT better suited for multi-lingual reasoning?</div>
+        <span class="chip chip-amber">9.47/10</span>
     </div>
     <div class="card-meta">
-        <span class="card-authors">Hanfei Yu, Bei Ouyang, Shwai He, Ang Li, Hao Wang</span>
-        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06350" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06350" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+        <span class="card-authors">Ali Hamza Bashir, Behzad Shomali, Markus Frey, Mehdi Ali, Rafet Sifa, David Berghaus</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.08177v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.08177v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
-    <div class="card-summary">MoEless 是首个使用无服务器计算优化 MoE LLM 服务的框架，推理延迟降低 54.9%，成本降低 36.4%。</div>
+    <div class="card-summary">该工作表明，把推理过程放入连续潜空间，可能比显式文字 CoT 更适合多语言泛化，尤其对低资源语言和 zero-shot 场景更有效。</div>
     <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
-<li>MoE LLM 使用专家并行分布式部署存在专家负载不平衡</li>
-<li>无服务器计算按需付费、弹性扩展，适合 MoE 的稀疏激活特性</li>
-<li>优化的专家放置 + 动态专家扩展缓解负载不平衡</li>
-<li>推理延迟降低 54.9%，成本降低 36.4%</li>
+<li>系统比较连续 Chain-of-Thought 与标准监督微调在多语言推理中的表现。</li>
+<li>覆盖英语、中文、德语、法语、乌尔都语五种语言，验证语言不变性的实际收益。</li>
+<li>在低资源语言与未见语言 zero-shot 设置下，连续推理明显优于显式推理。</li>
+<li>推理轨迹还可压缩约 <strong>29x-50x</strong>，兼顾泛化与效率。</li>
 </ul>
+<p><strong>关键结果</strong>：在 GSM8k 和 CommonsenseQA 上，continuous reasoning 在低资源语言上的鲁棒性更强，并显著压缩推理痕迹长度。</p>
 <hr /></div>
 </div><div class="paper-card" onclick="window.location.href='#'">
     <div class="card-top">
-        <div class="card-title">FlashPrefill: Instantaneous Pattern Discovery and Thresholding for Ultra-Fast Long-Context Prefilling</div>
-        <span class="chip chip-amber">置信度 0.40</span>
+        <div class="card-title">DyLLM: Efficient Diffusion LLM Inference via Saliency-based Token Selection and Partial Attention</div>
+        <span class="chip chip-amber">8.80/10</span>
     </div>
     <div class="card-meta">
-        <span class="card-authors">Qihang Fan, Huaibo Huang, Zhiying Wu</span>
-        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06199" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06199" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+        <span class="card-authors">Younjoo Lee, Junghoo Lee, Seungkyun Dan, Jaiyoung Park, Jung Ho Ahn</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.08026v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.08026v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
-    <div class="card-summary">FlashPrefill 实现超快速长上下文预填充，通过瞬时模式发现和阈值化减少注意力计算。</div>
+    <div class="card-summary">DyLLM 利用相邻扩散步之间 token 表示的稳定性，只重算真正“显著”的 token，大幅提升扩散式 LLM 解码吞吐。</div>
     <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
-<li>长上下文预填充是 LLM 推理的计算瓶颈</li>
-<li>现有稀疏注意力方法搜索延迟高或稀疏度不足</li>
-<li>FlashPrefill 实现瞬时模式发现</li>
-<li>自适应阈值化减少计算量</li>
-<li>保持模型质量的同时大幅加速</li>
+<li>观察到扩散式 LLM 在迭代去噪过程中，多数 token 的表示变化很小。</li>
+<li>提出基于 attention context 余弦相似度的 saliency 判定机制，找出需要更新的 token。</li>
+<li>仅对 salient tokens 重新执行 FFN 和 attention，其余 token 复用缓存激活。</li>
+<li>无需重新训练即可部署，是一种 training-free 的 inference acceleration 框架。</li>
 </ul>
-<p><strong>关键结果</strong>：在长上下文预填充上实现显著加速，同时保持模型性能。</p>
-<hr /></div>
-</div><div class="paper-card" onclick="window.location.href='大模型/2026-03/CR-QAT_Quantization-Aware-Training.html'">
-    <div class="card-top">
-        <div class="card-title">CR-QAT: Curriculum Relational Quantization-Aware Training for Open-Vocabulary Object Detection</div>
-        <span class="chip chip-amber">7.8/10 | 置信度 0.50</span>
-    </div>
-    <div class="card-meta">
-        <span class="card-authors">Jinyeong Park, Donghwa Kim, Brent ByungHoon Kang, Hyeongboo Baek, Jibum Kim</span>
-        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05964" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05964" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
-    </div>
-    <div class="card-summary">CR-QAT 首次研究极端量化对视觉-语言对齐的影响，通过课程关系保护保持 4-bit 量化性能。</div>
-    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
-<li>极端低比特（4-bit）量化破坏细粒度视觉-语言对齐和区域关系</li>
-<li>关系保护正则化 + 课程学习策略</li>
-<li>在 4-bit 量化下保持 OVOD 性能</li>
-</ul>
-<hr /></div>
-</div><div class="paper-card" onclick="window.location.href='大模型/2026-03/MoE-Lens_Expert-Specialization.html'">
-    <div class="card-top">
-        <div class="card-title">MoE Lens -- An Expert Is All You Need</div>
-        <span class="chip chip-amber">8.0/10 | 置信度 0.50</span>
-    </div>
-    <div class="card-meta">
-        <span class="card-authors">Marmik Chaudhari, Idhant Gulati, Nishkal Hundia, Pranav Karra, Shivam Raval</span>
-        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05806" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05806" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
-    </div>
-    <div class="card-summary">MoE Lens 系统性分析专家特化行为，发现显著冗余，专家剪枝 50% 保持性能。</div>
-    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
-<li>领域特定路由模式 + 早期解码框架</li>
-<li>DeepSeekMoE 存在显著专家特化冗余</li>
-<li>专家剪枝策略减少 50% 活动专家</li>
-</ul>
+<p><strong>关键结果</strong>：在 reasoning 和 code generation 基准上，DyLLM 可达到最高 <strong>9.6x</strong> 吞吐提升，同时大体保持 LLaDA、Dream 等基线模型精度。</p>
 <hr /></div>
 </div><div class="paper-card" onclick="window.location.href='#'">
     <div class="card-top">
-        <div class="card-title">Sparse Crosscoders for diffing MoEs and Dense models</div>
-        <span class="chip chip-amber">置信度 0.50</span>
+        <div class="card-title">FedMomentum: Preserving LoRA Training Momentum in Federated Fine-Tuning</div>
+        <span class="chip chip-amber">8.80/10</span>
     </div>
     <div class="card-meta">
-        <span class="card-authors">Marmik Chaudhari, Nishkal Hundia, Idhant Gulati</span>
-        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.05805" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.05805" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+        <span class="card-authors">Peishen Yan, Yang Hua, Hao Wang, Jiaru Zhang, Xiaoyu Wu, Tao Song, Haibing Guan</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.08014v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.08014v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
-    <div class="card-summary">使用稀疏交叉编码器系统比较 MoE 和密集模型的内部表示。</div>
+    <div class="card-summary">FedMomentum 通过对正确聚合后的低秩更新做 SVD 重构，尽量保留联邦 LoRA 微调中的跨轮次训练动量。</div>
     <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
-<li>MoE 通过稀疏专家路由实现参数高效扩展</li>
-<li>MoE 内部表示相比密集模型理解不足</li>
-<li>使用交叉编码器（稀疏自编码器变体）联合建模多个激活空间</li>
-<li>训练 5 层密集和 MoE 模型（相同活动参数）进行比较</li>
-<li>揭示 MoE 和密集模型的内部差异</li>
+<li>指出直接分别平均 LoRA 的 down/up 矩阵在数学上并不正确，会引入额外噪声。</li>
+<li>认为现有无噪声聚合方法又会牺牲 LoRA 的结构表达能力与客户端个性化信息。</li>
+<li>将问题抽象为“训练动量丢失”，即多轮训练更新无法有效累积。</li>
+<li>提出基于 SVD 的 momentum-preserving 聚合方式，并支持保留 residual 信息增强鲁棒性。</li>
 </ul>
-<p><strong>关键结果</strong>：提供 MoE 和密集模型的系统性比较，揭示内部表示差异。</p>
+<p><strong>关键结果</strong>：在多个任务上，FedMomentum 相比现有方法在收敛速度和最终精度上都更稳定、更优。</p>
 <hr /></div>
 </div><div class="paper-card" onclick="window.location.href='#'">
     <div class="card-top">
-        <div class="card-title">WMoE-CLIP: Wavelet-Enhanced Mixture-of-Experts Prompt Learning for Zero-Shot Anomaly Detection</div>
-        <span class="chip chip-amber">置信度 0.40</span>
+        <div class="card-title">Foley-Flow: Coordinated Video-to-Audio Generation with Masked Audio-Visual Alignment and Dynamic Conditional Flows</div>
+        <span class="chip chip-amber">8.53/10</span>
     </div>
     <div class="card-meta">
-        <span class="card-authors">Peng Chen, Chao Huang</span>
-        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.06313" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.06313" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+        <span class="card-authors">Shentong Mo, Yibing Song</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.08126v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.08126v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
     </div>
-    <div class="card-summary">WMoE-CLIP 结合小波增强和 MoE 提示学习，提升零样本异常检测性能。</div>
+    <div class="card-summary">Foley-Flow 通过 masked audio-visual alignment 与动态条件 flow，同步提升视频到音频生成的语义一致性和节奏对齐。</div>
     <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
-<li>视觉-语言模型在零样本异常检测（ZSAD）中表现优异</li>
-<li>现有方法依赖固定文本提示，难以捕获复杂语义</li>
-<li>仅关注空间域特征，限制细微异常检测能力</li>
-<li>WMoE-CLIP 使用：</li>
-<li>小波变换增强特征表示</li>
-<li>MoE 提示学习动态适应不同语义</li>
-<li>提升对复杂和细微异常的检测能力</li>
+<li>指出以往对比学习式 AV 对齐更擅长语义匹配，但对时序节奏同步支持不足。</li>
+<li>使用 masked modeling 训练方式，让视频片段直接指导音频片段恢复，增强局部对应关系。</li>
+<li>在生成阶段引入 dynamic conditional flow，用时变视频特征动态调制音频生成。</li>
+<li>同时建模 semantic consistency 与 rhythmic consistency，更适合真实 Foley 生成场景。</li>
 </ul>
-<p><strong>关键结果</strong>：在零样本异常检测任务上优于现有方法。</p>
+<p><strong>关键结果</strong>：在标准 benchmark 上，Foley-Flow 在多项指标上明显优于现有方法，音频与视频的语义和节奏协调性更强。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">CDRRM: Contrast-Driven Rubric Generation for Reliable and Interpretable Reward Modeling</div>
+        <span class="chip chip-amber">8.13/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Dengcan Liu, Fengkai Yang, Xiaohan Wang, Shurui Yan, Jiajun Chai, Jiahao Li, Yikun Ban, Zhendong Mao, Wei Lin, Guojun Yin</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.08035v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.08035v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">CDRRM 先做对比式偏好剖析，再自动综合出高质量 rubric，以更可解释、更高数据效率的方式完成 reward modeling。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>传统 reward model 依赖昂贵标注且可解释性差，rubric-based 方法又常产生冗余和噪声标准。</li>
+<li>提出 Contrast-then-Synthesis 范式，先识别偏好样本中的关键因果差异，再生成紧凑 rubric。</li>
+<li>这些 rubric 可直接指导 preference judgment，并减少 verbosity / position 等评估偏差。</li>
+<li>通过少量高质量样本训练 rubric generator，就能增强冻结 judge model 的表现。</li>
+</ul>
+<p><strong>关键结果</strong>：在 RewardBench、RMBench、RMB 上取得 SOTA，并且仅用 <strong>3k</strong> 高质量样本就能让冻结判别模型超过完全微调基线。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">Reject, Resample, Repeat: Understanding Parallel Reasoning in Language Model Inference</div>
+        <span class="chip chip-amber">8.13/10</span>
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Noah Golowich, Fan Chen, Dhruv Rohatgi, Raghav Singhal, Carles Domingo-Enrich, Dylan J. Foster, Akshay Krishnamurthy</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.07887v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.07887v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">该论文用 particle filtering / SMC 理论重新理解并行 reasoning 推理策略，为 accuracy-cost tradeoff 提供了更严格的分析框架。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>把 inference-time 采样、聚合、裁剪等并行 reasoning 方法统一到 Sequential Monte Carlo 视角下。</li>
+<li>研究在给定 process reward evaluations 预算时，如何更准确地逼近目标分布。</li>
+<li>从理论上给出非渐近保证成立的简单条件，并讨论 SMC 的算法改进方向。</li>
+<li>指出所有 particle filtering 方法都面临某种基本极限，说明并行 reasoning 并非“免费午餐”。</li>
+</ul>
+<p><strong>关键结果</strong>：实证结果显示，理论条件确实能较好解释 SMC 的 sampling error，但最终 accuracy 仍受更多因素影响。</p>
 <hr /></div>
 </div></div>
     </section>
