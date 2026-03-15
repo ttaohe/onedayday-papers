@@ -251,6 +251,346 @@ a:hover { text-decoration: underline; }
 </header>
 <main class="main" id="main">
     
+    <section class="date-section" data-date="2026-03-13">
+        <div class="date-header">
+            <h2 class="date-heading">2026-03-13</h2>
+            <span class="paper-count">10 篇论文</span>
+        </div>
+        <div class="overview-box"><p>今日推荐的 10 篇论文主要聚焦于 <strong>推理与服务优化</strong>、<strong>多模态/视频理解与生成</strong>、以及 <strong>具身智能与机器人系统</strong> 三条方向。</p>
+<ul>
+<li><strong>总体趋势</strong>：今天最值得关注的主题仍然是“在真实部署约束下做更快、更稳、更可扩展的模型推理与决策”，包括 zero-shot 分类选型、long-context 解码加速、跨层 sparse attention 复用，以及 streaming video reasoning。</li>
+<li><strong>质量分布</strong>：今日推荐论文评分在 <strong>7.73-9.73</strong> 之间，整体质量较高，前五篇都具有明确的问题定义和较强的工程/系统启发。</li>
+<li><strong>研究热点</strong>：</li>
+<li><strong>高效推理与 serving</strong>：Slow-Fast Inference、IndexCache 直接面向长上下文和 sparse attention 推理成本。</li>
+<li><strong>模型选型与系统权衡</strong>：BTZSC 把 zero-shot 分类的效果与延迟统一分析，很适合系统视角阅读。</li>
+<li><strong>多模态连续场景</strong>：FlashMotion、Think While Watching、HomeSafe-Bench 体现出视频流和 embodied 安全监控的持续升温。</li>
+<li><strong>阅读建议</strong>：建议先读 <strong>BTZSC</strong> 和 <strong>Slow-Fast Inference</strong>，快速抓住与你主线最相关的 benchmark 与 inference optimization；随后看 <strong>IndexCache</strong>，最后再根据兴趣浏览多模态和机器人方向。</li>
+</ul>
+<h3>BTZSC: A Benchmark for Zero-Shot Text Classification Across Cross-Encoders, Embedding Models, Rerankers and LLMs</h3>
+<ul>
+<li><strong>作者</strong>：Ilias Aarab</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.11991v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.11991v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/2026-03/BTZSC_A_Benchmark_for_Zero-Shot_Text_Classification_Across_Cross-Encoders_Embedding_Models_Rerankers_and_LLMs</li>
+<li><strong>笔记</strong>：已生成详细分析</li>
+</ul>
+<p><strong>一句话总结</strong>：系统比较 cross-encoder、embedding、reranker 与 LLM 在纯 zero-shot 分类中的效果与延迟权衡。</p>
+<p><strong>核心贡献/观点</strong>：
+- 构建 22 个公开数据集组成的真实 zero-shot 分类 benchmark。
+- 统一比较四类模型家族在 macro F1 与 latency 上的表现。
+- 表明 reranker 达到最佳精度，而 embedding model 提供更均衡的部署 trade-off。</p>
+<p><strong>关键结果</strong>：Qwen3-Reranker-8B 达到 macro F1 0.72，GTE-large-en-v1.5 在精度-延迟之间表现最平衡。</p>
+<hr />
+<h3>FlashMotion: Few-Step Controllable Video Generation with Trajectory Guidance</h3>
+<ul>
+<li><strong>作者</strong>：Quanhao Li, Zhen Xing, Rui Wang, Haidong Cao, Qi Dai, Daoguo Dong, Zuxuan Wu</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.12146v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.12146v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/2026-03/FlashMotion_Few-Step_Controllable_Video_Generation_with_Trajectory_Guidance</li>
+<li><strong>笔记</strong>：已生成详细分析</li>
+</ul>
+<p><strong>一句话总结</strong>：把轨迹可控视频生成蒸馏到 few-step，同时保持轨迹精度和视频质量。</p>
+<p><strong>核心贡献/观点</strong>：
+- 提出面向 few-step controllable video generation 的分阶段训练框架。
+- 把生成器蒸馏和控制 adapter 对齐分开处理。
+- 提出 FlashBench 用于评估长序列轨迹可控视频生成。</p>
+<p><strong>关键结果</strong>：在两个 adapter 架构上都优于现有视频蒸馏方法和之前的多步模型。</p>
+<hr />
+<h3>Prototype-Based Knowledge Guidance for Fine-Grained Structured Radiology Reporting</h3>
+<ul>
+<li><strong>作者</strong>：Chantal Pellegrini, Adrian Delchev, Ege Özsoy, Nassir Navab, Matthias Keicher</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.11938v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.11938v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>详细报告</strong>：20_Research/Papers/大模型/2026-03/Prototype-Based_Knowledge_Guidance_for_Fine-Grained_Structured_Radiology_Reporting</li>
+<li><strong>笔记</strong>：已生成详细分析</li>
+</ul>
+<p><strong>一句话总结</strong>：把自由文本放射报告转成 prototype knowledge base，用于增强结构化报告预测。</p>
+<p><strong>核心贡献/观点</strong>：
+- 从 80k+ MIMIC-CXR 自由文本中挖掘细粒度知识。
+- 构建与结构化模板对齐的 multimodal knowledge base。
+- 用 prototype-conditioned residual 对结构化预测做二次修正。</p>
+<p><strong>关键结果</strong>：在 Rad-ReStruct benchmark 上达到 SOTA，尤其在细粒度属性问题上提升明显。</p>
+<hr />
+<h3>RADAR: Closed-Loop Robotic Data Generation via Semantic Planning and Autonomous Causal Environment Reset</h3>
+<ul>
+<li><strong>作者</strong>：Yongzhong Wang, Keyu Zhu, Yong Zhong, Liqiong Wang, Jinyu Yang, Feng Zheng</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.11811v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.11811v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>笔记</strong>：&lt;&lt;无&gt;&gt;</li>
+</ul>
+<p><strong>一句话总结</strong>：通过 semantic planning、自动成功判定和 autonomous reset，把机器人数据采集变成闭环无人流程。</p>
+<p><strong>核心贡献/观点</strong>：
+- 提出全自动闭环 robotic data acquisition engine。
+- 用 VLM 做任务生成与成功判定。
+- 用 causal reset pipeline 解决人工重置瓶颈。</p>
+<p><strong>关键结果</strong>：模拟中复杂长程任务成功率可达 90%，真实世界中也能 few-shot 迁移执行 contact-rich skills。</p>
+<hr />
+<h3>Slow-Fast Inference: Training-Free Inference Acceleration via Within-Sentence Support Stability</h3>
+<ul>
+<li><strong>作者</strong>：Xingyu Xie, Zhaochen Yu, Yue Liao, Tao Wang, Kim-Chuan Toh, Shuicheng Yan</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.12038v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.12038v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>笔记</strong>：&lt;&lt;无&gt;&gt;</li>
+</ul>
+<p><strong>一句话总结</strong>：利用句内 attention support 稳定性，把解码拆成低成本 fast step 与周期性 slow step，实现训练免费加速。</p>
+<p><strong>核心贡献/观点</strong>：
+- 观察到句内 dominant attention support 的稳定性。
+- 提出 slow-fast 解码框架，快步复用 sparse memory，慢步刷新 context。
+- 无需训练即可直接应用在已有 checkpoint。</p>
+<p><strong>关键结果</strong>：在长上下文和 long-CoT 设置下可获得约 1.6x 到 14.4x 吞吐提升。</p>
+<hr />
+<h3>Few-for-Many Personalized Federated Learning</h3>
+<ul>
+<li><strong>作者</strong>：Ping Guo, Tiantian Zhang, Xi Lin, Xiang Li, Zhi-Ri Tang, Qingfu Zhang</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.11992v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.11992v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>笔记</strong>：&lt;&lt;无&gt;&gt;</li>
+</ul>
+<p><strong>一句话总结</strong>：把 personalized federated learning 重新表述成 few-for-many 优化问题，用少量 server model 服务大量异构客户端。</p>
+<p><strong>核心贡献/观点</strong>：
+- 以 multi-objective optimization 视角重构 PFL。
+- 只维护 K 个共享 server models，而非为每个客户端维护一个模型。
+- 提出 FedFew 自动学习最优模型多样性。</p>
+<p><strong>关键结果</strong>：仅用 3 个模型就在 vision、NLP 和 medical imaging 数据集上超过多种 SOTA。</p>
+<hr />
+<h3>Think While Watching: Online Streaming Segment-Level Memory for Multi-Turn Video Reasoning in Multimodal Large Language Models</h3>
+<ul>
+<li><strong>作者</strong>：Lu Wang, Zhuoran Jin, Yupu Hao, Yubo Chen, Kang Liu, Yulong Ao, Jun Zhao</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.11896v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.11896v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>笔记</strong>：&lt;&lt;无&gt;&gt;</li>
+</ul>
+<p><strong>一句话总结</strong>：通过 segment-level memory 和 watch-think overlap，让多模态大模型支持多轮 streaming video reasoning。</p>
+<p><strong>核心贡献/观点</strong>：
+- 提出 memory-anchored streaming reasoning 框架。
+- 设计 segment-level streaming causal mask 和 streaming positional encoding。
+- 推理阶段重叠 watching 与 thinking，降低流式处理成本。</p>
+<p><strong>关键结果</strong>：基于 Qwen3-VL，在 StreamingBench 与 OVO-Bench 上明显提升，并在多轮场景下降低 56% 输出 token。</p>
+<hr />
+<h3>IndexCache: Accelerating Sparse Attention via Cross-Layer Index Reuse</h3>
+<ul>
+<li><strong>作者</strong>：Yushi Bai, Qian Dong, Ting Jiang, Xin Lv, Zhengxiao Du, Aohan Zeng, Jie Tang, Juanzi Li</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.12201v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.12201v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>笔记</strong>：&lt;&lt;无&gt;&gt;</li>
+</ul>
+<p><strong>一句话总结</strong>：通过跨层复用 sparse attention top-k index，减少 indexer 计算并显著加速 prefill 与 decode。</p>
+<p><strong>核心贡献/观点</strong>：
+- 观察到相邻层的 top-k token 选择高度相似。
+- 将层划分为 Full layer 与 Shared layer，复用最近 Full layer 的 index。
+- 提供 training-free 与 training-aware 两种配置优化方式。</p>
+<p><strong>关键结果</strong>：在 30B DSA 模型上可去掉 75% indexer 计算，获得 1.82x prefill 与 1.48x decode 加速。</p>
+<hr />
+<h3>HomeSafe-Bench: Evaluating Vision-Language Models on Unsafe Action Detection for Embodied Agents in Household Scenarios</h3>
+<ul>
+<li><strong>作者</strong>：Jiayue Pu, Zhongxiang Sun, Zilu Zhang, Xiao Zhang, Jun Xu</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.11975v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.11975v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>笔记</strong>：&lt;&lt;无&gt;&gt;</li>
+</ul>
+<p><strong>一句话总结</strong>：提出面向 household embodied safety 的 benchmark，并设计 fast-slow 双脑架构做实时 unsafe action detection。</p>
+<p><strong>核心贡献/观点</strong>：
+- 构建 HomeSafe-Bench，覆盖 438 个家庭场景案例。
+- 提出 HD-Guard，用轻量 FastBrain 与大模型 SlowBrain 协同做安全监控。
+- 关注 latency 与 safety accuracy 的平衡。</p>
+<p><strong>关键结果</strong>：HD-Guard 在延迟和检测性能之间实现更优 trade-off，并暴露出当前 VLM 安全检测的关键瓶颈。</p>
+<hr />
+<h3>SaPaVe: Towards Active Perception and Manipulation in Vision-Language-Action Models for Robotics</h3>
+<ul>
+<li><strong>作者</strong>：Mengzhen Liu, Enshen Zhou, Cheng Chi, Yi Han, Shanyu Rong, Liming Chen, Pengwei Wang, Zhongyuan Wang, Shanghang Zhang</li>
+<li><strong>机构</strong>：&lt;&lt;未明确&gt;&gt;</li>
+<li><strong>链接</strong>：<a href="http://arxiv.org/abs/2603.12193v1">arXiv</a> | <a href="https://arxiv.org/pdf/2603.12193v1">PDF</a></li>
+<li><strong>来源</strong>：arXiv</li>
+<li><strong>笔记</strong>：&lt;&lt;无&gt;&gt;</li>
+</ul>
+<p><strong>一句话总结</strong>：联合学习语义驱动的 active perception 与 viewpoint-robust manipulation，提升 VLA 模型在真实场景中的主动操作能力。</p>
+<p><strong>核心贡献/观点</strong>：
+- 解耦 camera action 与 manipulation action。
+- 引入 ActiveViewPose-200K 与 ActiveManip-Bench。
+- 用 3D geometry-aware module 提升动态视角下的鲁棒性。</p>
+<p><strong>关键结果</strong>：相对 GR00T N1 和 π_0，在真实世界任务中最高提升 31.25% 成功率。</p>
+<hr /></div>
+        <div class="papers-grid"><div class="paper-card" onclick="window.location.href='大模型/2026-03/BTZSC_A_Benchmark_for_Zero-Shot_Text_Classification_Across_Cross-Encoders_Embedding_Models_Rerankers_and_LLMs.html'">
+    <div class="card-top">
+        <div class="card-title">BTZSC: A Benchmark for Zero-Shot Text Classification Across Cross-Encoders, Embedding Models, Rerankers and LLMs</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Ilias Aarab</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.11991v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.11991v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">系统比较 cross-encoder、embedding、reranker 与 LLM 在纯 zero-shot 分类中的效果与延迟权衡。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>构建 22 个公开数据集组成的真实 zero-shot 分类 benchmark。</li>
+<li>统一比较四类模型家族在 macro F1 与 latency 上的表现。</li>
+<li>表明 reranker 达到最佳精度，而 embedding model 提供更均衡的部署 trade-off。</li>
+</ul>
+<p><strong>关键结果</strong>：Qwen3-Reranker-8B 达到 macro F1 0.72，GTE-large-en-v1.5 在精度-延迟之间表现最平衡。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='大模型/2026-03/FlashMotion_Few-Step_Controllable_Video_Generation_with_Trajectory_Guidance.html'">
+    <div class="card-top">
+        <div class="card-title">FlashMotion: Few-Step Controllable Video Generation with Trajectory Guidance</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Quanhao Li, Zhen Xing, Rui Wang, Haidong Cao, Qi Dai, Daoguo Dong, Zuxuan Wu</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.12146v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.12146v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">把轨迹可控视频生成蒸馏到 few-step，同时保持轨迹精度和视频质量。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>提出面向 few-step controllable video generation 的分阶段训练框架。</li>
+<li>把生成器蒸馏和控制 adapter 对齐分开处理。</li>
+<li>提出 FlashBench 用于评估长序列轨迹可控视频生成。</li>
+</ul>
+<p><strong>关键结果</strong>：在两个 adapter 架构上都优于现有视频蒸馏方法和之前的多步模型。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='大模型/2026-03/Prototype-Based_Knowledge_Guidance_for_Fine-Grained_Structured_Radiology_Reporting.html'">
+    <div class="card-top">
+        <div class="card-title">Prototype-Based Knowledge Guidance for Fine-Grained Structured Radiology Reporting</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Chantal Pellegrini, Adrian Delchev, Ege Özsoy, Nassir Navab, Matthias Keicher</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.11938v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.11938v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">把自由文本放射报告转成 prototype knowledge base，用于增强结构化报告预测。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>从 80k+ MIMIC-CXR 自由文本中挖掘细粒度知识。</li>
+<li>构建与结构化模板对齐的 multimodal knowledge base。</li>
+<li>用 prototype-conditioned residual 对结构化预测做二次修正。</li>
+</ul>
+<p><strong>关键结果</strong>：在 Rad-ReStruct benchmark 上达到 SOTA，尤其在细粒度属性问题上提升明显。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">RADAR: Closed-Loop Robotic Data Generation via Semantic Planning and Autonomous Causal Environment Reset</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Yongzhong Wang, Keyu Zhu, Yong Zhong, Liqiong Wang, Jinyu Yang, Feng Zheng</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.11811v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.11811v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">通过 semantic planning、自动成功判定和 autonomous reset，把机器人数据采集变成闭环无人流程。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>提出全自动闭环 robotic data acquisition engine。</li>
+<li>用 VLM 做任务生成与成功判定。</li>
+<li>用 causal reset pipeline 解决人工重置瓶颈。</li>
+</ul>
+<p><strong>关键结果</strong>：模拟中复杂长程任务成功率可达 90%，真实世界中也能 few-shot 迁移执行 contact-rich skills。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">Slow-Fast Inference: Training-Free Inference Acceleration via Within-Sentence Support Stability</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Xingyu Xie, Zhaochen Yu, Yue Liao, Tao Wang, Kim-Chuan Toh, Shuicheng Yan</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.12038v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.12038v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">利用句内 attention support 稳定性，把解码拆成低成本 fast step 与周期性 slow step，实现训练免费加速。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>观察到句内 dominant attention support 的稳定性。</li>
+<li>提出 slow-fast 解码框架，快步复用 sparse memory，慢步刷新 context。</li>
+<li>无需训练即可直接应用在已有 checkpoint。</li>
+</ul>
+<p><strong>关键结果</strong>：在长上下文和 long-CoT 设置下可获得约 1.6x 到 14.4x 吞吐提升。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">Few-for-Many Personalized Federated Learning</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Ping Guo, Tiantian Zhang, Xi Lin, Xiang Li, Zhi-Ri Tang, Qingfu Zhang</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.11992v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.11992v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">把 personalized federated learning 重新表述成 few-for-many 优化问题，用少量 server model 服务大量异构客户端。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>以 multi-objective optimization 视角重构 PFL。</li>
+<li>只维护 K 个共享 server models，而非为每个客户端维护一个模型。</li>
+<li>提出 FedFew 自动学习最优模型多样性。</li>
+</ul>
+<p><strong>关键结果</strong>：仅用 3 个模型就在 vision、NLP 和 medical imaging 数据集上超过多种 SOTA。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">Think While Watching: Online Streaming Segment-Level Memory for Multi-Turn Video Reasoning in Multimodal Large Language Models</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Lu Wang, Zhuoran Jin, Yupu Hao, Yubo Chen, Kang Liu, Yulong Ao, Jun Zhao</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.11896v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.11896v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">通过 segment-level memory 和 watch-think overlap，让多模态大模型支持多轮 streaming video reasoning。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>提出 memory-anchored streaming reasoning 框架。</li>
+<li>设计 segment-level streaming causal mask 和 streaming positional encoding。</li>
+<li>推理阶段重叠 watching 与 thinking，降低流式处理成本。</li>
+</ul>
+<p><strong>关键结果</strong>：基于 Qwen3-VL，在 StreamingBench 与 OVO-Bench 上明显提升，并在多轮场景下降低 56% 输出 token。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">IndexCache: Accelerating Sparse Attention via Cross-Layer Index Reuse</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Yushi Bai, Qian Dong, Ting Jiang, Xin Lv, Zhengxiao Du, Aohan Zeng, Jie Tang, Juanzi Li</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.12201v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.12201v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">通过跨层复用 sparse attention top-k index，减少 indexer 计算并显著加速 prefill 与 decode。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>观察到相邻层的 top-k token 选择高度相似。</li>
+<li>将层划分为 Full layer 与 Shared layer，复用最近 Full layer 的 index。</li>
+<li>提供 training-free 与 training-aware 两种配置优化方式。</li>
+</ul>
+<p><strong>关键结果</strong>：在 30B DSA 模型上可去掉 75% indexer 计算，获得 1.82x prefill 与 1.48x decode 加速。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">HomeSafe-Bench: Evaluating Vision-Language Models on Unsafe Action Detection for Embodied Agents in Household Scenarios</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Jiayue Pu, Zhongxiang Sun, Zilu Zhang, Xiao Zhang, Jun Xu</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.11975v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.11975v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">提出面向 household embodied safety 的 benchmark，并设计 fast-slow 双脑架构做实时 unsafe action detection。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>构建 HomeSafe-Bench，覆盖 438 个家庭场景案例。</li>
+<li>提出 HD-Guard，用轻量 FastBrain 与大模型 SlowBrain 协同做安全监控。</li>
+<li>关注 latency 与 safety accuracy 的平衡。</li>
+</ul>
+<p><strong>关键结果</strong>：HD-Guard 在延迟和检测性能之间实现更优 trade-off，并暴露出当前 VLM 安全检测的关键瓶颈。</p>
+<hr /></div>
+</div><div class="paper-card" onclick="window.location.href='#'">
+    <div class="card-top">
+        <div class="card-title">SaPaVe: Towards Active Perception and Manipulation in Vision-Language-Action Models for Robotics</div>
+        
+    </div>
+    <div class="card-meta">
+        <span class="card-authors">Mengzhen Liu, Enshen Zhou, Cheng Chi, Yi Han, Shanyu Rong, Liming Chen, Pengwei Wang, Zhongyuan Wang, Shanghang Zhang</span>
+        <div class="card-links"><a class="chip chip-purple chip-link" href="http://arxiv.org/abs/2603.12193v1" target="_blank" onclick="event.stopPropagation()">arXiv</a><a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.12193v1" target="_blank" onclick="event.stopPropagation()">PDF</a></div>
+    </div>
+    <div class="card-summary">联合学习语义驱动的 active perception 与 viewpoint-robust manipulation，提升 VLA 模型在真实场景中的主动操作能力。</div>
+    <div class="card-contrib"><div class="card-contrib-label">核心贡献</div><ul>
+<li>解耦 camera action 与 manipulation action。</li>
+<li>引入 ActiveViewPose-200K 与 ActiveManip-Bench。</li>
+<li>用 3D geometry-aware module 提升动态视角下的鲁棒性。</li>
+</ul>
+<p><strong>关键结果</strong>：相对 GR00T N1 和 π_0，在真实世界任务中最高提升 31.25% 成功率。</p>
+<hr /></div>
+</div></div>
+    </section>
     <section class="date-section" data-date="2026-03-09">
         <div class="date-header">
             <h2 class="date-heading">2026-03-09</h2>
@@ -910,7 +1250,7 @@ a:hover { text-decoration: underline; }
     </div>
 </div>
 <script>
-const availableDates = ["2026-03-09", "2026-03-08", "2026-03-06"];
+const availableDates = ["2026-03-13", "2026-03-09", "2026-03-08", "2026-03-06"];
 let currentDate = 'all';
 
 function filterDate(date) {

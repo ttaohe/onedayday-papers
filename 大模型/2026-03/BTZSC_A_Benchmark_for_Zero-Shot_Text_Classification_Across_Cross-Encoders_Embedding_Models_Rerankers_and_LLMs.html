@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTZSC: A Benchmark for Zero-Shot Text Classification Across Cross-Encoders, Embedding Models, Rerankers and LLMs</title>
+    
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+    background: #f7f7fb;
+    color: #1a1a2e;
+    line-height: 1.65;
+    min-height: 100vh;
+}
+a { color: #5c4fcf; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 11px; border-radius: 999px;
+    font-size: .75em; font-weight: 600; line-height: 1.4;
+}
+.chip-purple { background: #ede9fe; color: #5c4fcf; }
+.chip-amber  { background: #fef3c7; color: #b45309; }
+.chip-gray   { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+.chip-link:hover { background: #ddd6fe; text-decoration: none; }
+</style>
+
+    
+<style>
+.container { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
+.back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #5c4fcf; font-size: .88em; font-weight: 500;
+    margin-bottom: 28px; cursor: pointer;
+}
+.back-btn:hover { color: #4338ca; }
+.paper-title-h1 {
+    font-size: 1.65em; font-weight: 800; color: #1a1a2e;
+    line-height: 1.3; margin-bottom: 14px;
+}
+.meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px; }
+.authors-txt { color: #6b7280; font-size: .88em; }
+
+/* sections */
+.section { margin-bottom: 36px; }
+.section-title {
+    font-size: 1em; font-weight: 700; color: #5c4fcf;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+    content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+.section-body { color: #374151; font-size: .95em; line-height: 1.8; }
+.section-body ul, .section-body ol { padding-left: 1.4em; }
+.section-body li { margin-bottom: 5px; }
+.section-body strong { color: #1a1a2e; }
+.section-body code {
+    background: #f3f0ff; color: #5c4fcf;
+    padding: 2px 6px; border-radius: 4px; font-size: .88em;
+}
+.section-body pre {
+    background: #f8f9fa; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0;
+}
+.section-body blockquote {
+    border-left: 3px solid #d1d5db; margin: 12px 0;
+    padding-left: 14px; color: #6b7280;
+}
+.section-body table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+.section-body th, .section-body td {
+    border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left;
+}
+.section-body th { background: #f9f8ff; font-weight: 600; }
+
+/* abstract */
+.abstract-zh {
+    background: #f9f8ff; border-left: 3px solid #5c4fcf;
+    border-radius: 0 8px 8px 0; padding: 16px 20px;
+    color: #374151; line-height: 1.9; font-size: .95em;
+    margin-bottom: 12px;
+}
+.abstract-en {
+    color: #6b7280; font-size: .88em; line-height: 1.75;
+}
+.en-label {
+    font-size: .72em; font-weight: 700; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 6px;
+}
+
+/* callout */
+.callout {
+    padding: 12px 16px; border-radius: 8px;
+    margin: 14px 0; border-left: 3px solid;
+}
+.callout-tip     { border-color: #5c4fcf; background: #f3f0ff; }
+.callout-success { border-color: #10b981; background: #ecfdf5; }
+.callout-warning { border-color: #f59e0b; background: #fffbeb; }
+.callout-info    { border-color: #3b82f6; background: #eff6ff; }
+.callout-icon { margin-right: 4px; }
+.callout-body { margin-top: 6px; font-size: .92em; color: #374151; }
+</style>
+
+</head>
+<body>
+<div class="container">
+    <a class="back-btn" href="../../index.html">← 返回每日推荐</a>
+    <h1 class="paper-title-h1">BTZSC: A Benchmark for Zero-Shot Text Classification Across Cross-Encoders, Embedding Models, Rerankers and LLMs</h1>
+    <div class="meta-row">
+        <span class="authors-txt">Ilias Aarab</span>
+        <span class="chip chip-amber">8.7/10</span>
+        
+        <a class="chip chip-purple chip-link" href="https://arxiv.org/abs/2603.11991" target="_blank">arXiv ↗</a>
+        <a class="chip chip-gray chip-link" href="https://arxiv.org/pdf/2603.11991" target="_blank">PDF ↗</a>
+    </div>
+    
+        <div class="section">
+            <div class="section-title">📄 摘要</div>
+            <div class="abstract-zh">零样本文本分类希望通过将文本直接与人类可读的标签描述进行匹配，从而摆脱昂贵的任务标注成本。早期方法主要依赖基于自然语言推理微调的 cross-encoder，但近期 embedding model、reranker 和 instruction-tuned LLM 的进展正在挑战这一范式。作者提出 BTZSC，一个包含 22 个公开数据集的综合 benchmark，覆盖情感、主题、意图与情绪分类等任务，并系统比较四类模型家族共 38 个 checkpoint。结果显示：reranker 达到新的 SOTA；强 embedding model 在精度与延迟之间给出最佳 trade-off；4B 到 12B instruction-tuned LLM 已具备较强竞争力；传统 NLI cross-encoder 的扩展收益有限。</div>
+            
+        </div>
+    
+        <div class="section">
+            <div class="section-title">🔍 研究问题与背景</div>
+            <div class="section-body"><ul>
+<li><strong>研究背景</strong>：zero-shot 分类的真实部署场景越来越关注延迟、吞吐和无需微调的泛化能力。</li>
+<li><strong>研究动机</strong>：现有评测往往混入 supervised probe 或 fine-tuning，无法真实刻画纯 zero-shot 能力。</li>
+<li><strong>核心方法</strong>：构建统一 benchmark，对四类模型在 22 个数据集上做系统比较。</li>
+<li><strong>主要结果</strong>：Qwen3-Reranker-8B 取得 macro F1 0.72；GTE-large-en-v1.5 给出最佳 accuracy-latency trade-off。</li>
+<li><strong>研究意义</strong>：为后续检索式分类、reranker serving 和 LLM inference 选型提供了更实用的参照系。</li>
+</ul></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">💡 核心创新点</div>
+            <div class="section-body"><h3>核心思想</h3>
+<p>这篇论文的重点不在提出一个新模型，而在于把“真正 zero-shot 分类”这件事从 benchmark 层面重新定义清楚。作者把 cross-encoder、embedding、reranker、LLM 四条路线放到同一套标准下比较，并显式把 latency 与效果一起纳入考量，因此对系统和 serving 场景尤其有价值。</p>
+<h3>方法架构图</h3>
+<blockquote>
+<p>图1展示了性能与延迟的 trade-off，是这篇论文最值得看的核心图之一：它直接反映了部署时 reranker、embedding 与 LLM 三条路线的取舍。</p>
+</blockquote></div>
+        </div>
+    
+        <div class="section">
+            <div class="section-title">📊 实验结果</div>
+            <div class="section-body"><ul>
+<li><strong>reranker 最强</strong>：Qwen3-Reranker-8B 达到新的 SOTA（macro F1 = 0.72）</li>
+<li><strong>embedding 最均衡</strong>：GTE-large-en-v1.5 在准确率和延迟之间提供最佳折中</li>
+<li><strong>LLM 逐渐可用</strong>：4B-12B 的 instruction-tuned LLM 达到最高 0.67 macro F1，尤其擅长 topic classification</li>
+<li><strong>cross-encoder 遇到瓶颈</strong>：NLI-based 路线继续扩大 backbone 收益有限</li>
+</ul>
+<blockquote>
+<p>图2更适合观察不同模型家族之间的准确率对比。</p>
+</blockquote></div>
+        </div>
+    
+    
+        <div class="section">
+            <div class="section-title">🧠 深度分析</div>
+            <div class="section-body"><h3>研究价值</h3>
+<ul>
+<li><strong>理论价值</strong>：重新定义了 zero-shot 分类 benchmark 的评测边界，强调纯 zero-shot 而非 probe-based 评估。</li>
+<li><strong>工程价值</strong>：对检索式分类和在线 serving 特别有意义，因为它不仅看精度，还看 latency。</li>
+<li><strong>领域影响</strong>：可能推动更多分类系统从传统 NLI cross-encoder 转向 reranker 或 embedding route。</li>
+</ul>
+<h3>优势</h3>
+<ul>
+<li>benchmark 设计清晰，覆盖任务面广</li>
+<li>统一了不同模型家族的比较标准</li>
+<li>把 latency 放进主结论，对工业界更有价值</li>
+</ul>
+<h3>局限性</h3>
+<ul>
+<li>这是一篇 benchmark 论文，不直接提出可复用的新 inference 方法</li>
+<li>热门度和长期影响还需要更多后续工作验证</li>
+<li>作者数较少，可能说明实验和生态建设主要靠单人推进，后续维护需观察</li>
+</ul></div>
+        </div>
+</div>
+</body>
+</html>
